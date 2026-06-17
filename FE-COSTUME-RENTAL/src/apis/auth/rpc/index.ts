@@ -43,6 +43,7 @@ export const registerRpc = createServerFn({ method: 'POST' })
         data: {
           username: data.username,
           email: data.email,
+          phone: data.phone,
           password: data.password,
           display_name: data.username,
         },
@@ -80,7 +81,7 @@ export const updateProfileRpc = createServerFn({ method: 'POST' })
   .inputValidator(
     z.object({
       username: z.string().min(3).optional(),
-      email: z.string().email().optional(),
+      email: z.string().optional().nullable(),
       password: z.string().min(6).optional().nullable(),
     })
   )

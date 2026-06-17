@@ -19,6 +19,8 @@ class UpdateUserRequest extends FormRequest
         $user = $this->resolveUser();
 
         return [
+            'email' => ['nullable', 'string', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:20'],
             'username' => ['sometimes', 'required', 'string', 'max:50', Rule::unique('users', 'username')->ignore($user)],
             'password' => ['nullable', 'string', 'min:6'],
             'role' => ['sometimes', 'required', Rule::enum(UserRole::class)],

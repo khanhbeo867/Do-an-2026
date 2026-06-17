@@ -24,7 +24,7 @@ export const EditProfileDialog: React.FC<EditProfileDialogProps> = ({ open, onOp
   useEffect(() => {
     if (open && user) {
       setUsername(user.username || '')
-      setEmail(user.employee?.email || '')
+      setEmail(user.email || user.employee?.email || '')
       setPassword('')
     }
   }, [open, user])
@@ -34,11 +34,6 @@ export const EditProfileDialog: React.FC<EditProfileDialogProps> = ({ open, onOp
 
     if (!username.trim()) {
       toast.error('Tên đăng nhập không được để trống.')
-      return
-    }
-
-    if (!email.trim()) {
-      toast.error('Email không được để trống.')
       return
     }
 
@@ -99,11 +94,11 @@ export const EditProfileDialog: React.FC<EditProfileDialogProps> = ({ open, onOp
               </div>
               <Input
                 id="email"
-                type="email"
+                type="text"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="pl-9 h-10 border-border/40 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 bg-background/50"
-                placeholder="example@domain.com"
+                placeholder="Nhập email liên hệ (không bắt buộc)"
               />
             </div>
           </div>

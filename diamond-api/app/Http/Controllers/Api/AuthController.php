@@ -41,14 +41,19 @@ class AuthController extends Controller
     public function register(Request $request): JsonResponse
     {
         $data = $request->validate([
+            'email' => ['nullable', 'string', 'max:255'],
+            'phone' => ['required', 'string', 'max:20'],
             'username' => ['required', 'string', 'max:50', 'unique:users,username'],
             'password' => ['required', 'string', 'min:6'],
+            'confirmPassword' => ['nullable', 'string'],
             'employee_id' => ['nullable', 'integer', Rule::exists('employees', 'id'), Rule::unique('users', 'employee_id')],
             'role' => ['nullable', Rule::in(['USER', 'ADMIN'])],
             'is_active' => ['nullable', 'boolean'],
         ]);
 
         $user = User::query()->create([
+            'email' => $data['email'] ?? null,
+            'phone' => $data['phone'] ?? null,
             'username' => $data['username'],
             'password' => $data['password'],
             'employee_id' => $data['employee_id'] ?? null,
@@ -93,7 +98,7 @@ class AuthController extends Controller
 
         $data = $request->validate([
             'username' => ['sometimes', 'required', 'string', 'max:50', Rule::unique('users', 'username')->ignore($user->id)],
-            'email' => ['sometimes', 'required', 'email', 'max:255'],
+            'email' => ['sometimes', 'nullable', 'string', 'max:255'],
             'password' => ['sometimes', 'nullable', 'string', 'min:6'],
         ]);
 
@@ -104,8 +109,13 @@ class AuthController extends Controller
             if (!empty($data['password'])) {
                 $user->password = $data['password'];
             }
+            // Save email directly to users table for all account types
+            if (array_key_exists('email', $data)) {
+                $user->email = $data['email'] ?: null;
+            }
             $user->save();
 
+            // Also update employee.email if user has an employee profile
             if (!empty($data['email']) && $user->employee) {
                 $user->employee->update([
                     'email' => $data['email'],
@@ -132,8 +142,10 @@ class AuthController extends Controller
 
         return [
             'id' => $user->id,
+            'email' => $user->email,
             'username' => $user->username,
             'role' => $user->role?->value,
+            'phone' => $user->phone,
             'employee_id' => $user->employee_id,
             'employee' => $user->employee ? [
                 'id' => $user->employee->id,

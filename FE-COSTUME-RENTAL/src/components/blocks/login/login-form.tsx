@@ -11,13 +11,24 @@ import { LogIn, UserPlus } from 'lucide-react'
 import { useState, useEffect, type SubmitEventHandler } from 'react'
 import { toast } from 'sonner'
 
-const LoginFormContent = ({ onSwitchToRegister }: { onSwitchToRegister: () => void }) => {
+type PrefillCredentials = { username: string; password: string } | null
+
+const LoginFormContent = ({
+  onSwitchToRegister,
+  prefillCredentials,
+}: {
+  onSwitchToRegister: () => void
+  prefillCredentials: PrefillCredentials
+}) => {
   const [isPending, setIsPending] = useState(false)
   const loginFn = useServerFn(loginRpc)
   const router = useRouter()
 
   const form = useForm({
-    defaultValues: { username: '', password: '' },
+    defaultValues: {
+      username: prefillCredentials?.username || '',
+      password: prefillCredentials?.password || '',
+    },
     validators: { onSubmit: loginSchema },
     onSubmit: async ({ value }) => {
       try {
@@ -76,19 +87,23 @@ const LoginFormContent = ({ onSwitchToRegister }: { onSwitchToRegister: () => vo
   )
 }
 
-const RegisterFormContent = ({ onSwitchToLogin }: { onSwitchToLogin: () => void }) => {
+const RegisterFormContent = ({
+  onSwitchToLogin,
+}: {
+  onSwitchToLogin: (credentials: PrefillCredentials) => void
+}) => {
   const [isPending, setIsPending] = useState(false)
   const registerFn = useServerFn(registerRpc)
 
   const form = useForm({
-    defaultValues: { email: '', username: '', password: '', confirmPassword: '' },
+    defaultValues: { email: '', phone: '', username: '', password: '', confirmPassword: '' },
     validators: { onSubmit: registerSchema },
     onSubmit: async ({ value }) => {
       try {
         setIsPending(true)
         await registerFn({ data: value })
-        toast.success('Đăng ký tài khoản thành công!')
-        onSwitchToLogin()
+        toast.success('Đăng ký tài khoản thành công! Vui lòng đăng nhập.')
+        onSwitchToLogin({ username: value.username, password: value.password })
       } catch (err: any) {
         toast.error(err?.message || 'Đăng ký tài khoản thất bại. Tài khoản hoặc email có thể đã tồn tại.')
       } finally {
@@ -110,6 +125,11 @@ const RegisterFormContent = ({ onSwitchToLogin }: { onSwitchToLogin: () => void 
         <FormField name="email">
           {(field) => (
             <InputFieldControl field={field} type="email" label="Email" placeholder="example@gmail.com" />
+          )}
+        </FormField>
+        <FormField name="phone">
+          {(field) => (
+            <InputFieldControl field={field} type="tel" label="Số điện thoại" placeholder="Nhập số điện thoại" />
           )}
         </FormField>
         <FormField name="username">
@@ -136,7 +156,7 @@ const RegisterFormContent = ({ onSwitchToLogin }: { onSwitchToLogin: () => void 
         Đã có tài khoản?{' '}
         <button
           type="button"
-          onClick={onSwitchToLogin}
+          onClick={() => onSwitchToLogin(null)}
           className="text-primary hover:underline font-semibold cursor-pointer"
         >
           Đăng nhập hệ thống
@@ -148,12 +168,22 @@ const RegisterFormContent = ({ onSwitchToLogin }: { onSwitchToLogin: () => void 
 
 const LoginForm = () => {
   const [mounted, setMounted] = useState(false)
+  const [isRegistering, setIsRegistering] = useState(false)
+  const [prefillCredentials, setPrefillCredentials] = useState<PrefillCredentials>(null)
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
-  const [isRegistering, setIsRegistering] = useState(false)
+  const handleSwitchToLogin = (credentials: PrefillCredentials) => {
+    setIsRegistering(false)
+    setPrefillCredentials(credentials)
+  }
+
+  const handleSwitchToRegister = () => {
+    setIsRegistering(true)
+    setPrefillCredentials(null)
+  }
 
   if (!mounted) {
     return (
@@ -164,10 +194,17 @@ const LoginForm = () => {
   }
 
   if (isRegistering) {
-    return <RegisterFormContent onSwitchToLogin={() => setIsRegistering(false)} />
+    return <RegisterFormContent onSwitchToLogin={handleSwitchToLogin} />
   }
 
-  return <LoginFormContent onSwitchToRegister={() => setIsRegistering(true)} />
+  return (
+    <LoginFormContent
+      key={prefillCredentials?.username ?? 'empty'}
+      onSwitchToRegister={handleSwitchToRegister}
+      prefillCredentials={prefillCredentials}
+    />
+  )
 }
 
 export default LoginForm
+

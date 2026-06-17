@@ -4,6 +4,7 @@ import type { IEmployee } from '@/apis/employee/types'
 export interface IUser extends IBaseEntity {
   username: string
   email: string
+  phone?: string
   password: string
   role: UserRole
   avatar: string

@@ -1,4 +1,5 @@
 import { getUsersQueryOptions } from '@/apis/user/hooks/use-user-request'
+import { getLoanFormsQueryOptions } from '@/apis/loan-form/hooks/use-loan-form-request'
 import type { IUser } from '@/apis/user/types'
 import { formatPhoneNumber } from '@/common/helpers/format-intl'
 import { DataGrid } from '@/components/shared/data-grid'
@@ -16,13 +17,66 @@ import { useMemo } from 'react'
 import CustomerActionDropdown from './customer-action-dropdown'
 import CustomerTableToolbar from './customer-table-toolbar'
 
+const normalizeString = (str: string) => {
+  return str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/\s+/g, '')
+    .replace(/[đĐ]/g, 'd')
+}
+
 const CustomerTable: React.FC = () => {
   const { data: allUsers, isLoading } = useSuspenseQuery(getUsersQueryOptions())
+  const { data: allLoanForms } = useSuspenseQuery(getLoanFormsQueryOptions())
 
-  // Filter users to only show customers (role === 'USER')
+  // Filter users to only show customers (role === 'USER' and not linked to an employee profile)
   const customers = useMemo(() => {
-    return allUsers.filter((user: IUser) => user.role === 'USER')
+    return allUsers.filter((user: IUser) => user.role === 'USER' && !user.employee)
   }, [allUsers])
+
+  const getCustomerInfo = useMemo(() => {
+    return (user: IUser) => {
+      if (user.employee) {
+        return {
+          fullName: user.employee.full_name,
+          phone: user.employee.phone,
+          email: user.employee.email,
+        }
+      }
+
+      // Use email and phone directly from registered account
+      const registeredEmail = user.email || null
+      const registeredPhone = user.phone || null
+
+      if (allLoanForms && allLoanForms.length > 0) {
+        const normalizedUsername = normalizeString(user.username)
+        const matchedOrders = allLoanForms.filter((order: any) => {
+          if (!order.borrower_name) return false
+          return normalizeString(order.borrower_name) === normalizedUsername
+        })
+
+        if (matchedOrders.length > 0) {
+          // Sort by created_at descending to get the latest order
+          const latestOrder = [...matchedOrders].sort((a: any, b: any) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          )[0]
+
+          return {
+            fullName: latestOrder.borrower_name,
+            phone: registeredPhone || latestOrder.borrower_phone,
+            email: registeredEmail,
+          }
+        }
+      }
+
+      return {
+        fullName: user.username,
+        phone: registeredPhone,
+        email: user.email || null,
+      }
+    }
+  }, [allLoanForms])
 
   const columnHelper = createColumnHelper<IUser>()
 
@@ -33,7 +87,8 @@ const CustomerTable: React.FC = () => {
         header: 'Tài khoản',
         size: 250,
         cell: ({ row }) => {
-          const fullName = row.original.employee?.full_name || 'Khách hàng chưa liên kết'
+          const info = getCustomerInfo(row.original)
+          const fullName = info.fullName || row.original.username
           return (
             <Item size="xs" className="p-0 flex-nowrap">
               <ItemMedia>
@@ -55,11 +110,12 @@ const CustomerTable: React.FC = () => {
           )
         },
       }),
-      columnHelper.accessor((row) => row.employee?.email, {
+      columnHelper.accessor((row) => row.email, {
         id: 'email',
         header: 'Email',
         cell: ({ row }) => {
-          const value = row.original.employee?.email
+          const info = getCustomerInfo(row.original)
+          const value = info.email
           if (!value)
             return (
               <Typography variant="small" color="muted">
@@ -73,7 +129,8 @@ const CustomerTable: React.FC = () => {
         id: 'phone',
         header: 'Số điện thoại',
         cell: ({ row }) => {
-          const value = row.original.employee?.phone
+          const info = getCustomerInfo(row.original)
+          const value = info.phone
           if (!value)
             return (
               <Typography variant="small" color="muted">
@@ -141,7 +198,7 @@ const CustomerTable: React.FC = () => {
         cell: CustomerActionDropdown,
       }),
     ],
-    []
+    [getCustomerInfo]
   )
 
   return (

@@ -1,51 +1,70 @@
 import type { Table } from '@tanstack/react-table'
 
-import { Button } from '@/components/ui/button'
+import { Tooltip } from '@/components/shared/tooltip'
+import { buttonVariants } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Icon } from '@/components/ui/icon'
+import useMediaQuery from '@/hooks/use-media-query'
+import { cn } from '@/lib/utils'
 
 interface DataTableViewOptionsProps<TData> {
   table: Table<TData>
 }
 
 export function CustomerTableViewOptions<TData>({ table }: DataTableViewOptionsProps<TData>) {
+  const isMobile = useMediaQuery('(max-width: 768px)')
+
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger
-        render={
-          <Button variant="outline" size="sm" className="ml-auto hidden h-10 lg:flex">
-            <Icon name="SlidersHorizontal" />
-            Hiển thị
-          </Button>
-        }
+      <Tooltip
+        message="Thiết lập cột"
+        contentProps={{ hidden: !isMobile }}
+        triggerProps={{
+          render: (
+            <DropdownMenuTrigger
+              className={cn(
+                buttonVariants({
+                  variant: isMobile ? 'ghost' : 'outline',
+                  size: isMobile ? 'icon' : 'default',
+                }),
+                'ml-auto h-10'
+              )}
+            >
+              <Icon name="SlidersHorizontal" />
+              {!isMobile && 'Hiển thị'}
+            </DropdownMenuTrigger>
+          ),
+        }}
       />
-      <DropdownMenuContent align="end" className="w-[150px]">
-        <DropdownMenuLabel>Ẩn/Hiện cột</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        {table
-          .getAllColumns()
-          .filter((column) => typeof column.accessorFn !== 'undefined' && column.getCanHide())
-          .map((column) => {
-            return (
-              <DropdownMenuCheckboxItem
-                key={column.id}
-                className="capitalize"
-                checked={column.getIsVisible()}
-                onCheckedChange={(value) => column.toggleVisibility(!!value)}
-              >
-                {column.id}
-              </DropdownMenuCheckboxItem>
-            )
-          })}
+      <DropdownMenuContent align="end" className="w-60">
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>Tùy chỉnh hiển thị</DropdownMenuLabel>
+          {table
+            .getAllColumns()
+            .filter((column) => typeof column.accessorFn !== 'undefined' && column.getCanHide())
+            .map((column) => {
+              return (
+                <DropdownMenuCheckboxItem
+                  key={column.id}
+                  className="capitalize"
+                  checked={column.getIsVisible()}
+                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                >
+                  {column.columnDef.header?.toString()}
+                </DropdownMenuCheckboxItem>
+              )
+            })}
+        </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   )
 }
+
 

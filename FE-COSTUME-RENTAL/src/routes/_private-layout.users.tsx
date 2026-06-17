@@ -1,5 +1,6 @@
 import { Position, WorkStatus } from '@/apis/employee/constants'
 import { getEmployeeQueryOptions } from '@/apis/employee/hooks/use-employee-request'
+import { getLoanFormsQueryOptions } from '@/apis/loan-form/hooks/use-loan-form-request'
 import { getUsersQueryOptions } from '@/apis/user/hooks/use-user-request'
 import UserPage from '@/components/blocks/users'
 
@@ -13,6 +14,7 @@ export const Route = createFileRoute('/_private-layout/users')({
   loader: async ({ context }) => {
     await Promise.all([
       context.queryClient.ensureQueryData(getUsersQueryOptions()),
+      context.queryClient.ensureQueryData(getLoanFormsQueryOptions()),
       context.queryClient.ensureQueryData(
         getEmployeeQueryOptions({
           'position:in': `${Position.MANAGER},${Position.ORDER_PROCESSOR},${Position.WAREHOUSE_MANAGER}`,

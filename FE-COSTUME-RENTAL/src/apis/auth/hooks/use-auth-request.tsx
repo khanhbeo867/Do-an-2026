@@ -5,6 +5,7 @@ import { useEffect } from 'react'
 import { toast } from 'sonner'
 import { getProfileRpc, logOutFn, updateProfileRpc } from '../rpc'
 import { useCartStore } from '@/hooks/use-cart-store'
+import { GET_USERS_QUERY_KEY } from '@/apis/user/hooks/use-user-request'
 
 export const GET_PROFILE_QUERY_KEY = ['profile'] as const
 
@@ -88,12 +89,15 @@ export const useLogOutMutation = () => {
 export const useUpdateProfileMutation = () => {
   const updateProfile = useServerFn(updateProfileRpc)
   const queryClient = useQueryClient()
+  const router = useRouter()
 
   return useMutation({
     mutationFn: (data: { username?: string; email?: string; password?: string | null }) =>
       updateProfile({ data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: GET_PROFILE_QUERY_KEY as any })
+      queryClient.invalidateQueries({ queryKey: [GET_USERS_QUERY_KEY] })
+      router.invalidate()
     },
   })
 }

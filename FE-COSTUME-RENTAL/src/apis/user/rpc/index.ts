@@ -4,6 +4,7 @@ import { createServerFn } from '@tanstack/react-start'
 import { omit } from 'lodash-es'
 import { number } from 'zod'
 import { createUserSchema } from '../schemas/create-user.schema'
+import { createCustomerSchema } from '../schemas/create-customer.schema'
 import { updateUserSchema } from '../schemas/update-user.schema'
 
 export const getUsersRpc = createServerFn({ method: 'GET' })
@@ -27,6 +28,21 @@ export const createUserRpc = createServerFn({ method: 'POST' })
         },
         ['employee']
       ),
+    })
+  })
+
+export const createCustomerRpc = createServerFn({ method: 'POST' })
+  .inputValidator(createCustomerSchema)
+  .middleware([authMiddleware, requestMiddleware])
+  .handler(async ({ context, data }) => {
+    return await context.request({
+      url: '/users',
+      method: 'POST',
+      data: {
+        ...data,
+        role: 'USER',
+        employee_id: null,
+      },
     })
   })
 

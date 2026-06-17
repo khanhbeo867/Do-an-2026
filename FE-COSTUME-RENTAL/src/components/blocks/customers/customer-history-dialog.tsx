@@ -12,6 +12,15 @@ import { usePageEventContext } from '@/contexts/event-context'
 import { CalendarIcon, PackageIcon, Receipt, ShoppingBagIcon } from 'lucide-react'
 import React, { useState, useMemo } from 'react'
 
+const normalizeString = (str: string) => {
+  return str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/\s+/g, '')
+    .replace(/[đĐ]/g, 'd')
+}
+
 const CustomerHistoryDialog: React.FC = () => {
   const { event$ } = usePageEventContext()
   const [open, setOpen] = useState<boolean>(false)
@@ -30,16 +39,30 @@ const CustomerHistoryDialog: React.FC = () => {
     if (!selectedCustomer || !allLoanForms) return []
     
     const customerPhone = selectedCustomer.employee?.phone
+      ? selectedCustomer.employee.phone.replace(/\D/g, '')
+      : null
     const customerName = selectedCustomer.employee?.full_name || selectedCustomer.username
+    const normalizedCustomerName = customerName ? normalizeString(customerName) : ''
+    const normalizedUsername = selectedCustomer.username ? normalizeString(selectedCustomer.username) : ''
     
     return allLoanForms.filter((order: any) => {
-      if (customerPhone && order.borrower_phone === customerPhone) return true
-      if (
-        order.borrower_name?.toLowerCase() === customerName?.toLowerCase() ||
-        order.borrower_name?.toLowerCase() === selectedCustomer.username?.toLowerCase()
-      ) {
-        return true
+      // 1. Match by phone if both have phone numbers
+      if (customerPhone && order.borrower_phone) {
+        const orderPhone = order.borrower_phone.replace(/\D/g, '')
+        if (orderPhone === customerPhone) return true
       }
+      
+      // 2. Match by normalized name
+      if (order.borrower_name) {
+        const normalizedOrderName = normalizeString(order.borrower_name)
+        if (
+          normalizedOrderName === normalizedCustomerName ||
+          normalizedOrderName === normalizedUsername
+        ) {
+          return true
+        }
+      }
+      
       return false
     })
   }, [allLoanForms, selectedCustomer])
@@ -56,8 +79,14 @@ const CustomerHistoryDialog: React.FC = () => {
     switch (status) {
       case 'DEPOSIT_PENDING':
         return <span className="px-2 py-0.5 text-[10px] font-bold bg-warning/15 text-warning border border-warning/20 rounded-full">Chờ xử lý</span>
+      case 'APPROVED':
+        return <span className="px-2 py-0.5 text-[10px] font-bold bg-blue-500/15 text-blue-500 border border-blue-500/20 rounded-full">Đã xử lý</span>
+      case 'SHIPPING':
+        return <span className="px-2 py-0.5 text-[10px] font-bold bg-warning/15 text-warning border border-warning/20 rounded-full">Đang giao hàng</span>
+      case 'DELIVERED':
+        return <span className="px-2 py-0.5 text-[10px] font-bold bg-blue-500/15 text-blue-500 border border-blue-500/20 rounded-full">Đã giao hàng</span>
       case 'BORROWING':
-        return <span className="px-2 py-0.5 text-[10px] font-bold bg-primary/15 text-primary border border-primary/20 rounded-full">Đang xử lý</span>
+        return <span className="px-2 py-0.5 text-[10px] font-bold bg-primary/15 text-primary border border-primary/20 rounded-full">Đang thuê</span>
       case 'RETURNED':
         return <span className="px-2 py-0.5 text-[10px] font-bold bg-success/15 text-success border border-success/20 rounded-full">Đã trả đồ</span>
       case 'PAID':
@@ -144,7 +173,7 @@ const CustomerHistoryDialog: React.FC = () => {
           </DialogTitle>
           <Typography className="text-xs text-muted-foreground pt-1">
             Khách hàng: <span className="font-semibold text-foreground">{customerName}</span> 
-            {selectedCustomer?.employee?.phone && ` - SĐT: ${selectedCustomer.employee.phone}`}
+            {(selectedCustomer?.phone || selectedCustomer?.employee?.phone) && ` - SĐT: ${selectedCustomer.phone || selectedCustomer.employee.phone}`}
           </Typography>
         </DialogHeader>
 

@@ -157,9 +157,9 @@ class FrontendWorkflowApiTest extends TestCase
             'loan_form_code' => $loanCode,
         ]);
 
-        // 2. Confirm deposit (marking the BUY order as PAID)
+        // 2. Checkout (marking the BUY order as PAID)
         $this->withHeaders($headers)
-            ->postJson("/api/loan-forms/{$loanId}/confirm-deposit")
+            ->postJson("/api/loan-forms/{$loanId}/checkout")
             ->assertOk()
             ->assertJsonPath('status', 'PAID');
 

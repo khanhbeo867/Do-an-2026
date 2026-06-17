@@ -1,8 +1,8 @@
 import { getUsersQueryOptions } from '@/apis/user/hooks/use-user-request'
+import { getLoanFormsQueryOptions } from '@/apis/loan-form/hooks/use-loan-form-request'
 import type { IUser } from '@/apis/user/types'
 import { formatPhoneNumber } from '@/common/helpers/format-intl'
 import { DataGrid } from '@/components/shared/data-grid'
-import TableCellText from '@/components/shared/data-grid/components/table-cell-text'
 import { ROW_ACTIONS_COLUMN_ID } from '@/components/shared/data-grid/constants'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
@@ -18,30 +18,83 @@ import RoleBadge from './role-badge'
 import UserActionDropdown from './user-action-dropdown'
 import UserTableToolbar from './user-table-toolbar'
 
+const normalizeString = (str: string) => {
+  return str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/\s+/g, '')
+    .replace(/[đĐ]/g, 'd')
+}
+
 const UserTable: React.FC = () => {
-  const { data, isLoading } = useSuspenseQuery(getUsersQueryOptions())
+  const { data: allUsers, isLoading } = useSuspenseQuery(getUsersQueryOptions())
+  const { data: allLoanForms } = useSuspenseQuery(getLoanFormsQueryOptions())
+
+  const users = allUsers
+
+  const getAccountInfo = useMemo(() => {
+    return (user: IUser) => {
+      if (user.employee) {
+        return {
+          fullName: user.employee.full_name,
+          phone: user.employee.phone,
+          email: user.employee.email,
+        }
+      }
+
+      if (allLoanForms && allLoanForms.length > 0) {
+        const normalizedUsername = normalizeString(user.username)
+        const matchedOrders = allLoanForms.filter((order: any) => {
+          if (!order.borrower_name) return false
+          return normalizeString(order.borrower_name) === normalizedUsername
+        })
+
+        if (matchedOrders.length > 0) {
+          const latestOrder = [...matchedOrders].sort((a: any, b: any) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          )[0]
+
+          return {
+            fullName: latestOrder.borrower_name,
+            phone: latestOrder.borrower_phone,
+            email: null,
+          }
+        }
+      }
+
+      return {
+        fullName: user.username,
+        phone: null,
+        email: null,
+      }
+    }
+  }, [allLoanForms])
 
   const columnHelper = createColumnHelper<IUser>()
 
   const columns = useMemo(
     () => [
-      columnHelper.accessor('employee.full_name', {
+      columnHelper.accessor((row) => row.employee?.full_name, {
+        id: 'account',
         header: 'Tài khoản',
         size: 250,
-        cell: ({ getValue, row }) => {
+        cell: ({ row }) => {
+          const info = getAccountInfo(row.original)
+          const fullName = info.fullName || row.original.username
           return (
             <Item size="xs" className="p-0 flex-nowrap">
               <ItemMedia>
                 <Avatar className="col-start-1 row-span-2">
                   <AvatarImage
-                    src={generateAvatar({ name: row.original.employee?.full_name })}
-                    alt={row.original.employee?.full_name}
+                    src={generateAvatar({ name: fullName })}
+                    alt={fullName}
                   />
-                  <AvatarFallback>G</AvatarFallback>
+                  <AvatarFallback>U</AvatarFallback>
                 </Avatar>
               </ItemMedia>
               <ItemContent>
-                <ItemTitle>{getValue()}</ItemTitle>
+                <ItemTitle>{fullName}</ItemTitle>
                 <ItemDescription className='before:[content:"@"] font-medium before:text-normal before:text-muted-foreground'>
                   {row.original.username}
                 </ItemDescription>
@@ -50,14 +103,27 @@ const UserTable: React.FC = () => {
           )
         },
       }),
-      columnHelper.accessor('employee.email', {
+      columnHelper.accessor((row) => row.employee?.email, {
+        id: 'email',
         header: 'Email',
-        cell: TableCellText,
+        cell: ({ row }) => {
+          const info = getAccountInfo(row.original)
+          const value = info.email
+          if (!value)
+            return (
+              <Typography variant="small" color="muted">
+                Chưa xác định
+              </Typography>
+            )
+          return <Typography variant="small">{value}</Typography>
+        },
       }),
-      columnHelper.accessor('employee.phone', {
+      columnHelper.accessor((row) => row.employee?.phone, {
+        id: 'phone',
         header: 'Số điện thoại',
-        cell: ({ getValue }) => {
-          const value = getValue()
+        cell: ({ row }) => {
+          const info = getAccountInfo(row.original)
+          const value = info.phone
           if (!value)
             return (
               <Typography variant="small" color="muted">
@@ -135,13 +201,13 @@ const UserTable: React.FC = () => {
         cell: UserActionDropdown,
       }),
     ],
-    []
+    [getAccountInfo]
   )
 
   return (
     <DataGrid
       columns={columns}
-      data={data}
+      data={users}
       loading={isLoading}
       border="bottom-only"
       defaultFilterOpen={false}

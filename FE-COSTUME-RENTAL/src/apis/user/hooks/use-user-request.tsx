@@ -1,12 +1,13 @@
 import { Position, WorkStatus } from '@/apis/employee/constants'
 import { GET_EMPLOYEE_QUERY_KEY } from '@/apis/employee/hooks/use-employee-request'
 import { CommonActions } from '@/common/constants/enums'
-import { queryOptions, useMutation, useSuspenseQuery, type MutationFunction } from '@tanstack/react-query'
+import { queryOptions, useMutation, useQueryClient, useSuspenseQuery, type MutationFunction } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
 import { useServerFn } from '@tanstack/react-start'
 import { useRef } from 'react'
 import { toast } from 'sonner'
-import { createUserRpc, deleteUserRpc, getUsersRpc, updateUserRpc } from '../rpc'
+import { createCustomerRpc, createUserRpc, deleteUserRpc, getUsersRpc, updateUserRpc } from '../rpc'
+import type { TCreateCustomerValues } from '../schemas/create-customer.schema'
 import type { TCreateUserValues } from '../schemas/create-user.schema'
 import type { TUpdateUserValues } from '../schemas/update-user.schema'
 import type { IUser } from '../types'
@@ -93,9 +94,23 @@ export const useCreateOrUpdateUserMutataion = (action: CommonActions.CREATE | Co
 
 export const useDeleteUserMutation = () => {
   const deleteUserFn = useServerFn(deleteUserRpc)
+  const router = useRouter()
+  const queryClient = useQueryClient()
+  const toastRef = useRef<string | number | null>(null)
 
   return useMutation({
     mutationFn: (id: number) => deleteUserFn({ data: id }),
+    onMutate: () => {
+      toastRef.current = toast.loading('Đang xóa tài khoản ...')
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [GET_USERS_QUERY_KEY] })
+      router.invalidate()
+      toast.success('Đã xóa tài khoản thành công', { id: toastRef.current! })
+    },
+    onError: () => {
+      toast.error('Xóa tài khoản thất bại !', { id: toastRef.current! })
+    },
     meta: {
       invalidates: [
         [GET_USERS_QUERY_KEY],
@@ -109,6 +124,29 @@ export const useDeleteUserMutation = () => {
           },
         ],
       ],
+    },
+  })
+}
+
+export const useCreateCustomerMutation = () => {
+  const createCustomerFn = useServerFn(createCustomerRpc)
+  const toastRef = useRef<string | number | null>(null)
+  const router = useRouter()
+
+  return useMutation({
+    mutationFn: (data: TCreateCustomerValues) => createCustomerFn({ data }),
+    meta: {
+      invalidates: [[GET_USERS_QUERY_KEY]],
+    },
+    onMutate: () => {
+      toastRef.current = toast.loading('Đang xử lý ...')
+    },
+    onSuccess: () => {
+      router.invalidate()
+      toast.success('Thêm tài khoản khách hàng thành công', { id: toastRef.current! })
+    },
+    onError: () => {
+      toast.error('Đã có lỗi xảy ra !', { id: toastRef.current! })
     },
   })
 }

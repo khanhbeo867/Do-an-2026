@@ -12,13 +12,13 @@ import { Field, FieldDescription, FieldGroup, FieldLegend, FieldSet } from '@/co
 import { Icon } from '@/components/ui/icon'
 import { usePageEventContext } from '@/contexts/event-context'
 import { useForm } from '@tanstack/react-form'
-import React, { useRef, useState } from 'react'
+import React, { useState } from 'react'
 
 const EmployeeFormDialog: React.FC = () => {
   const { event$ } = usePageEventContext()
   const [action, setAction] = useState<CommonActions.CREATE | CommonActions.UPDATE | 'none'>('none')
   const [open, setOpen] = useState<boolean>(!!action)
-  const formSchemaRef = useRef<TCreateEmployeeSchema | TUpdateEmployeeSchema>(createEmployeeSchema)
+  const [formSchema, setFormSchema] = useState<TCreateEmployeeSchema | TUpdateEmployeeSchema>(createEmployeeSchema)
 
   const mutation = useCreateOrUpdateEmployeeMutataion(action)
 
@@ -29,7 +29,7 @@ const EmployeeFormDialog: React.FC = () => {
       email: '',
       phone: '',
       address: '',
-      position: {},
+      position: {} as any,
     },
     onSubmitInvalid: ({ value }) => {
       console.debug('value', value)
@@ -39,7 +39,7 @@ const EmployeeFormDialog: React.FC = () => {
       await mutation.mutateAsync(value)
       setOpen(false)
     },
-    validators: { onSubmit: formSchemaRef.current as any },
+    validators: { onSubmit: formSchema as any },
   })
 
   event$.useSubscription((e) => {
@@ -47,11 +47,15 @@ const EmployeeFormDialog: React.FC = () => {
     setAction(e.action)
     setOpen(true)
     if (e.action === CommonActions.CREATE) {
+      setFormSchema(createEmployeeSchema)
       form.reset()
-      formSchemaRef.current = createEmployeeSchema
     } else {
-      formSchemaRef.current = updateEmployeeSchema
-      form.reset(e.payload, { keepDefaultValues: true })
+      setFormSchema(updateEmployeeSchema)
+      const mappedPosition = POSITION_OPTIONS.find((option) => option.value === e.payload.position) || {}
+      form.reset({
+        ...e.payload,
+        position: mappedPosition,
+      }, { keepDefaultValues: true })
     }
   })
 

@@ -1,4 +1,4 @@
-import { getEmployeeQueryOptions } from '@/apis/employee/hooks/use-employee-request'
+import { getLoanFormsQueryOptions } from '@/apis/loan-form/hooks/use-loan-form-request'
 import { getUsersQueryOptions } from '@/apis/user/hooks/use-user-request'
 import CustomerPage from '@/components/blocks/customers'
 import { createFileRoute } from '@tanstack/react-router'
@@ -11,12 +11,7 @@ export const Route = createFileRoute('/_private-layout/customers')({
   loader: async ({ context }) => {
     await Promise.all([
       context.queryClient.ensureQueryData(getUsersQueryOptions()),
-      context.queryClient.ensureQueryData(
-        getEmployeeQueryOptions({
-          'is_active:eq': true,
-          'user_id:eq': null,
-        })
-      ),
+      context.queryClient.ensureQueryData(getLoanFormsQueryOptions()),
     ])
   },
 })

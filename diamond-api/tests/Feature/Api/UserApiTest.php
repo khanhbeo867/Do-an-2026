@@ -108,7 +108,7 @@ class UserApiTest extends TestCase
         ]);
     }
 
-    public function test_admin_can_soft_delete_a_user(): void
+    public function test_admin_can_hard_delete_a_user(): void
     {
         $targetUser = User::factory()->create([
             'is_active' => true,
@@ -120,9 +120,8 @@ class UserApiTest extends TestCase
             ->assertJsonPath('statusCode', 200)
             ->assertJsonMissingPath('metadata');
 
-        $this->assertDatabaseHas('users', [
+        $this->assertDatabaseMissing('users', [
             'id' => $targetUser->id,
-            'is_active' => 0,
         ]);
     }
 

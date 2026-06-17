@@ -17,15 +17,16 @@ import { Item, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '@/comp
 import { usePageEventContext } from '@/contexts/event-context'
 import generateAvatar from '@/lib/generate-avatar'
 
+import { UserRole } from '@/apis/auth/constants'
 import { useForm } from '@tanstack/react-form'
 import { useSuspenseQuery } from '@tanstack/react-query'
-import React, { useRef, useState } from 'react'
+import React, { useState } from 'react'
 
 const UserFormDialog: React.FC = () => {
   const { event$ } = usePageEventContext()
   const [action, setAction] = useState<CommonActions.CREATE | CommonActions.UPDATE | 'none'>('none')
   const [open, setOpen] = useState<boolean>(!!action)
-  const formSchemaRef = useRef<TCreateUserSchema | TUpdateUserSchema>(createUserSchema)
+  const [formSchema, setFormSchema] = useState<TCreateUserSchema | TUpdateUserSchema>(createUserSchema)
 
   const { data: employees } = useSuspenseQuery(
     getEmployeeQueryOptions({
@@ -41,17 +42,22 @@ const UserFormDialog: React.FC = () => {
     defaultValues: {
       username: '',
       password: '',
-      role: {},
-      employee: {},
+      role: {} as any,
+      employee: {} as any,
     },
     onSubmit: async ({ value }) => {
       if (typeof mutation?.mutateAsync !== 'function') return
 
-      await mutation.mutateAsync(value)
+      const payload = { ...value } as any
+      if (!payload.password) {
+        delete payload.password
+      }
+
+      await mutation.mutateAsync(payload)
 
       setOpen(false)
     },
-    validators: { onSubmit: formSchemaRef.current as any },
+    validators: { onSubmit: formSchema as any },
   })
 
   event$.useSubscription((e) => {
@@ -59,11 +65,19 @@ const UserFormDialog: React.FC = () => {
     setAction(e.action)
     setOpen(true)
     if (e.action === CommonActions.CREATE) {
+      setFormSchema(createUserSchema)
       form.reset()
-      formSchemaRef.current = createUserSchema
     } else {
-      formSchemaRef.current = updateUserSchema
-      form.reset(e.payload, { keepDefaultValues: true })
+      setFormSchema(updateUserSchema)
+      const mappedRole = ROLE_OPTIONS.find((option) => option.value === e.payload.role) || {
+        label: 'Thành viên',
+        value: UserRole.USER,
+      }
+      form.reset({
+        ...e.payload,
+        role: mappedRole,
+        password: '',
+      }, { keepDefaultValues: true })
     }
   })
 
