@@ -2,14 +2,13 @@ import { useGetLoanFormsQuery } from '@/apis/loan-form/hooks/use-loan-form-reque
 import type { IUser } from '@/apis/user/types'
 import { CommonActions } from '@/common/constants/enums'
 import { formatCurrency } from '@/common/helpers/format-intl'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog'
 import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Typography } from '@/components/ui/typography'
 import { usePageEventContext } from '@/contexts/event-context'
-import { CalendarIcon, PackageIcon, Receipt, ShoppingBagIcon } from 'lucide-react'
+import { CalendarIcon, PackageIcon, Receipt } from 'lucide-react'
 import React, { useState, useMemo } from 'react'
 
 const normalizeString = (str: string) => {
