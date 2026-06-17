@@ -1,0 +1,30 @@
+﻿$kind: http-request
+name: Delete Equipment Prop
+description: |-
+  Xóa một đạo cụ/thiết bị theo ID. Yêu cầu quyền ADMIN. Hỗ trợ xóa mềm hoặc xóa vĩnh viễn.
+
+  **Path Variables:**
+
+  | Tham số | Kiểu | Mô tả |
+  |---------|------|-------|
+  | id | integer | ID của đạo cụ/thiết bị cần xóa |
+
+  **Query Params:**
+
+  | Tham số | Kiểu | Mô tả |
+  |---------|------|-------|
+  | permanantly | boolean | true để xóa vĩnh viễn, false để xóa mềm (mặc định: false) |
+
+  **Response:**
+
+  - 200 OK: Xóa thành công.
+  - 404 Not Found: Không tìm thấy đạo cụ/thiết bị.
+method: DELETE
+url: '{{baseUrl}}/equipment-props/:id'
+order: 5000
+pathVariables:
+  - key: id
+    value: ''
+queryParams:
+  - key: permanantly
+    value: 'false'

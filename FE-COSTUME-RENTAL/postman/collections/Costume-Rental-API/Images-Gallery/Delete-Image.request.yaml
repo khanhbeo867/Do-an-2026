@@ -1,0 +1,30 @@
+﻿$kind: http-request
+name: Delete Image
+description: |-
+  Xóa một hình ảnh khỏi thư viện theo ID. Yêu cầu quyền ADMIN. Hỗ trợ xóa mềm hoặc xóa vĩnh viễn kèm file trên server.
+
+  **Path Variables:**
+
+  | Tham số | Kiểu | Mô tả |
+  |---------|------|-------|
+  | id | integer | ID của hình ảnh cần xóa |
+
+  **Query Params:**
+
+  | Tham số | Kiểu | Mô tả |
+  |---------|------|-------|
+  | permanantly | boolean | true để xóa vĩnh viễn kèm file, false để xóa mềm (mặc định: false) |
+
+  **Response:**
+
+  - 200 OK: Xóa thành công.
+  - 404 Not Found: Không tìm thấy hình ảnh.
+method: DELETE
+url: '{{baseUrl}}/images-gallery/:id'
+order: 5000
+pathVariables:
+  - key: id
+    value: ''
+queryParams:
+  - key: permanantly
+    value: 'false'

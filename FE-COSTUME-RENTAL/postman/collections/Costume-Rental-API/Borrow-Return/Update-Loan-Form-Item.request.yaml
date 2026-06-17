@@ -1,0 +1,22 @@
+$kind: http-request
+name: Update Loan Form Item
+description: |-
+  Cập nhật thông tin một dòng sản phẩm trong phiếu mượn/thuê.
+
+  Dùng khi cần chỉnh snapshot item (tên, giá, trạng thái trả...).
+method: PATCH
+url: '{{baseUrl}}/loan-form-items/:id'
+order: 5100
+pathVariables:
+  id: '1'
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "item_name": "Ao dai nhung do do",
+      "item_price": 2200000,
+      "is_returned": false
+    }

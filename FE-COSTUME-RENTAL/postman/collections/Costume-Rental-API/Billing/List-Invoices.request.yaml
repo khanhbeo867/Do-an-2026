@@ -1,0 +1,14 @@
+$kind: http-request
+name: List Invoices
+description: |-
+  Lấy danh sách hóa đơn, response đã join loan form, return form, penalty form và employee tạo.
+method: GET
+url: '{{baseUrl}}/invoices'
+order: 5000
+params:
+  - key: status:eq
+    value: ISSUED
+    disabled: true
+  - key: penalty_form_code:eq
+    value: PF00001
+    disabled: true

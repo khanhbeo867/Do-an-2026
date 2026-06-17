@@ -1,0 +1,47 @@
+$kind: http-request
+description: Gán các vật tư cụ thể trong kho vào các dòng chi tiết thuê.
+url: "{{baseUrl}}/rental-slips/:id/assign-items"
+method: POST
+headers:
+  Content-Type: application/json
+pathVariables:
+  - key: id
+    value: "3"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: json
+  content: |-
+    {
+      "assignments": [
+        {
+          "detail_id": 1,
+          "inventory_item_ids": [
+            3,
+            4
+          ],
+          "condition_on_rent_id": 1,
+          "remarks": "Giao 2 bộ"
+        }
+      ]
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "assignments": {
+          "type": "array"
+        }
+      }
+    }
+order: 8000

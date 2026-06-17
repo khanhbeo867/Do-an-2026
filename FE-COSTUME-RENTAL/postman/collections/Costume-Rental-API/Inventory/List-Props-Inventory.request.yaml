@@ -1,0 +1,37 @@
+﻿$kind: http-request
+name: List Props Inventory
+description: |-
+  Lấy danh sách tồn kho đạo cụ/thiết bị. Hỗ trợ lọc theo nhiều tiêu chí.
+
+  **Query Params:**
+
+  | Tham số | Kiểu | Mô tả |
+  |---------|------|-------|
+  | item_id | integer | Lọc theo ID đạo cụ/thiết bị |
+  | inventory_condition_id | integer | Lọc theo ID tình trạng sản phẩm |
+  | warehouse_id | integer | Lọc theo ID kho |
+  | status | enum | Lọc theo trạng thái: AVAILABLE, RENTED, MAINTENANCE, DISPOSED |
+  | keyword | string | Tìm kiếm theo từ khóa (tên, SKU) |
+
+  **Response:**
+
+  - 200 OK: Mảng các bản ghi Inventory của đạo cụ/thiết bị.
+method: GET
+url: '{{baseUrl}}/inventory/props'
+order: 2000
+params:
+  - key: item_id
+    value: ''
+    disabled: true
+  - key: inventory_condition_id
+    value: ''
+    disabled: true
+  - key: warehouse_id
+    value: ''
+    disabled: true
+  - key: status
+    value: ''
+    disabled: true
+  - key: keyword
+    value: ''
+    disabled: true

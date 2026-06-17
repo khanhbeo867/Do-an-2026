@@ -1,0 +1,7 @@
+$kind: http-request
+name: Issue Penalty Form
+description: |-
+  Chuyển trạng thái phiếu phạt sang ISSUED.
+method: POST
+url: '{{baseUrl}}/penalty-forms/1/issue'
+order: 3000

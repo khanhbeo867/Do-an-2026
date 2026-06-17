@@ -1,0 +1,13 @@
+$kind: http-request
+description: |-
+  Lấy danh sách tất cả nhân viên trong hệ thống. Hỗ trợ lọc theo vị trí công việc, trạng thái làm việc và tìm kiếm theo tên.
+
+  **Response:**
+
+  - 200 OK: Mảng các đối tượng Employee.
+url: "{{baseUrl}}/employees"
+method: GET
+body:
+  type: text
+  content: ""
+order: 1000

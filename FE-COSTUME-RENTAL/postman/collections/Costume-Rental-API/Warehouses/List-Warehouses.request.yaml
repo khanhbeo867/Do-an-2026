@@ -1,0 +1,11 @@
+﻿$kind: http-request
+name: List Warehouses
+description: |-
+  Lấy danh sách tất cả kho hàng trong hệ thống. Hỗ trợ lọc theo loại kho và người quản lý.
+
+  **Response:**
+
+  - 200 OK: Mảng các đối tượng Warehouse.
+method: GET
+url: '{{baseUrl}}/warehouses'
+order: 1000

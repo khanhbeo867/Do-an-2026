@@ -1,0 +1,40 @@
+$kind: http-request
+description: |-
+  Tạo mới một danh mục sản phẩm. Yêu cầu quyền ADMIN. Slug sẽ được tự động sinh từ trường name.
+
+  **Body (JSON):**
+
+  | Trường | Kiểu | Mô tả |  
+  |--------|------|-------|  
+  | name | string | Tên danh mục |  
+  | type | enum | Loại danh mục: COSTUME hoặc EQUIPMENT_PROPS |
+
+  **Response:**
+
+  - 201 Created: Danh mục mới được tạo thành công.
+      
+  - 400 Bad Request: Dữ liệu không hợp lệ.
+url: "{{baseUrl}}/categories"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "",
+      "type": ""
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    }
+order: 2000

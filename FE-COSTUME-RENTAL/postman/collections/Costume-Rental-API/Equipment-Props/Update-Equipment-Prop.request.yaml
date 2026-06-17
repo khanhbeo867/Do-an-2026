@@ -1,0 +1,40 @@
+﻿$kind: http-request
+name: Update Equipment Prop
+description: |-
+  Cập nhật thông tin của một đạo cụ/thiết bị theo ID. Yêu cầu quyền ADMIN.
+
+  **Path Variables:**
+
+  | Tham số | Kiểu | Mô tả |
+  |---------|------|-------|
+  | id | integer | ID của đạo cụ/thiết bị cần cập nhật |
+
+  **Body (JSON):**
+
+  | Trường | Kiểu | Mô tả |
+  |--------|------|-------|
+  | name | string | Tên mới của đạo cụ/thiết bị |
+  | rental_price_per_day | integer | Giá thuê mới (tối thiểu 50.000 VND) |
+  | is_active | boolean | Trạng thái kích hoạt |
+
+  **Response:**
+
+  - 200 OK: Đạo cụ/thiết bị sau khi cập nhật.
+  - 404 Not Found: Không tìm thấy đạo cụ/thiết bị.
+method: PATCH
+url: '{{baseUrl}}/equipment-props/:id'
+order: 4000
+pathVariables:
+  - key: id
+    value: ''
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "",
+      "rental_price_per_day": 50000,
+      "is_active": true
+    }

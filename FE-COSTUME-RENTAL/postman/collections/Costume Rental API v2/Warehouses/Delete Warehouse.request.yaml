@@ -1,0 +1,45 @@
+$kind: http-request
+description: |-
+  Xóa một kho hàng theo ID. Yêu cầu quyền ADMIN và kho phải không còn tồn kho. Hỗ trợ xóa mềm hoặc xóa vĩnh viễn.
+
+  **Path Variables:**
+
+  | Tham số | Kiểu | Mô tả |
+  |---------|------|-------|
+  | id | integer | ID của kho cần xóa |
+
+  **Query Params:**
+
+  | Tham số | Kiểu | Mô tả |
+  |---------|------|-------|
+  | permanantly | boolean | true để xóa vĩnh viễn, false để xóa mềm (mặc định: false) |
+
+  **Response:**
+
+  - 200 OK: Xóa thành công.
+  - 404 Not Found: Không tìm thấy kho.
+url: "{{baseUrl}}/warehouses/:id?permanantly=false"
+method: DELETE
+queryParams:
+  - key: permanantly
+    value: "false"
+    $type: boolean
+pathVariables:
+  - key: id
+    value: ""
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: text
+  content: ""
+order: 5000

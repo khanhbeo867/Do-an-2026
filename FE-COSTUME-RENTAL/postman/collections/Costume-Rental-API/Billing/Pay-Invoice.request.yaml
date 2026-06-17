@@ -1,0 +1,9 @@
+$kind: http-request
+name: Pay Invoice
+description: |-
+  **Workflow step 12**: Xác nhận khách đã thanh toán hóa đơn (`PAID`).
+
+  Nếu hóa đơn liên kết `penalty_form_code`, mock backend cũng tự chuyển phiếu phạt sang `PAID`.
+method: POST
+url: '{{baseUrl}}/invoices/1/pay'
+order: 8000

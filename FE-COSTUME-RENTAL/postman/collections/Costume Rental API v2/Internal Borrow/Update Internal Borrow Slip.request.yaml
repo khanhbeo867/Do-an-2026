@@ -1,0 +1,48 @@
+$kind: http-request
+description: Cập nhật các trường có thể chỉnh sửa trên phiếu nháp hoặc phiếu đang chờ.
+url: "{{baseUrl}}/internal-borrow-slips/:id"
+method: PATCH
+headers:
+  Content-Type: application/json
+pathVariables:
+  - key: id
+    value: "3"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: json
+  content: |-
+    {
+      "due_date": "2026-05-23",
+      "purpose": "Cập nhật mục đích",
+      "remarks": "Điều chỉnh hạn trả"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "borrow_date": {
+          "type": "string"
+        },
+        "due_date": {
+          "type": "string"
+        },
+        "purpose": {
+          "type": "string"
+        },
+        "remarks": {
+          "type": "string"
+        }
+      }
+    }
+order: 4000

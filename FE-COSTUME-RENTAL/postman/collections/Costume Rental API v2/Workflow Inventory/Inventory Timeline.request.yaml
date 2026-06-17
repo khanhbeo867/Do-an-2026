@@ -1,0 +1,23 @@
+$kind: http-request
+description: Hiển thị dòng thời gian của vật tư trong kho, bao gồm giao dịch, sự cố và bảo trì.
+url: "{{baseUrl}}/inventory/:id/timeline"
+method: GET
+pathVariables:
+  - key: id
+    value: "3"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: text
+  content: ""
+order: 3000

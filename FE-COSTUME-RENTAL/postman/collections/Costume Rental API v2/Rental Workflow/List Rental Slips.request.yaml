@@ -1,0 +1,24 @@
+$kind: http-request
+description: Liệt kê các phiếu thuê.
+url: "{{baseUrl}}/rental-slips?status=ACTIVE&payment_status=PARTIALLY_PAID&customer_id=1&warehouse_id=1&keyword=PTH"
+method: GET
+queryParams:
+  - key: status
+    value: ACTIVE
+    $type: string
+  - key: payment_status
+    value: PARTIALLY_PAID
+    $type: string
+  - key: customer_id
+    value: "1"
+    $type: integer
+  - key: warehouse_id
+    value: "1"
+    $type: integer
+  - key: keyword
+    value: PTH
+    $type: string
+body:
+  type: text
+  content: ""
+order: 1000

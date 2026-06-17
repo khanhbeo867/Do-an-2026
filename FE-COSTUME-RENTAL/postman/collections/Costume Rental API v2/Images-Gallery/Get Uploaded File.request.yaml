@@ -1,0 +1,50 @@
+$kind: http-request
+description: |-
+  Truy xuất trực tiếp file ảnh đã upload từ server theo tên thư mục và tên file. Endpoint này không yêu cầu xác thực (noauth) và trả về binary stream của file ảnh.
+
+  **Path Variables:**
+
+  | Tham số | Kiểu | Mô tả |
+  |---------|------|-------|
+  | folder | string | Tên thư mục chứa file trên server |
+  | fileName | string | Tên file ảnh cần truy xuất |
+
+  **Response:**
+
+  - 200 OK: Binary stream của file ảnh với Content-Type tương ứng.
+  - 404 Not Found: Không tìm thấy file.
+url: "{{baseUrl}}/upload/:folder/:fileName"
+method: GET
+pathVariables:
+  - key: folder
+    value: ""
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+  - key: fileName
+    value: ""
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: text
+  content: ""
+order: 6000

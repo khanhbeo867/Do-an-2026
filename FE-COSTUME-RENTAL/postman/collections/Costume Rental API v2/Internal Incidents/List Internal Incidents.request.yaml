@@ -1,0 +1,18 @@
+$kind: http-request
+description: Liệt kê các sự cố nội bộ.
+url: "{{baseUrl}}/internal-incidents?status=OPEN&incident_type=DAMAGED&inventory_item_id=44"
+method: GET
+queryParams:
+  - key: status
+    value: OPEN
+    $type: string
+  - key: incident_type
+    value: DAMAGED
+    $type: string
+  - key: inventory_item_id
+    value: "44"
+    $type: integer
+body:
+  type: text
+  content: ""
+order: 1000

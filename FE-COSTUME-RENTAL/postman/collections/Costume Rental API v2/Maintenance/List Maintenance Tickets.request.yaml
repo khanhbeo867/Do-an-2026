@@ -1,0 +1,21 @@
+$kind: http-request
+description: Liệt kê các phiếu bảo trì.
+url: "{{baseUrl}}/maintenance-tickets?status=OPEN&maintenance_type=REPAIR&inventory_item_id=4&item_id=15"
+method: GET
+queryParams:
+  - key: status
+    value: OPEN
+    $type: string
+  - key: maintenance_type
+    value: REPAIR
+    $type: string
+  - key: inventory_item_id
+    value: "4"
+    $type: integer
+  - key: item_id
+    value: "15"
+    $type: integer
+body:
+  type: text
+  content: ""
+order: 1000

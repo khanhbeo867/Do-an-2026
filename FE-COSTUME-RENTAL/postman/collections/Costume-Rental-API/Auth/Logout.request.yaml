@@ -1,0 +1,13 @@
+$kind: http-request
+name: Logout
+description: |-
+  Đăng xuất khỏi hệ thống. Endpoint này hủy phiên làm việc hiện tại và vô hiệu hóa refresh token đang hoạt động. Yêu cầu gửi kèm access token hợp lệ trong header Authorization.
+
+  **Response:**
+
+  - 200 OK: Đăng xuất thành công.
+      
+  - 401 Unauthorized: Token không hợp lệ hoặc đã hết hạn.
+method: POST
+url: "{{baseUrl}}/auth/logout"
+order: 3000

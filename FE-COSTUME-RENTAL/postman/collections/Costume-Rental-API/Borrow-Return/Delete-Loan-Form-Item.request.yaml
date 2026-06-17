@@ -1,0 +1,9 @@
+$kind: http-request
+name: Delete Loan Form Item
+description: |-
+  Xóa một dòng SKU khỏi phiếu mượn/thuê theo `loan_form_item.id`.
+method: DELETE
+url: '{{baseUrl}}/loan-form-items/:id'
+order: 5200
+pathVariables:
+  id: '1'

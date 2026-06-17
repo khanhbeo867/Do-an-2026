@@ -1,0 +1,16 @@
+$kind: http-request
+name: Delete Inventory By SKU
+description: |-
+  Xóa bản ghi tồn kho theo `sku`.
+
+  - `permanantly=false` (mặc định): xóa mềm
+  - `permanantly=true`: xóa cứng.
+method: DELETE
+url: '{{baseUrl}}/inventory/delete/:sku'
+order: 5000
+pathVariables:
+  sku: TP-ADNH-VOL200-0001
+params:
+  - key: permanantly
+    value: 'false'
+    disabled: true

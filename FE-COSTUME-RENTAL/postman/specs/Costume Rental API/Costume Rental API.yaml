@@ -1,0 +1,3362 @@
+openapi: 3.1.0
+info:
+  title: Costume Rental API
+  version: 1.0.0
+  description: ''
+servers:
+  - url: '{{baseUrl}}'
+paths:
+  /auth/login:
+    post:
+      summary: Login
+      responses: {}
+      tags:
+        - Auth
+      description: |-
+        Đăng nhập vào hệ thống bằng tên đăng nhập và mật khẩu. Khi thành công, server trả về accessToken (JWT) và thông tin người dùng. Access token sẽ được lưu vào biến môi trường token tự động qua script.
+
+        **Body (JSON):**
+
+        | Trường | Kiểu | Mô tả |
+        | --- | --- | --- |
+        | username | string | Tên đăng nhập của tài khoản |
+        | password | string | Mật khẩu của tài khoản |
+
+        **Response:**
+
+        - 200 OK: { accessToken, user } - đăng nhập thành công, token được lưu vào môi trường.
+            
+        - 401 Unauthorized: Sai tên đăng nhập hoặc mật khẩu.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                  format: color
+            example:
+              username: quanghiep031
+              password: '123123'
+  /register:
+    post:
+      summary: Register
+      responses: {}
+      tags:
+        - Auth
+      description: |-
+        Đăng ký tài khoản người dùng mới trong hệ thống. Endpoint này tạo một User mới với vai trò mặc định là USER.
+
+        **Body (JSON):**
+
+        | Trường | Kiểu | Mô tả |  
+        |--------|------|-------|  
+        | username | string | Tên đăng nhập, phải duy nhất trong hệ thống |  
+        | email | string | Địa chỉ email của người dùng |  
+        | password | string | Mật khẩu (sẽ được hash trước khi lưu) |  
+        | display_name | string | Tên hiển thị của người dùng |  
+        | role | enum | Vai trò: ADMIN hoặc USER (mặc định: USER) |
+
+        **Response:**
+
+        - 201 Created: Tài khoản được tạo thành công, trả về thông tin user mới.
+            
+        - 400 Bad Request: Dữ liệu không hợp lệ hoặc username đã tồn tại.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+                display_name:
+                  type: string
+                role:
+                  type: string
+            example:
+              username: ''
+              email: ''
+              password: ''
+              display_name: ''
+              role: USER
+  /auth/logout:
+    post:
+      summary: Logout
+      responses: {}
+      tags:
+        - Auth
+      description: |-
+        Đăng xuất khỏi hệ thống. Endpoint này hủy phiên làm việc hiện tại và vô hiệu hóa refresh token đang hoạt động. Yêu cầu gửi kèm access token hợp lệ trong header Authorization.
+
+        **Response:**
+
+        - 200 OK: Đăng xuất thành công.
+            
+        - 401 Unauthorized: Token không hợp lệ hoặc đã hết hạn.
+  /auth/refresh:
+    get:
+      summary: Refresh Token
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: 'Bearer {{token}}'
+      responses: {}
+      tags:
+        - Auth
+      description: |-
+        Làm mới access token bằng cách sử dụng refresh token còn hiệu lực. Gửi kèm access token cũ trong header Authorization: Bearer {{token}}. Server sẽ trả về access token mới nếu refresh token hợp lệ.
+
+        **Headers:**
+
+        | Header | Mô tả |  
+        |--------|-------|  
+        | Authorization | Bearer {{token}} - access token hiện tại |
+
+        **Response:**
+
+        - 200 OK: { accessToken } - token mới được cấp.
+            
+        - 401 Unauthorized: Refresh token không hợp lệ hoặc đã hết hạn.
+  /auth/me:
+    get:
+      summary: Get Current User
+      responses: {}
+      tags:
+        - Auth
+      description: |-
+        Lấy thông tin của người dùng đang đăng nhập dựa trên access token hiện tại trong môi trường. Trả về đầy đủ thông tin tài khoản bao gồm username, role, employee_id và trạng thái hoạt động.
+
+        **Response:**
+
+        - 200 OK: Thông tin người dùng hiện tại { id, username, role, employee_id, is_active, ... }.
+        - 401 Unauthorized: Token không hợp lệ hoặc chưa đăng nhập.
+  /categories:
+    get:
+      summary: List Categories
+      parameters:
+        - name: _embed
+          in: query
+          schema:
+            type: string
+          example: costumes
+        - name: 'type:eq'
+          in: query
+          schema:
+            type: string
+          example: EQUIPMENT_PROPS
+      responses: {}
+      tags:
+        - Categories
+      description: |-
+        Lấy danh sách tất cả danh mục sản phẩm trong hệ thống. Hỗ trợ lọc theo loại danh mục và những sản phẩm liên kết.
+
+        **Query Params:**
+
+        | Tham số | Kiểu | Mô tả |
+        | --- | --- | --- |
+        | _embed | string | Những dữ liệu liên kết (ví dụ: costumes) |
+        | type:eq | enum | Lọc theo loại: COSTUME hoặc EQUIPMENT_PROPS |
+
+        **Response:**
+
+        - 200 OK: Mảng các đối tượng ItemCategory.
+    post:
+      summary: Create Category
+      responses: {}
+      tags:
+        - Categories
+      description: |-
+        Tạo mới một danh mục sản phẩm. Yêu cầu quyền ADMIN. Slug sẽ được tự động sinh từ trường name.
+
+        **Body (JSON):**
+
+        | Trường | Kiểu | Mô tả |  
+        |--------|------|-------|  
+        | name | string | Tên danh mục |  
+        | type | enum | Loại danh mục: COSTUME hoặc EQUIPMENT_PROPS |
+
+        **Response:**
+
+        - 201 Created: Danh mục mới được tạo thành công.
+            
+        - 400 Bad Request: Dữ liệu không hợp lệ.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                type:
+                  type: string
+            example:
+              name: ''
+              type: ''
+  '/categories/{id}':
+    get:
+      summary: Get Category
+      responses: {}
+      tags:
+        - Categories
+      description: |-
+        Lấy thông tin chi tiết của một danh mục sản phẩm theo ID.
+
+        **Path Variables:**
+
+        | Tham số | Kiểu | Mô tả |  
+        |---------|------|-------|  
+        | id | integer | ID của danh mục cần lấy |
+
+        **Response:**
+
+        - 200 OK: Đối tượng ItemCategory tương ứng.
+            
+        - 404 Not Found: Không tìm thấy danh mục với ID đã cho.
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        example: ''
+    patch:
+      summary: Update Category
+      responses: {}
+      tags:
+        - Categories
+      description: |-
+        Cập nhật thông tin của một danh mục sản phẩm theo ID. Yêu cầu quyền ADMIN.
+
+        **Path Variables:**
+
+        | Tham số | Kiểu | Mô tả |
+        |---------|------|-------|
+        | id | integer | ID của danh mục cần cập nhật |
+
+        **Body (JSON):**
+
+        | Trường | Kiểu | Mô tả |
+        |--------|------|-------|
+        | name | string | Tên danh mục mới |
+        | type | enum | Loại danh mục: COSTUME hoặc EQUIPMENT_PROPS |
+
+        **Response:**
+
+        - 200 OK: Danh mục sau khi cập nhật.
+        - 404 Not Found: Không tìm thấy danh mục.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                type:
+                  type: string
+            example:
+              name: ''
+              type: ''
+    delete:
+      summary: Delete Category
+      parameters:
+        - name: permanantly
+          in: query
+          schema:
+            type: boolean
+          example: false
+      responses: {}
+      tags:
+        - Categories
+      description: |-
+        Xóa một danh mục sản phẩm theo ID. Yêu cầu quyền ADMIN. Hỗ trợ xóa mềm (soft delete) hoặc xóa vĩnh viễn tùy theo tham số permanantly.
+
+        **Path Variables:**
+
+        | Tham số | Kiểu | Mô tả |
+        |---------|------|-------|
+        | id | integer | ID của danh mục cần xóa |
+
+        **Query Params:**
+
+        | Tham số | Kiểu | Mô tả |
+        |---------|------|-------|
+        | permanantly | boolean | true để xóa vĩnh viễn, false để xóa mềm (mặc định: false) |
+
+        **Response:**
+
+        - 200 OK: Xóa thành công.
+        - 404 Not Found: Không tìm thấy danh mục.
+  /costumes:
+    get:
+      summary: List Costumes
+      responses: {}
+      tags:
+        - Costumes
+      description: |-
+        Lấy danh sách tất cả trang phục trong hệ thống. Hỗ trợ lọc theo danh mục, giới tính, kích cỡ và từ khóa tìm kiếm.
+
+        **Response:**
+
+        - 200 OK: Mảng các đối tượng Costume.
+    post:
+      summary: Create Costume
+      responses: {}
+      tags:
+        - Costumes
+      description: |-
+        Tạo mới một trang phục trong hệ thống. Yêu cầu quyền ADMIN. SKU và slug sẽ được tự động sinh.
+
+        **Body (JSON):**
+
+        | Trường | Kiểu | Mô tả |
+        |--------|------|-------|
+        | name | string | Tên trang phục |
+        | category_id | integer | ID danh mục (ItemCategory, type = COSTUME) |
+        | sizes | array | Các kích cỡ: XS, S, M, L, XL, 2XL, 3XL |
+        | gender | enum | Giới tính: MALE, FEMALE, UNISEX |
+        | images | array | Danh sách ID ảnh (ImageGallery) |
+        | rental_price_per_day | integer | Giá thuê/ngày (tối thiểu 50.000 VND) |
+        | unit | enum | Đơn vị: SET hoặc PIECE |
+        | description | string | Mô tả chi tiết |
+        | hashtags | array | Danh sách hashtag, không trùng lặp |
+        | color | object | Màu sắc: { hex, code, intensity } |
+
+        **Response:**
+
+        - 201 Created: Trang phục mới được tạo thành công.
+        - 400 Bad Request: Dữ liệu không hợp lệ.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                category_id:
+                  type: 'null'
+                sizes:
+                  type: array
+                gender:
+                  type: string
+                images:
+                  type: array
+                rental_price_per_day:
+                  type: integer
+                unit:
+                  type: string
+                description:
+                  type: 'null'
+                hashtags:
+                  type: array
+                color:
+                  type: 'null'
+            example:
+              name: ''
+              category_id: null
+              sizes: []
+              gender: ''
+              images: []
+              rental_price_per_day: 50000
+              unit: ''
+              description: null
+              hashtags: []
+              color: null
+  '/costumes/{id}':
+    get:
+      summary: Get Costume
+      responses: {}
+      tags:
+        - Costumes
+      description: |-
+        Lấy thông tin chi tiết của một trang phục theo ID, bao gồm hình ảnh, các biến thể kích cỡ, màu sắc và giá thuê.
+
+        **Path Variables:**
+
+        | Tham số | Kiểu | Mô tả |
+        |---------|------|-------|
+        | id | integer | ID của trang phục cần lấy |
+
+        **Response:**
+
+        - 200 OK: Đối tượng Costume đầy đủ thông tin.
+        - 404 Not Found: Không tìm thấy trang phục.
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        example: ''
+    patch:
+      summary: Update Costume
+      responses: {}
+      tags:
+        - Costumes
+      description: |-
+        Cập nhật thông tin của một trang phục theo ID. Yêu cầu quyền ADMIN. Chỉ cần gửi các trường cần thay đổi.
+
+        **Path Variables:**
+
+        | Tham số | Kiểu | Mô tả |
+        |---------|------|-------|
+        | id | integer | ID của trang phục cần cập nhật |
+
+        **Body (JSON):**
+
+        | Trường | Kiểu | Mô tả |
+        |--------|------|-------|
+        | name | string | Tên trang phục mới |
+        | rental_price_per_day | integer | Giá thuê mới (tối thiểu 50.000 VND) |
+        | is_active | boolean | Trạng thái kích hoạt |
+
+        **Response:**
+
+        - 200 OK: Trang phục sau khi cập nhật.
+        - 404 Not Found: Không tìm thấy trang phục.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                rental_price_per_day:
+                  type: integer
+                is_active:
+                  type: boolean
+            example:
+              name: ''
+              rental_price_per_day: 50000
+              is_active: true
+    delete:
+      summary: Delete Costume
+      parameters:
+        - name: permanantly
+          in: query
+          schema:
+            type: boolean
+          example: false
+      responses: {}
+      tags:
+        - Costumes
+      description: |-
+        Xóa một trang phục theo ID. Yêu cầu quyền ADMIN. Hỗ trợ xóa mềm hoặc xóa vĩnh viễn.
+
+        **Path Variables:**
+
+        | Tham số | Kiểu | Mô tả |
+        |---------|------|-------|
+        | id | integer | ID của trang phục cần xóa |
+
+        **Query Params:**
+
+        | Tham số | Kiểu | Mô tả |
+        |---------|------|-------|
+        | permanantly | boolean | true để xóa vĩnh viễn, false để xóa mềm (mặc định: false) |
+
+        **Response:**
+
+        - 200 OK: Xóa thành công.
+        - 404 Not Found: Không tìm thấy trang phục.
+  /employees:
+    get:
+      summary: List Employees
+      responses: {}
+      tags:
+        - Employees
+      description: |-
+        Lấy danh sách tất cả nhân viên trong hệ thống. Hỗ trợ lọc theo vị trí công việc, trạng thái làm việc và tìm kiếm theo tên.
+
+        **Response:**
+
+        - 200 OK: Mảng các đối tượng Employee.
+    post:
+      summary: Create Employee
+      responses: {}
+      tags:
+        - Employees
+      description: |-
+        Tạo mới hồ sơ nhân viên trong hệ thống. Yêu cầu quyền ADMIN. Mã nhân viên (employee_code) sẽ được tự động sinh.
+
+        **Body (JSON):**
+
+        | Trường | Kiểu | Mô tả |
+        |--------|------|-------|
+        | full_name | string | Họ và tên đầy đủ của nhân viên |
+        | phone | string | Số điện thoại liên hệ |
+        | email | string | Địa chỉ email liên hệ |
+        | address | string | Địa chỉ thường trú |
+        | citizen_id_number | string | Số căn cước công dân / CMND |
+        | position | enum | Vị trí: MANAGER, WAREHOUSE_MANAGER, ORDER_PROCESSOR, TALENT, TECHNICAL_CREW, WARDROBE |
+        | work_status | enum | Trạng thái: ACTIVE, SUSPENDED, EXITED (mặc định: ACTIVE) |
+
+        **Response:**
+
+        - 201 Created: Hồ sơ nhân viên mới được tạo thành công.
+        - 400 Bad Request: Dữ liệu không hợp lệ.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                full_name:
+                  type: string
+                phone:
+                  type: string
+                email:
+                  type: string
+                address:
+                  type: string
+                citizen_id_number:
+                  type: string
+                position:
+                  type: string
+                work_status:
+                  type: string
+            example:
+              full_name: ''
+              phone: ''
+              email: ''
+              address: ''
+              citizen_id_number: ''
+              position: ''
+              work_status: ACTIVE
+  '/employees/{id}':
+    get:
+      summary: Get Employee
+      responses: {}
+      tags:
+        - Employees
+      description: |-
+        Lấy thông tin chi tiết của một nhân viên theo ID, bao gồm thông tin liên hệ, vị trí công việc và liên kết tài khoản.
+
+        **Path Variables:**
+
+        | Tham số | Kiểu | Mô tả |
+        |---------|------|-------|
+        | id | integer | ID của nhân viên cần lấy |
+
+        **Response:**
+
+        - 200 OK: Đối tượng Employee đầy đủ thông tin.
+        - 404 Not Found: Không tìm thấy nhân viên.
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        example: ''
+    patch:
+      summary: Update Employee
+      responses: {}
+      tags:
+        - Employees
+      description: |-
+        Cập nhật thông tin của một nhân viên theo ID. Yêu cầu quyền ADMIN.
+
+        **Path Variables:**
+
+        | Tham số | Kiểu | Mô tả |
+        |---------|------|-------|
+        | id | integer | ID của nhân viên cần cập nhật |
+
+        **Body (JSON):**
+
+        | Trường | Kiểu | Mô tả |
+        |--------|------|-------|
+        | full_name | string | Họ và tên mới |
+        | phone | string | Số điện thoại mới |
+        | work_status | enum | Trạng thái làm việc mới: ACTIVE, SUSPENDED, EXITED |
+
+        **Response:**
+
+        - 200 OK: Hồ sơ nhân viên sau khi cập nhật.
+        - 404 Not Found: Không tìm thấy nhân viên.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                full_name:
+                  type: string
+                phone:
+                  type: string
+                work_status:
+                  type: string
+            example:
+              full_name: ''
+              phone: ''
+              work_status: ACTIVE
+    delete:
+      summary: Delete Employee
+      parameters:
+        - name: permanantly
+          in: query
+          schema:
+            type: boolean
+          example: false
+      responses: {}
+      tags:
+        - Employees
+      description: |-
+        Xóa hồ sơ nhân viên theo ID. Yêu cầu quyền ADMIN. Hỗ trợ xóa mềm hoặc xóa vĩnh viễn.
+
+        **Path Variables:**
+
+        | Tham số | Kiểu | Mô tả |
+        |---------|------|-------|
+        | id | integer | ID của nhân viên cần xóa |
+
+        **Query Params:**
+
+        | Tham số | Kiểu | Mô tả |
+        |---------|------|-------|
+        | permanantly | boolean | true để xóa vĩnh viễn, false để xóa mềm (mặc định: false) |
+
+        **Response:**
+
+        - 200 OK: Xóa thành công.
+        - 404 Not Found: Không tìm thấy nhân viên.
+  /equipment-props:
+    get:
+      summary: List Equipment Props
+      responses: {}
+      tags:
+        - Equipment-Props
+      description: |-
+        Lấy danh sách tất cả đạo cụ và thiết bị trong hệ thống. Hỗ trợ lọc theo danh mục và từ khóa tìm kiếm.
+
+        **Response:**
+
+        - 200 OK: Mảng các đối tượng EquipmentProps.
+    post:
+      summary: Create Equipment Prop
+      responses: {}
+      tags:
+        - Equipment-Props
+      description: |-
+        Tạo mới một đạo cụ/thiết bị trong hệ thống. Yêu cầu quyền ADMIN. Slug sẽ được tự động sinh từ trường name.
+
+        **Body (JSON):**
+
+        | Trường | Kiểu | Mô tả |
+        |--------|------|-------|
+        | name | string | Tên đạo cụ/thiết bị |
+        | category_id | integer | ID danh mục (ItemCategory, type = EQUIPMENT_PROPS) |
+        | rental_price_per_day | integer | Giá thuê/ngày (tối thiểu 50.000 VND) |
+        | weight_kg | number | Trọng lượng tính bằng kg |
+        | dimensions | object | Kích thước (dài x rộng x cao) |
+        | is_fragile | boolean | Có dễ vỡ/hư không (mặc định: false) |
+        | description | string | Mô tả chi tiết |
+        | images | array | Danh sách ID ảnh (ImageGallery) |
+        | unit | string | Đơn vị tính (ví dụ: cái, bộ, chiếc) |
+        | hashtags | array | Danh sách hashtag, không trùng lặp |
+
+        **Response:**
+
+        - 201 Created: Đạo cụ/thiết bị mới được tạo thành công.
+        - 400 Bad Request: Dữ liệu không hợp lệ.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                category_id:
+                  type: 'null'
+                rental_price_per_day:
+                  type: integer
+                weight_kg:
+                  type: 'null'
+                dimensions:
+                  type: 'null'
+                is_fragile:
+                  type: boolean
+                description:
+                  type: 'null'
+                images:
+                  type: array
+                unit:
+                  type: string
+                hashtags:
+                  type: array
+            example:
+              name: ''
+              category_id: null
+              rental_price_per_day: 50000
+              weight_kg: null
+              dimensions: null
+              is_fragile: false
+              description: null
+              images: []
+              unit: ''
+              hashtags: []
+  '/equipment-props/{id}':
+    get:
+      summary: Get Equipment Prop
+      responses: {}
+      tags:
+        - Equipment-Props
+      description: |-
+        Lấy thông tin chi tiết của một đạo cụ/thiết bị theo ID, bao gồm hình ảnh, mô tả và thông tin danh mục.
+
+        **Path Variables:**
+
+        | Tham số | Kiểu | Mô tả |
+        |---------|------|-------|
+        | id | integer | ID của đạo cụ/thiết bị cần lấy |
+
+        **Response:**
+
+        - 200 OK: Đối tượng EquipmentProps đầy đủ thông tin.
+        - 404 Not Found: Không tìm thấy đạo cụ/thiết bị.
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        example: ''
+    patch:
+      summary: Update Equipment Prop
+      responses: {}
+      tags:
+        - Equipment-Props
+      description: |-
+        Cập nhật thông tin của một đạo cụ/thiết bị theo ID. Yêu cầu quyền ADMIN.
+
+        **Path Variables:**
+
+        | Tham số | Kiểu | Mô tả |
+        |---------|------|-------|
+        | id | integer | ID của đạo cụ/thiết bị cần cập nhật |
+
+        **Body (JSON):**
+
+        | Trường | Kiểu | Mô tả |
+        |--------|------|-------|
+        | name | string | Tên mới của đạo cụ/thiết bị |
+        | rental_price_per_day | integer | Giá thuê mới (tối thiểu 50.000 VND) |
+        | is_active | boolean | Trạng thái kích hoạt |
+
+        **Response:**
+
+        - 200 OK: Đạo cụ/thiết bị sau khi cập nhật.
+        - 404 Not Found: Không tìm thấy đạo cụ/thiết bị.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                rental_price_per_day:
+                  type: integer
+                is_active:
+                  type: boolean
+            example:
+              name: ''
+              rental_price_per_day: 50000
+              is_active: true
+    delete:
+      summary: Delete Equipment Prop
+      parameters:
+        - name: permanantly
+          in: query
+          schema:
+            type: boolean
+          example: false
+      responses: {}
+      tags:
+        - Equipment-Props
+      description: |-
+        Xóa một đạo cụ/thiết bị theo ID. Yêu cầu quyền ADMIN. Hỗ trợ xóa mềm hoặc xóa vĩnh viễn.
+
+        **Path Variables:**
+
+        | Tham số | Kiểu | Mô tả |
+        |---------|------|-------|
+        | id | integer | ID của đạo cụ/thiết bị cần xóa |
+
+        **Query Params:**
+
+        | Tham số | Kiểu | Mô tả |
+        |---------|------|-------|
+        | permanantly | boolean | true để xóa vĩnh viễn, false để xóa mềm (mặc định: false) |
+
+        **Response:**
+
+        - 200 OK: Xóa thành công.
+        - 404 Not Found: Không tìm thấy đạo cụ/thiết bị.
+  /images-gallery:
+    get:
+      summary: List Images
+      responses:
+        '200':
+          description: List Images
+          headers:
+            vary:
+              schema:
+                type: string
+              example: 'Origin, Accept-Encoding'
+            access-control-allow-credentials:
+              schema:
+                type: boolean
+              example: true
+            cache-control:
+              schema:
+                type: string
+              example: no-cache
+            pragma:
+              schema:
+                type: string
+              example: no-cache
+            expires:
+              schema:
+                type: integer
+              example: -1
+            etag:
+              schema:
+                type: string
+              example: W/"3848-vv6AKNLAQXc6fgpQJGf8F16CJPY"
+            content-encoding:
+              schema:
+                type: string
+              example: br
+            x-powered-by:
+              schema:
+                type: string
+              example: Express
+            date:
+              schema:
+                type: string
+              example: 'Thu, 14 May 2026 04:53:58 GMT'
+            transfer-encoding:
+              schema:
+                type: string
+              example: chunked
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    file_name:
+                      type: string
+                    size:
+                      type: integer
+                    dest:
+                      type: string
+                    mime_type:
+                      type: string
+                    category_id:
+                      type: integer
+                    is_active:
+                      type: boolean
+                    created_by:
+                      type: object
+                      properties:
+                        username:
+                          type: string
+                        password:
+                          type: string
+                        role:
+                          type: string
+                        employee_id:
+                          type: integer
+                        is_active:
+                          type: boolean
+                        created_at:
+                          type: string
+                          format: date-time
+                        updated_at:
+                          type: string
+                          format: date-time
+                        id:
+                          type: integer
+                        employee:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            user_id:
+                              type: integer
+                            work_status:
+                              type: string
+                            employee_code:
+                              type: string
+                              format: color
+                            position:
+                              type: string
+                            hire_date:
+                              type: string
+                              format: date
+                            full_name:
+                              type: string
+                            phone:
+                              type: string
+                              format: utc-millisec
+                            email:
+                              type: string
+                              format: email
+                            address:
+                              type: string
+                            citizen_id_number:
+                              type: string
+                              format: utc-millisec
+                            is_active:
+                              type: boolean
+                            created_at:
+                              type: string
+                              format: date-time
+                    created_at:
+                      type: string
+                      format: date-time
+                    updated_at:
+                      type: string
+                      format: date-time
+                    id:
+                      type: integer
+              example:
+                - file_name: 1777023502551-ao-dai-gam-bong-nhieu-mau-nu.webp
+                  size: 36840
+                  dest: /images/1777023502551-ao-dai-gam-bong-nhieu-mau-nu.webp
+                  mime_type: image/webp
+                  category_id: 1
+                  is_active: true
+                  created_by:
+                    username: quanghiep031
+                    password: $2b$10$K3OV2a6070bTMQngIEewseBH0cbE/uWHqR0fxl5ibvO9WTPM1g1yG
+                    role: ADMIN
+                    employee_id: 1
+                    is_active: true
+                    created_at: '2026-04-20T04:35:49.640Z'
+                    updated_at: '2026-04-23T09:19:17.938Z'
+                    id: 1
+                    employee:
+                      id: 1
+                      user_id: 1
+                      work_status: ACTIVE
+                      employee_code: D00001
+                      position: MANAGER
+                      hire_date: '2020-01-01'
+                      full_name: Quang Hiệp
+                      phone: 0336089988
+                      email: quanghiep03198@gmail.com
+                      address: Hải Phòng
+                      citizen_id_number: 031098005468
+                      is_active: true
+                      created_at: '2026-04-21T15:43:42.651Z'
+                  created_at: '2026-04-24T09:38:22.551Z'
+                  updated_at: '2026-04-24T16:26:33.871Z'
+                  id: 2
+                - file_name: 1777023502553-ao-tac-cho-nu-mau-cam.webp
+                  size: 49296
+                  dest: /images/1777023502553-ao-tac-cho-nu-mau-cam.webp
+                  mime_type: image/webp
+                  category_id: 1
+                  is_active: true
+                  created_by:
+                    username: quanghiep031
+                    password: $2b$10$K3OV2a6070bTMQngIEewseBH0cbE/uWHqR0fxl5ibvO9WTPM1g1yG
+                    role: ADMIN
+                    employee_id: 1
+                    is_active: true
+                    created_at: '2026-04-20T04:35:49.640Z'
+                    updated_at: '2026-04-23T09:19:17.938Z'
+                    id: 1
+                    employee:
+                      id: 1
+                      user_id: 1
+                      work_status: ACTIVE
+                      employee_code: D00001
+                      position: MANAGER
+                      hire_date: '2020-01-01'
+                      full_name: Quang Hiệp
+                      phone: 0336089988
+                      email: quanghiep03198@gmail.com
+                      address: Hải Phòng
+                      citizen_id_number: 031098005468
+                      is_active: true
+                      created_at: '2026-04-21T15:43:42.651Z'
+                  created_at: '2026-04-24T09:38:22.554Z'
+                  updated_at: null
+                  id: 4
+                - file_name: AO-TAC-MAU-XANH-MINT-BAC-HA-600x600.webp
+                  size: 19734
+                  dest: /images/AO-TAC-MAU-XANH-MINT-BAC-HA-600x600.webp
+                  mime_type: image/webp
+                  category_id: 1
+                  is_active: true
+                  created_by:
+                    username: quanghiep031
+                    password: $2b$10$K3OV2a6070bTMQngIEewseBH0cbE/uWHqR0fxl5ibvO9WTPM1g1yG
+                    role: ADMIN
+                    employee_id: 1
+                    is_active: true
+                    created_at: '2026-04-20T04:35:49.640Z'
+                    updated_at: '2026-04-23T09:19:17.938Z'
+                    id: 1
+                    employee:
+                      id: 1
+                      user_id: 1
+                      work_status: ACTIVE
+                      employee_code: D00001
+                      position: MANAGER
+                      hire_date: '2020-01-01'
+                      full_name: Quang Hiệp
+                      phone: 0336089988
+                      email: quanghiep03198@gmail.com
+                      address: Hải Phòng
+                      citizen_id_number: 031098005468
+                      is_active: true
+                      created_at: '2026-04-21T15:43:42.651Z'
+                  created_at: '2026-04-24T09:38:22.567Z'
+                  updated_at: '2026-05-12T03:21:17.673Z'
+                  id: 5
+                - file_name: AO-TAC-NU-MAU-HONG.webp
+                  size: 18522
+                  dest: /images/AO-TAC-NU-MAU-HONG.webp
+                  mime_type: image/webp
+                  category_id: 1
+                  is_active: true
+                  created_by:
+                    username: quanghiep031
+                    password: $2b$10$K3OV2a6070bTMQngIEewseBH0cbE/uWHqR0fxl5ibvO9WTPM1g1yG
+                    role: ADMIN
+                    employee_id: 1
+                    is_active: true
+                    created_at: '2026-04-20T04:35:49.640Z'
+                    updated_at: '2026-04-23T09:19:17.938Z'
+                    id: 1
+                    employee:
+                      id: 1
+                      user_id: 1
+                      work_status: ACTIVE
+                      employee_code: D00001
+                      position: MANAGER
+                      hire_date: '2020-01-01'
+                      full_name: Quang Hiệp
+                      phone: 0336089988
+                      email: quanghiep03198@gmail.com
+                      address: Hải Phòng
+                      citizen_id_number: 031098005468
+                      is_active: true
+                      created_at: '2026-04-21T15:43:42.651Z'
+                  created_at: '2026-04-24T09:38:22.579Z'
+                  updated_at: '2026-05-12T03:21:46.850Z'
+                  id: 6
+                - file_name: 1777046950675-vn-11134207-7ras8-m0zo4auo8j6jec-1728118676279.webp
+                  size: 306928
+                  dest: /images/1777046950675-vn-11134207-7ras8-m0zo4auo8j6jec-1728118676279.webp
+                  mime_type: image/webp
+                  item_type: EQUIPMENT_PROPS
+                  is_active: true
+                  created_by:
+                    username: quanghiep031
+                    password: $2b$10$K3OV2a6070bTMQngIEewseBH0cbE/uWHqR0fxl5ibvO9WTPM1g1yG
+                    role: ADMIN
+                    employee_id: 1
+                    is_active: true
+                    created_at: '2026-04-20T04:35:49.640Z'
+                    updated_at: '2026-04-23T09:19:17.938Z'
+                    id: 1
+                    employee:
+                      id: 1
+                      user_id: 1
+                      work_status: ACTIVE
+                      employee_code: D00001
+                      position: MANAGER
+                      hire_date: '2020-01-01'
+                      full_name: Quang Hiệp
+                      phone: 0336089988
+                      email: quanghiep03198@gmail.com
+                      address: Hải Phòng
+                      citizen_id_number: 031098005468
+                      is_active: true
+                      created_at: '2026-04-21T15:43:42.651Z'
+                  created_at: '2026-04-24T16:09:10.676Z'
+                  updated_at: null
+                  category_id: 5
+                  id: 7
+                - file_name: ao-dai-cach-tan-tim-1.webp
+                  size: 65950
+                  dest: /images/ao-dai-cach-tan-tim-1.webp
+                  mime_type: image/webp
+                  category_id: 7
+                  created_by:
+                    username: quanghiep031
+                    password: $2b$10$K3OV2a6070bTMQngIEewseBH0cbE/uWHqR0fxl5ibvO9WTPM1g1yG
+                    role: ADMIN
+                    employee_id: 1
+                    is_active: true
+                    created_at: '2026-04-20T04:35:49.640Z'
+                    updated_at: '2026-04-23T09:19:17.938Z'
+                    id: 1
+                    employee:
+                      id: 1
+                      user_id: 1
+                      work_status: ACTIVE
+                      employee_code: D00001
+                      position: MANAGER
+                      hire_date: '2020-01-01'
+                      full_name: Quang Hiệp
+                      phone: 0336089988
+                      email: quanghiep03198@gmail.com
+                      address: Hải Phòng
+                      citizen_id_number: 031098005468
+                      is_active: true
+                      created_at: '2026-04-21T15:43:42.651Z'
+                  is_active: true
+                  created_at: '2026-05-11T14:35:40.957Z'
+                  updated_at: '2026-05-12T03:22:32.020Z'
+                  id: 8
+                - file_name: 1778510140958-2-8.webp
+                  size: 77488
+                  dest: /images/1778510140958-2-8.webp
+                  mime_type: image/webp
+                  category_id: 7
+                  created_by:
+                    username: quanghiep031
+                    password: $2b$10$K3OV2a6070bTMQngIEewseBH0cbE/uWHqR0fxl5ibvO9WTPM1g1yG
+                    role: ADMIN
+                    employee_id: 1
+                    is_active: true
+                    created_at: '2026-04-20T04:35:49.640Z'
+                    updated_at: '2026-04-23T09:19:17.938Z'
+                    id: 1
+                    employee:
+                      id: 1
+                      user_id: 1
+                      work_status: ACTIVE
+                      employee_code: D00001
+                      position: MANAGER
+                      hire_date: '2020-01-01'
+                      full_name: Quang Hiệp
+                      phone: 0336089988
+                      email: quanghiep03198@gmail.com
+                      address: Hải Phòng
+                      citizen_id_number: 031098005468
+                      is_active: true
+                      created_at: '2026-04-21T15:43:42.651Z'
+                  is_active: true
+                  created_at: '2026-05-11T14:35:40.959Z'
+                  updated_at: null
+                  id: 9
+                - file_name: 1778510140971-3-8.webp
+                  size: 73736
+                  dest: /images/1778510140971-3-8.webp
+                  mime_type: image/webp
+                  category_id: 7
+                  created_by:
+                    username: quanghiep031
+                    password: $2b$10$K3OV2a6070bTMQngIEewseBH0cbE/uWHqR0fxl5ibvO9WTPM1g1yG
+                    role: ADMIN
+                    employee_id: 1
+                    is_active: true
+                    created_at: '2026-04-20T04:35:49.640Z'
+                    updated_at: '2026-04-23T09:19:17.938Z'
+                    id: 1
+                    employee:
+                      id: 1
+                      user_id: 1
+                      work_status: ACTIVE
+                      employee_code: D00001
+                      position: MANAGER
+                      hire_date: '2020-01-01'
+                      full_name: Quang Hiệp
+                      phone: 0336089988
+                      email: quanghiep03198@gmail.com
+                      address: Hải Phòng
+                      citizen_id_number: 031098005468
+                      is_active: true
+                      created_at: '2026-04-21T15:43:42.651Z'
+                  is_active: true
+                  created_at: '2026-05-11T14:35:40.971Z'
+                  updated_at: null
+                  id: 10
+                - file_name: 1778510140981-5-8-600x901.webp
+                  size: 52522
+                  dest: /images/1778510140981-5-8-600x901.webp
+                  mime_type: image/webp
+                  category_id: 7
+                  created_by:
+                    username: quanghiep031
+                    password: $2b$10$K3OV2a6070bTMQngIEewseBH0cbE/uWHqR0fxl5ibvO9WTPM1g1yG
+                    role: ADMIN
+                    employee_id: 1
+                    is_active: true
+                    created_at: '2026-04-20T04:35:49.640Z'
+                    updated_at: '2026-04-23T09:19:17.938Z'
+                    id: 1
+                    employee:
+                      id: 1
+                      user_id: 1
+                      work_status: ACTIVE
+                      employee_code: D00001
+                      position: MANAGER
+                      hire_date: '2020-01-01'
+                      full_name: Quang Hiệp
+                      phone: 0336089988
+                      email: quanghiep03198@gmail.com
+                      address: Hải Phòng
+                      citizen_id_number: 031098005468
+                      is_active: true
+                      created_at: '2026-04-21T15:43:42.651Z'
+                  is_active: true
+                  created_at: '2026-05-11T14:35:40.982Z'
+                  updated_at: null
+                  id: 11
+                - file_name: 1778513299684-il_794xN.webp
+                  size: 54916
+                  dest: /images/1778513299684-il_794xN.webp
+                  mime_type: image/webp
+                  category_id: 7
+                  created_by:
+                    username: quanghiep031
+                    password: $2b$10$K3OV2a6070bTMQngIEewseBH0cbE/uWHqR0fxl5ibvO9WTPM1g1yG
+                    role: ADMIN
+                    employee_id: 1
+                    is_active: true
+                    created_at: '2026-04-20T04:35:49.640Z'
+                    updated_at: '2026-04-23T09:19:17.938Z'
+                    id: 1
+                    employee:
+                      id: 1
+                      user_id: 1
+                      work_status: ACTIVE
+                      employee_code: D00001
+                      position: MANAGER
+                      hire_date: '2020-01-01'
+                      full_name: Quang Hiệp
+                      phone: 0336089988
+                      email: quanghiep03198@gmail.com
+                      address: Hải Phòng
+                      citizen_id_number: 031098005468
+                      is_active: true
+                      created_at: '2026-04-21T15:43:42.651Z'
+                  is_active: true
+                  created_at: '2026-05-11T15:28:19.685Z'
+                  updated_at: null
+                  id: 12
+                - file_name: 1778513299686-il_794xN.webp
+                  size: 53468
+                  dest: /images/1778513299686-il_794xN.webp
+                  mime_type: image/webp
+                  category_id: 7
+                  created_by:
+                    username: quanghiep031
+                    password: $2b$10$K3OV2a6070bTMQngIEewseBH0cbE/uWHqR0fxl5ibvO9WTPM1g1yG
+                    role: ADMIN
+                    employee_id: 1
+                    is_active: true
+                    created_at: '2026-04-20T04:35:49.640Z'
+                    updated_at: '2026-04-23T09:19:17.938Z'
+                    id: 1
+                    employee:
+                      id: 1
+                      user_id: 1
+                      work_status: ACTIVE
+                      employee_code: D00001
+                      position: MANAGER
+                      hire_date: '2020-01-01'
+                      full_name: Quang Hiệp
+                      phone: 0336089988
+                      email: quanghiep03198@gmail.com
+                      address: Hải Phòng
+                      citizen_id_number: 031098005468
+                      is_active: true
+                      created_at: '2026-04-21T15:43:42.651Z'
+                  is_active: true
+                  created_at: '2026-05-11T15:28:19.687Z'
+                  updated_at: null
+                  id: 13
+                - file_name: 1778513299700-il_794xN.webp
+                  size: 53056
+                  dest: /images/1778513299700-il_794xN.webp
+                  mime_type: image/webp
+                  category_id: 7
+                  created_by:
+                    username: quanghiep031
+                    password: $2b$10$K3OV2a6070bTMQngIEewseBH0cbE/uWHqR0fxl5ibvO9WTPM1g1yG
+                    role: ADMIN
+                    employee_id: 1
+                    is_active: true
+                    created_at: '2026-04-20T04:35:49.640Z'
+                    updated_at: '2026-04-23T09:19:17.938Z'
+                    id: 1
+                    employee:
+                      id: 1
+                      user_id: 1
+                      work_status: ACTIVE
+                      employee_code: D00001
+                      position: MANAGER
+                      hire_date: '2020-01-01'
+                      full_name: Quang Hiệp
+                      phone: 0336089988
+                      email: quanghiep03198@gmail.com
+                      address: Hải Phòng
+                      citizen_id_number: 031098005468
+                      is_active: true
+                      created_at: '2026-04-21T15:43:42.651Z'
+                  is_active: true
+                  created_at: '2026-05-11T15:28:19.701Z'
+                  updated_at: null
+                  id: 14
+                - file_name: 1778639230219-672138759_3466822183478641_3521795180160107625_n.jpg
+                  size: 63664
+                  dest: /images/1778639230219-672138759_3466822183478641_3521795180160107625_n.jpg
+                  mime_type: image/jpeg
+                  category_id: 7
+                  created_by:
+                    username: quanghiep031
+                    password: $2b$10$K3OV2a6070bTMQngIEewseBH0cbE/uWHqR0fxl5ibvO9WTPM1g1yG
+                    role: ADMIN
+                    employee_id: 1
+                    is_active: true
+                    created_at: '2026-04-20T04:35:49.640Z'
+                    updated_at: '2026-04-23T09:19:17.938Z'
+                    id: 1
+                    employee:
+                      id: 1
+                      user_id: 1
+                      work_status: ACTIVE
+                      employee_code: D00001
+                      position: MANAGER
+                      hire_date: '2020-01-01'
+                      full_name: Quang Hiệp
+                      phone: 0336089988
+                      email: quanghiep03198@gmail.com
+                      address: Hải Phòng
+                      citizen_id_number: 031098005468
+                      is_active: true
+                      created_at: '2026-04-21T15:43:42.651Z'
+                  is_active: true
+                  created_at: '2026-05-13T02:27:10.220Z'
+                  updated_at: null
+                  id: 15
+      tags:
+        - Images-Gallery
+      description: |-
+        Lấy danh sách tất cả hình ảnh trong thư viện. Hỗ trợ lọc theo category_id và mime_type.
+
+        **Response:**
+
+        - 200 OK: Mảng các đối tượng ImageGallery.
+  '/images-gallery/{id}':
+    get:
+      summary: Get Image
+      responses: {}
+      tags:
+        - Images-Gallery
+      description: |-
+        Lấy thông tin metadata của một hình ảnh theo ID, bao gồm tên file, kích thước, URL truy cập và danh mục liên kết.
+
+        **Path Variables:**
+
+        | Tham số | Kiểu | Mô tả |
+        |---------|------|-------|
+        | id | integer | ID của hình ảnh cần lấy |
+
+        **Response:**
+
+        - 200 OK: Đối tượng ImageGallery với đầy đủ metadata.
+        - 404 Not Found: Không tìm thấy hình ảnh.
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        example: ''
+    patch:
+      summary: Update Image
+      responses: {}
+      tags:
+        - Images-Gallery
+      description: |-
+        Cập nhật metadata của một hình ảnh theo ID. Có thể thay đổi tên file và danh mục liên kết.
+
+        **Path Variables:**
+
+        | Tham số | Kiểu | Mô tả |
+        |---------|------|-------|
+        | id | integer | ID của hình ảnh cần cập nhật |
+
+        **Body (JSON):**
+
+        | Trường | Kiểu | Mô tả |
+        |--------|------|-------|
+        | file_name | string | Tên file mới |
+        | category_id | integer | ID danh mục liên kết mới |
+
+        **Response:**
+
+        - 200 OK: Đối tượng ImageGallery sau khi cập nhật.
+        - 404 Not Found: Không tìm thấy hình ảnh.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                file_name:
+                  type: string
+                category_id:
+                  type: string
+            example:
+              file_name: ''
+              category_id: ''
+    delete:
+      summary: Delete Image
+      parameters:
+        - name: permanantly
+          in: query
+          schema:
+            type: boolean
+          example: false
+      responses: {}
+      tags:
+        - Images-Gallery
+      description: |-
+        Xóa một hình ảnh khỏi thư viện theo ID. Yêu cầu quyền ADMIN. Hỗ trợ xóa mềm hoặc xóa vĩnh viễn kèm file trên server.
+
+        **Path Variables:**
+
+        | Tham số | Kiểu | Mô tả |
+        |---------|------|-------|
+        | id | integer | ID của hình ảnh cần xóa |
+
+        **Query Params:**
+
+        | Tham số | Kiểu | Mô tả |
+        |---------|------|-------|
+        | permanantly | boolean | true để xóa vĩnh viễn kèm file, false để xóa mềm (mặc định: false) |
+
+        **Response:**
+
+        - 200 OK: Xóa thành công.
+        - 404 Not Found: Không tìm thấy hình ảnh.
+  /images-gallery/upload:
+    post:
+      summary: Upload Image
+      responses: {}
+      tags:
+        - Images-Gallery
+      description: |-
+        Upload một hoặc nhiều hình ảnh lên hệ thống sử dụng multipart/form-data. Hỗ trợ các định dạng PNG, JPG, JPEG, WEBP. Trả về thông tin metadata của các ảnh đã upload.
+
+        **Form Data:**
+
+        | Trường | Kiểu | Mô tả |
+        |--------|------|-------|
+        | data | text (JSON) | Metadata kèm theo: { category_id } |
+        | files | file | File ảnh cần upload (PNG/JPG/JPEG/WEBP) |
+
+        **Response:**
+
+        - 201 Created: Danh sách đối tượng ImageGallery của các ảnh đã upload.
+        - 400 Bad Request: Định dạng file không hợp lệ.
+  '/upload/{folder}/{fileName}':
+    get:
+      summary: Get Uploaded File
+      responses: {}
+      tags:
+        - Images-Gallery
+      description: |-
+        Truy xuất trực tiếp file ảnh đã upload từ server theo tên thư mục và tên file. Endpoint này không yêu cầu xác thực (noauth) và trả về binary stream của file ảnh.
+
+        **Path Variables:**
+
+        | Tham số | Kiểu | Mô tả |
+        |---------|------|-------|
+        | folder | string | Tên thư mục chứa file trên server |
+        | fileName | string | Tên file ảnh cần truy xuất |
+
+        **Response:**
+
+        - 200 OK: Binary stream của file ảnh với Content-Type tương ứng.
+        - 404 Not Found: Không tìm thấy file.
+    parameters:
+      - name: folder
+        in: path
+        required: true
+        schema:
+          type: string
+        example: ''
+      - name: fileName
+        in: path
+        required: true
+        schema:
+          type: string
+        example: ''
+  /inventory/costumes:
+    get:
+      summary: List Costume Inventory
+      parameters:
+        - name: _expand
+          in: query
+          schema:
+            type: string
+          example: inventory_condition
+      responses: {}
+      tags:
+        - Inventory
+      description: |-
+        Lấy danh sách tồn kho trang phục. Hỗ trợ lọc theo nhiều tiêu chí và mở rộng thông tin tình trạng sản phẩm.
+
+        **Query Params:**
+
+        | Tham số | Kiểu | Mô tả |
+        |---------|------|-------|
+        | _expand | string | Mở rộng dữ liệu liên kết (ví dụ: inventory_condition) |
+        | item_id | integer | Lọc theo ID trang phục |
+        | inventory_condition_id | integer | Lọc theo ID tình trạng sản phẩm |
+        | warehouse_id | integer | Lọc theo ID kho |
+        | status | enum | Lọc theo trạng thái: AVAILABLE, RENTED, MAINTENANCE, DISPOSED |
+        | keyword | string | Tìm kiếm theo từ khóa (tên, SKU) |
+
+        **Response:**
+
+        - 200 OK: Mảng các bản ghi Inventory của trang phục.
+  /inventory/props:
+    get:
+      summary: List Props Inventory
+      responses: {}
+      tags:
+        - Inventory
+      description: |-
+        Lấy danh sách tồn kho đạo cụ/thiết bị. Hỗ trợ lọc theo nhiều tiêu chí.
+
+        **Query Params:**
+
+        | Tham số | Kiểu | Mô tả |
+        |---------|------|-------|
+        | item_id | integer | Lọc theo ID đạo cụ/thiết bị |
+        | inventory_condition_id | integer | Lọc theo ID tình trạng sản phẩm |
+        | warehouse_id | integer | Lọc theo ID kho |
+        | status | enum | Lọc theo trạng thái: AVAILABLE, RENTED, MAINTENANCE, DISPOSED |
+        | keyword | string | Tìm kiếm theo từ khóa (tên, SKU) |
+
+        **Response:**
+
+        - 200 OK: Mảng các bản ghi Inventory của đạo cụ/thiết bị.
+  /inventory/import:
+    post:
+      summary: Import Inventory
+      responses: {}
+      tags:
+        - Inventory
+      description: |-
+        Nhập kho: thêm một hoặc nhiều sản phẩm vào kho với thông tin đầy đủ. Mỗi bản ghi nhập kho sẽ tạo một SKU tồn kho mới.
+
+        **Body (JSON):**
+
+        | Trường | Kiểu | Mô tả |
+        |--------|------|-------|
+        | item_id | integer | ID sản phẩm (Costume hoặc EquipmentProps) |
+        | item_type | enum | Loại sản phẩm: COSTUME hoặc EQUIPMENT_PROPS |
+        | inventory_condition_id | integer | ID tình trạng sản phẩm (InventoryCondition) |
+        | warehouse_id | integer | ID kho lưu trữ (Warehouse) |
+        | size | enum | Kích cỡ (chỉ áp dụng cho trang phục): XS, S, M, L, XL, 2XL, 3XL |
+        | quantity | integer | Số lượng cần nhập kho |
+
+        **Response:**
+
+        - 201 Created: Danh sách bản ghi Inventory mới được tạo.
+        - 400 Bad Request: Dữ liệu không hợp lệ.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                item_id:
+                  type: integer
+                item_type:
+                  type: string
+                inventory_condition_id:
+                  type: integer
+                warehouse_id:
+                  type: integer
+                size:
+                  type: string
+                quantity:
+                  type: integer
+            example:
+              item_id: 5
+              item_type: COSTUME
+              inventory_condition_id: 1
+              warehouse_id: 1
+              size: 2XL
+              quantity: 2
+  '/inventory/condition/{sku}':
+    patch:
+      summary: Update Inventory Condition
+      responses: {}
+      tags:
+        - Inventory
+      description: |-
+        Cập nhật tình trạng chất lượng của một sản phẩm cụ thể trong kho theo SKU. Dùng để ghi nhận tình trạng sản phẩm sau khi kiểm tra hoặc bảo trì.
+
+        **Path Variables:**
+
+        | Tham số | Kiểu | Mô tả |
+        |---------|------|-------|
+        | sku | string | Mã SKU của bản ghi tồn kho cần cập nhật |
+
+        **Body (JSON):**
+
+        | Trường | Kiểu | Mô tả |
+        |--------|------|-------|
+        | inventory_condition_id | integer | ID tình trạng mới (InventoryCondition: A/B/C) |
+
+        **Response:**
+
+        - 200 OK: Bản ghi Inventory sau khi cập nhật tình trạng.
+        - 404 Not Found: Không tìm thấy bản ghi với SKU đã cho.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                inventory_condition_id:
+                  type: integer
+            example:
+              inventory_condition_id: 1
+    parameters:
+      - name: sku
+        in: path
+        required: true
+        schema:
+          type: string
+        example: TP-ADNH-VOL200-0001
+  /users:
+    get:
+      summary: List Users
+      parameters:
+        - name: _expand
+          in: query
+          schema:
+            type: string
+          example: employee
+      responses: {}
+      tags:
+        - Users
+      description: |-
+        Lấy danh sách tất cả người dùng trong hệ thống. Hỗ trợ mở rộng thông tin nhân viên liên kết.
+
+        **Query Params:**
+
+        | Tham số | Kiểu | Mô tả |
+        |---------|------|-------|
+        | _expand | string | Mở rộng dữ liệu liên kết (ví dụ: employee) |
+
+        **Response:**
+
+        - 200 OK: Mảng các đối tượng User, có thể kèm thông tin Employee.
+    post:
+      summary: Create User
+      responses: {}
+      tags:
+        - Users
+      description: |-
+        Tạo mới tài khoản người dùng trong hệ thống. Yêu cầu quyền ADMIN. Có thể liên kết với hồ sơ nhân viên qua employee_id.
+
+        **Body (JSON):**
+
+        | Trường | Kiểu | Mô tả |
+        |--------|------|-------|
+        | username | string | Tên đăng nhập, phải duy nhất trong hệ thống |
+        | password | string | Mật khẩu (sẽ được hash trước khi lưu) |
+        | employee_id | integer / null | ID nhân viên liên kết (tùy chọn) |
+        | role | enum | Vai trò: ADMIN hoặc USER (mặc định: USER) |
+
+        **Response:**
+
+        - 201 Created: Tài khoản người dùng mới được tạo thành công.
+        - 400 Bad Request: Dữ liệu không hợp lệ hoặc username đã tồn tại.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                employee_id:
+                  type: 'null'
+                role:
+                  type: string
+            example:
+              username: ''
+              password: ''
+              employee_id: null
+              role: USER
+  '/users/{id}':
+    get:
+      summary: Get User
+      responses: {}
+      tags:
+        - Users
+      description: |-
+        Lấy thông tin chi tiết của một người dùng theo ID, bao gồm thông tin liên kết nhân viên.
+
+        **Path Variables:**
+
+        | Tham số | Kiểu | Mô tả |
+        |---------|------|-------|
+        | id | integer | ID của người dùng cần lấy |
+
+        **Response:**
+
+        - 200 OK: Đối tượng User đầy đủ thông tin.
+        - 404 Not Found: Không tìm thấy người dùng.
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        example: ''
+    patch:
+      summary: Update User
+      responses: {}
+      tags:
+        - Users
+      description: |-
+        Cập nhật thông tin của một người dùng theo ID. Yêu cầu quyền ADMIN. Có thể thay đổi tên đăng nhập, vai trò và trạng thái hoạt động.
+
+        **Path Variables:**
+
+        | Tham số | Kiểu | Mô tả |
+        |---------|------|-------|
+        | id | integer | ID của người dùng cần cập nhật |
+
+        **Body (JSON):**
+
+        | Trường | Kiểu | Mô tả |
+        |--------|------|-------|
+        | username | string | Tên đăng nhập mới |
+        | role | enum | Vai trò mới: ADMIN hoặc USER |
+        | is_active | boolean | Trạng thái kích hoạt tài khoản |
+
+        **Response:**
+
+        - 200 OK: Tài khoản người dùng sau khi cập nhật.
+        - 404 Not Found: Không tìm thấy người dùng.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                role:
+                  type: string
+                is_active:
+                  type: boolean
+            example:
+              username: ''
+              role: USER
+              is_active: true
+    delete:
+      summary: Delete User
+      parameters:
+        - name: permanantly
+          in: query
+          schema:
+            type: boolean
+          example: false
+      responses: {}
+      tags:
+        - Users
+      description: |-
+        Xóa tài khoản người dùng theo ID. Yêu cầu quyền ADMIN. Hỗ trợ xóa mềm hoặc xóa vĩnh viễn.
+
+        **Path Variables:**
+
+        | Tham số | Kiểu | Mô tả |
+        |---------|------|-------|
+        | id | integer | ID của người dùng cần xóa |
+
+        **Query Params:**
+
+        | Tham số | Kiểu | Mô tả |
+        |---------|------|-------|
+        | permanantly | boolean | true để xóa vĩnh viễn, false để xóa mềm (mặc định: false) |
+
+        **Response:**
+
+        - 200 OK: Xóa thành công.
+        - 404 Not Found: Không tìm thấy người dùng.
+  /warehouses:
+    get:
+      summary: List Warehouses
+      responses: {}
+      tags:
+        - Warehouses
+      description: |-
+        Lấy danh sách tất cả kho hàng trong hệ thống. Hỗ trợ lọc theo loại kho và người quản lý.
+
+        **Response:**
+
+        - 200 OK: Mảng các đối tượng Warehouse.
+    post:
+      summary: Create Warehouse
+      responses: {}
+      tags:
+        - Warehouses
+      description: |-
+        Tạo mới một kho hàng trong hệ thống. Yêu cầu quyền ADMIN. Kho được phân loại theo loại sản phẩm lưu trữ và giao cho một quản lý kho phụ trách.
+
+        **Body (JSON):**
+
+        | Trường | Kiểu | Mô tả |
+        |--------|------|-------|
+        | name | string | Tên kho |
+        | type | enum | Loại kho: COSTUME (kho trang phục) hoặc EQUIPMENT_PROPS (kho đạo cụ) |
+        | managed_by | integer | ID nhân viên quản lý kho (vị trí WAREHOUSE_MANAGER) |
+
+        **Response:**
+
+        - 201 Created: Kho mới được tạo thành công.
+        - 400 Bad Request: Dữ liệu không hợp lệ.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                type:
+                  type: string
+                managed_by:
+                  type: 'null'
+            example:
+              name: ''
+              type: ''
+              managed_by: null
+  '/warehouses/{id}':
+    get:
+      summary: Get Warehouse
+      responses: {}
+      tags:
+        - Warehouses
+      description: |-
+        Lấy thông tin chi tiết của một kho hàng theo ID, bao gồm thông tin người quản lý và thống kê tồn kho.
+
+        **Path Variables:**
+
+        | Tham số | Kiểu | Mô tả |
+        |---------|------|-------|
+        | id | integer | ID của kho cần lấy |
+
+        **Response:**
+
+        - 200 OK: Đối tượng Warehouse đầy đủ thông tin.
+        - 404 Not Found: Không tìm thấy kho.
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        example: ''
+    patch:
+      summary: Update Warehouse
+      responses: {}
+      tags:
+        - Warehouses
+      description: |-
+        Cập nhật thông tin của một kho hàng theo ID. Yêu cầu quyền ADMIN.
+
+        **Path Variables:**
+
+        | Tham số | Kiểu | Mô tả |
+        |---------|------|-------|
+        | id | integer | ID của kho cần cập nhật |
+
+        **Body (JSON):**
+
+        | Trường | Kiểu | Mô tả |
+        |--------|------|-------|
+        | name | string | Tên kho mới |
+        | type | enum | Loại kho mới: COSTUME hoặc EQUIPMENT_PROPS |
+        | managed_by | integer | ID nhân viên quản lý mới |
+
+        **Response:**
+
+        - 200 OK: Kho sau khi cập nhật.
+        - 404 Not Found: Không tìm thấy kho.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                type:
+                  type: string
+                managed_by:
+                  type: 'null'
+            example:
+              name: ''
+              type: ''
+              managed_by: null
+    delete:
+      summary: Delete Warehouse
+      parameters:
+        - name: permanantly
+          in: query
+          schema:
+            type: boolean
+          example: false
+      responses: {}
+      tags:
+        - Warehouses
+      description: |-
+        Xóa một kho hàng theo ID. Yêu cầu quyền ADMIN và kho phải không còn tồn kho. Hỗ trợ xóa mềm hoặc xóa vĩnh viễn.
+
+        **Path Variables:**
+
+        | Tham số | Kiểu | Mô tả |
+        |---------|------|-------|
+        | id | integer | ID của kho cần xóa |
+
+        **Query Params:**
+
+        | Tham số | Kiểu | Mô tả |
+        |---------|------|-------|
+        | permanantly | boolean | true để xóa vĩnh viễn, false để xóa mềm (mặc định: false) |
+
+        **Response:**
+
+        - 200 OK: Xóa thành công.
+        - 404 Not Found: Không tìm thấy kho.
+  /customers:
+    get:
+      summary: List Workflow Customers
+      responses: {}
+      tags:
+        - Workflow Customers
+      description: Liệt kê khách hàng cho quy trình cho thuê.
+      parameters:
+        - name: keyword
+          in: query
+          schema:
+            type: string
+          example: khách
+        - name: type
+          in: query
+          schema:
+            type: string
+          example: INDIVIDUAL
+        - name: include_inactive
+          in: query
+          schema:
+            type: boolean
+          example: false
+  '/customers/{id}':
+    get:
+      summary: Show Workflow Customer
+      responses: {}
+      tags:
+        - Workflow Customers
+      description: Hiển thị một khách hàng theo ID.
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 1
+  /inventory/available:
+    get:
+      summary: List Available Inventory
+      responses: {}
+      tags:
+        - Workflow Inventory
+      description: Liệt kê các vật tư trong kho có sẵn cho luồng phân bổ.
+      parameters:
+        - name: warehouse_id
+          in: query
+          schema:
+            type: integer
+          example: 1
+        - name: item_type
+          in: query
+          schema:
+            type: string
+          example: COSTUME
+        - name: equipment_prop_id
+          in: query
+          schema:
+            type: integer
+          example: 15
+        - name: size
+          in: query
+          schema:
+            type: string
+          example: M
+        - name: inventory_condition_id
+          in: query
+          schema:
+            type: integer
+          example: 1
+        - name: keyword
+          in: query
+          schema:
+            type: string
+          example: TP
+  '/inventory/{id}':
+    get:
+      summary: Show Inventory Item
+      responses: {}
+      tags:
+        - Workflow Inventory
+      description: Hiển thị một vật tư trong kho.
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 3
+  '/inventory/{id}/timeline':
+    get:
+      summary: Inventory Timeline
+      responses: {}
+      tags:
+        - Workflow Inventory
+      description: Hiển thị dòng thời gian của vật tư trong kho, bao gồm giao dịch, sự cố và bảo trì.
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 3
+  /inventory-transactions:
+    get:
+      summary: List Inventory Transactions
+      responses: {}
+      tags:
+        - Workflow Inventory
+      description: Liệt kê các giao dịch kho, có thể lọc theo vật tư trong kho.
+      parameters:
+        - name: inventory_item_id
+          in: query
+          schema:
+            type: integer
+          example: 3
+        - name: reference_type
+          in: query
+          schema:
+            type: string
+          example: RENTAL_SLIP
+        - name: reference_id
+          in: query
+          schema:
+            type: integer
+          example: 1
+  /internal-borrow-slips:
+    get:
+      summary: List Internal Borrow Slips
+      responses: {}
+      tags:
+        - Internal Borrow
+      description: Liệt kê các phiếu mượn nội bộ.
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+          example: BORROWING
+        - name: employee_id
+          in: query
+          schema:
+            type: integer
+          example: 2
+        - name: warehouse_id
+          in: query
+          schema:
+            type: integer
+          example: 2
+        - name: keyword
+          in: query
+          schema:
+            type: string
+          example: PMN
+        - name: from_date
+          in: query
+          schema:
+            type: string
+          example: '2026-05-19'
+        - name: to_date
+          in: query
+          schema:
+            type: string
+          example: '2026-05-22'
+    post:
+      summary: Create Internal Borrow Slip
+      responses: {}
+      tags:
+        - Internal Borrow
+      description: Tạo phiếu mượn nội bộ mới.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                employee_id:
+                  type: integer
+                warehouse_id:
+                  type: integer
+                borrow_date:
+                  type: string
+                due_date:
+                  type: string
+                purpose:
+                  type: string
+                remarks:
+                  type: string
+            example:
+              employee_id: 2
+              warehouse_id: 2
+              borrow_date: '2026-05-19'
+              due_date: '2026-05-22'
+              purpose: Sử dụng nội bộ
+              remarks: null
+  '/internal-borrow-slips/{id}':
+    get:
+      summary: Show Internal Borrow Slip
+      responses: {}
+      tags:
+        - Internal Borrow
+      description: Hiển thị một phiếu mượn nội bộ.
+    patch:
+      summary: Update Internal Borrow Slip
+      responses: {}
+      tags:
+        - Internal Borrow
+      description: Cập nhật các trường có thể chỉnh sửa trên phiếu nháp hoặc phiếu đang chờ.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                borrow_date:
+                  type: string
+                due_date:
+                  type: string
+                purpose:
+                  type: string
+                remarks:
+                  type: string
+            example:
+              due_date: '2026-05-23'
+              purpose: Cập nhật mục đích
+              remarks: Điều chỉnh hạn trả
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 3
+  '/internal-borrow-slips/{id}/details':
+    post:
+      summary: Add Internal Borrow Detail
+      responses: {}
+      tags:
+        - Internal Borrow
+      description: Thêm một dòng chi tiết vào phiếu mượn nội bộ.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                equipment_prop_id:
+                  type: integer
+                borrowed_quantity:
+                  type: integer
+                remarks:
+                  type: string
+            example:
+              equipment_prop_id: 19
+              borrowed_quantity: 1
+              remarks: Đạo cụ cần mượn
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 3
+  '/internal-borrow-slips/{id}/details/{detailId}':
+    patch:
+      summary: Update Internal Borrow Detail
+      responses: {}
+      tags:
+        - Internal Borrow
+      description: Cập nhật số lượng hoặc ghi chú của một dòng chi tiết.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                borrowed_quantity:
+                  type: integer
+                remarks:
+                  type: string
+            example:
+              borrowed_quantity: 2
+              remarks: Tăng thêm số lượng
+    delete:
+      summary: Delete Internal Borrow Detail
+      responses: {}
+      tags:
+        - Internal Borrow
+      description: Xóa một dòng chi tiết khỏi phiếu.
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 3
+      - name: detailId
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 1
+  '/internal-borrow-slips/{id}/assign-items':
+    post:
+      summary: Assign Internal Borrow Items
+      responses: {}
+      tags:
+        - Internal Borrow
+      description: Gán các vật tư cụ thể trong kho vào các dòng chi tiết của phiếu.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                assignments:
+                  type: array
+            example:
+              assignments:
+                - detail_id: 1
+                  inventory_item_ids:
+                    - 44
+                  condition_on_borrow_id: 1
+                  remarks: Gán item cụ thể
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 3
+  '/internal-borrow-slips/{id}/approve':
+    post:
+      summary: Approve Internal Borrow Slip
+      responses: {}
+      tags:
+        - Internal Borrow
+      description: Duyệt phiếu mượn nội bộ.
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 3
+  '/internal-borrow-slips/{id}/reject':
+    post:
+      summary: Reject Internal Borrow Slip
+      responses: {}
+      tags:
+        - Internal Borrow
+      description: Từ chối phiếu mượn nội bộ.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+            example:
+              reason: Không đủ tồn kho
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 3
+  '/internal-borrow-slips/{id}/cancel':
+    post:
+      summary: Cancel Internal Borrow Slip
+      responses: {}
+      tags:
+        - Internal Borrow
+      description: Hủy phiếu mượn nội bộ trước khi xuất kho.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+            example:
+              reason: Không còn nhu cầu mượn
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 3
+  '/internal-borrow-slips/{id}/checkout':
+    post:
+      summary: Checkout Internal Borrow Slip
+      responses: {}
+      tags:
+        - Internal Borrow
+      description: Xuất kho cho phiếu và chuyển các vật tư đã gán ra khỏi kho.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                checkout_at:
+                  type: string
+                note:
+                  type: string
+            example:
+              checkout_at: '2026-05-19'
+              note: Xuất kho
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 3
+  '/internal-borrow-slips/{id}/return':
+    post:
+      summary: Return Internal Borrow Items
+      responses: {}
+      tags:
+        - Internal Borrow
+      description: Trả các vật tư mượn nội bộ đã gán với trạng thái bình thường, hư hỏng hoặc thất lạc.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                items:
+                  type: array
+            example:
+              items:
+                - inventory_item_id: 44
+                  return_action: DAMAGED
+                  condition_on_return_id: 1
+                  compensation_amount: 120000
+                  note: Hỏng khóa dây
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 3
+  /rental-slips:
+    get:
+      summary: List Rental Slips
+      responses: {}
+      tags:
+        - Rental Workflow
+      description: Liệt kê các phiếu thuê.
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+          example: ACTIVE
+        - name: payment_status
+          in: query
+          schema:
+            type: string
+          example: PARTIALLY_PAID
+        - name: customer_id
+          in: query
+          schema:
+            type: integer
+          example: 1
+        - name: warehouse_id
+          in: query
+          schema:
+            type: integer
+          example: 1
+        - name: keyword
+          in: query
+          schema:
+            type: string
+          example: PTH
+    post:
+      summary: Create Rental Slip
+      responses: {}
+      tags:
+        - Rental Workflow
+      description: Tạo phiếu thuê mới.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                customer_id:
+                  type: integer
+                warehouse_id:
+                  type: integer
+                rental_date:
+                  type: string
+                start_date:
+                  type: string
+                due_date:
+                  type: string
+                deposit_amount:
+                  type: number
+                terms_and_conditions:
+                  type: string
+                remarks:
+                  type: string
+            example:
+              customer_id: 1
+              warehouse_id: 1
+              rental_date: '2026-05-19'
+              start_date: '2026-05-19'
+              due_date: '2026-05-21'
+              deposit_amount: 50000
+              terms_and_conditions: Dieu khoan thue
+              remarks: null
+  '/rental-slips/{id}':
+    get:
+      summary: Show Rental Slip
+      responses: {}
+      tags:
+        - Rental Workflow
+      description: Hiển thị một phiếu thuê.
+    patch:
+      summary: Update Rental Slip
+      responses: {}
+      tags:
+        - Rental Workflow
+      description: Cập nhật các trường có thể chỉnh sửa trên phiếu thuê.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                start_date:
+                  type: string
+                due_date:
+                  type: string
+                terms_and_conditions:
+                  type: string
+                remarks:
+                  type: string
+            example:
+              due_date: '2026-05-22'
+              terms_and_conditions: Dieu khoan moi
+              remarks: Gia hạn
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 3
+  '/rental-slips/{id}/details':
+    post:
+      summary: Add Rental Detail
+      responses: {}
+      tags:
+        - Rental Workflow
+      description: Thêm một dòng chi tiết thuê.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                equipment_prop_id:
+                  type: integer
+                rented_quantity:
+                  type: integer
+                rental_unit_price:
+                  type: number
+                rental_days:
+                  type: integer
+                deposit_amount:
+                  type: number
+                remarks:
+                  type: string
+            example:
+              equipment_prop_id: 15
+              rented_quantity: 2
+              rental_unit_price: 100000
+              rental_days: 2
+              deposit_amount: 50000
+              remarks: null
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 3
+  '/rental-slips/{id}/details/{detailId}':
+    patch:
+      summary: Update Rental Detail
+      responses: {}
+      tags:
+        - Rental Workflow
+      description: Cập nhật một dòng chi tiết thuê.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rental_unit_price:
+                  type: number
+                rental_days:
+                  type: integer
+                deposit_amount:
+                  type: number
+                remarks:
+                  type: string
+            example:
+              rental_unit_price: 120000
+              rental_days: 3
+              deposit_amount: 100000
+              remarks: Điều chỉnh đơn giá
+    delete:
+      summary: Delete Rental Detail
+      responses: {}
+      tags:
+        - Rental Workflow
+      description: Xóa một dòng chi tiết thuê.
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 3
+      - name: detailId
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 1
+  '/rental-slips/{id}/assign-items':
+    post:
+      summary: Assign Rental Items
+      responses: {}
+      tags:
+        - Rental Workflow
+      description: Gán các vật tư cụ thể trong kho vào các dòng chi tiết thuê.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                assignments:
+                  type: array
+            example:
+              assignments:
+                - detail_id: 1
+                  inventory_item_ids:
+                    - 3
+                    - 4
+                  condition_on_rent_id: 1
+                  remarks: Giao 2 bộ
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 3
+  '/rental-slips/{id}/submit':
+    post:
+      summary: Submit Rental Slip
+      responses: {}
+      tags:
+        - Rental Workflow
+      description: Gửi phiếu thuê để duyệt.
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 3
+  '/rental-slips/{id}/approve':
+    post:
+      summary: Approve Rental Slip
+      responses: {}
+      tags:
+        - Rental Workflow
+      description: Duyệt phiếu thuê.
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 3
+  '/rental-slips/{id}/cancel':
+    post:
+      summary: Cancel Rental Slip
+      responses: {}
+      tags:
+        - Rental Workflow
+      description: Hủy phiếu thuê trước khi xuất kho và trước khi ghi nhận thanh toán.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+            example:
+              reason: Khách đổi lịch
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 3
+  '/rental-slips/{id}/checkout':
+    post:
+      summary: Checkout Rental Slip
+      responses: {}
+      tags:
+        - Rental Workflow
+      description: Xuất kho phiếu thuê và chuyển vật tư sang trạng thái đang được thuê.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                checkout_at:
+                  type: string
+                note:
+                  type: string
+            example:
+              checkout_at: '2026-05-19'
+              note: Bàn giao hàng
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 3
+  '/rental-slips/{id}/return':
+    post:
+      summary: Return Rental Items
+      responses: {}
+      tags:
+        - Rental Workflow
+      description: Trả vật tư thuê và tạo sự cố cho các vật tư bị hư hỏng hoặc thất lạc.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                items:
+                  type: array
+            example:
+              items:
+                - inventory_item_id: 3
+                  return_action: RETURNED
+                  condition_on_return_id: 1
+                - inventory_item_id: 4
+                  return_action: DAMAGED
+                  condition_on_return_id: 1
+                  compensation_amount: 150000
+                  note: Rách vải
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 3
+  '/rental-slips/{id}/close':
+    post:
+      summary: Close Rental Slip
+      responses: {}
+      tags:
+        - Rental Workflow
+      description: Đóng phiếu thuê đã trả sau khi tất cả sự cố đã được đóng và số dư đã được thanh toán đầy đủ.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                note:
+                  type: string
+            example:
+              note: Đóng phiếu sau khi quyết toán
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 3
+  '/rental-slips/{id}/payments':
+    get:
+      summary: List Rental Payments
+      responses: {}
+      tags:
+        - Rental Workflow
+      description: Hiển thị các khoản thanh toán của một phiếu thuê.
+    post:
+      summary: Add Rental Payment
+      responses: {}
+      tags:
+        - Rental Workflow
+      description: Thêm một khoản thanh toán vào phiếu thuê.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                payment_type:
+                  type: string
+                payment_date:
+                  type: string
+                amount:
+                  type: number
+                payment_method:
+                  type: string
+                reference_no:
+                  type: string
+                note:
+                  type: string
+            example:
+              payment_type: DEPOSIT
+              payment_date: '2026-05-19'
+              amount: 50000
+              payment_method: CASH
+              reference_no: DEP-001
+              note: Tiền cọc
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 3
+  /internal-incidents:
+    get:
+      summary: List Internal Incidents
+      responses: {}
+      tags:
+        - Internal Incidents
+      description: Liệt kê các sự cố nội bộ.
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+          example: OPEN
+        - name: incident_type
+          in: query
+          schema:
+            type: string
+          example: DAMAGED
+        - name: inventory_item_id
+          in: query
+          schema:
+            type: integer
+          example: 44
+    post:
+      summary: Create Internal Incident
+      responses: {}
+      tags:
+        - Internal Incidents
+      description: Tạo sự cố trực tiếp cho một vật tư thuộc chi tiết mượn nội bộ.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                internal_borrow_detail_id:
+                  type: integer
+                inventory_item_id:
+                  type: integer
+                incident_type:
+                  type: string
+                incident_description:
+                  type: string
+                compensation_amount:
+                  type: number
+            example:
+              internal_borrow_detail_id: 1
+              inventory_item_id: 44
+              incident_type: DAMAGED
+              incident_description: Hỏng khi sử dụng
+              compensation_amount: 120000
+  '/internal-incidents/{id}':
+    get:
+      summary: Show Internal Incident
+      responses: {}
+      tags:
+        - Internal Incidents
+      description: Hiển thị một sự cố nội bộ.
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 2
+  '/internal-incidents/{id}/resolve':
+    post:
+      summary: Resolve Internal Incident
+      responses: {}
+      tags:
+        - Internal Incidents
+      description: Xử lý một sự cố nội bộ.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                resolution:
+                  type: string
+                compensation_amount:
+                  type: number
+            example:
+              resolution: Đã xử lý sự cố
+              compensation_amount: 120000
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 2
+  '/internal-incidents/{id}/close':
+    post:
+      summary: Close Internal Incident
+      responses: {}
+      tags:
+        - Internal Incidents
+      description: Đóng một sự cố nội bộ đã được xử lý.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                note:
+                  type: string
+            example:
+              note: Đóng sự cố nội bộ
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 2
+  '/internal-incidents/{id}/create-maintenance-ticket':
+    post:
+      summary: Create Maintenance Ticket From Internal Incident
+      responses: {}
+      tags:
+        - Internal Incidents
+      description: Tạo phiếu bảo trì từ một sự cố nội bộ bị hư hỏng.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                maintenance_type:
+                  type: string
+                reported_date:
+                  type: string
+                expected_return_date:
+                  type: string
+                vendor:
+                  type: string
+                remarks:
+                  type: string
+            example:
+              maintenance_type: REPAIR
+              reported_date: '2026-05-19'
+              expected_return_date: '2026-05-22'
+              vendor: Xưởng sửa
+              remarks: Sửa khóa
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 2
+  '/internal-incidents/{id}/write-off':
+    post:
+      summary: Write Off Internal Incident Item
+      responses: {}
+      tags:
+        - Internal Incidents
+      description: Ghi giảm vật tư trong kho của một sự cố nội bộ.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                note:
+                  type: string
+            example:
+              note: Không thể sửa
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 2
+  /rental-incidents:
+    get:
+      summary: List Rental Incidents
+      responses: {}
+      tags:
+        - Rental Incidents
+      description: Liệt kê các sự cố thuê.
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+          example: OPEN
+        - name: incident_type
+          in: query
+          schema:
+            type: string
+          example: DAMAGED
+        - name: inventory_item_id
+          in: query
+          schema:
+            type: integer
+          example: 4
+    post:
+      summary: Create Rental Incident
+      responses: {}
+      tags:
+        - Rental Incidents
+      description: Tạo sự cố trực tiếp cho một vật tư thuộc chi tiết thuê.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rental_detail_id:
+                  type: integer
+                inventory_item_id:
+                  type: integer
+                incident_type:
+                  type: string
+                incident_description:
+                  type: string
+                compensation_amount:
+                  type: number
+            example:
+              rental_detail_id: 1
+              inventory_item_id: 4
+              incident_type: DAMAGED
+              incident_description: Rách vải khi trả
+              compensation_amount: 150000
+  '/rental-incidents/{id}':
+    get:
+      summary: Show Rental Incident
+      responses: {}
+      tags:
+        - Rental Incidents
+      description: Hiển thị một sự cố thuê.
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 2
+  '/rental-incidents/{id}/resolve':
+    post:
+      summary: Resolve Rental Incident
+      responses: {}
+      tags:
+        - Rental Incidents
+      description: Xử lý một sự cố thuê.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                resolution:
+                  type: string
+                compensation_amount:
+                  type: number
+            example:
+              resolution: Đã xử lý và cập nhật bồi thường
+              compensation_amount: 150000
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 2
+  '/rental-incidents/{id}/close':
+    post:
+      summary: Close Rental Incident
+      responses: {}
+      tags:
+        - Rental Incidents
+      description: Đóng một sự cố thuê đã được xử lý.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                note:
+                  type: string
+            example:
+              note: Đóng sự cố thuê
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 2
+  '/rental-incidents/{id}/create-maintenance-ticket':
+    post:
+      summary: Create Maintenance Ticket From Rental Incident
+      responses: {}
+      tags:
+        - Rental Incidents
+      description: Tạo phiếu bảo trì từ một sự cố thuê bị hư hỏng.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                maintenance_type:
+                  type: string
+                reported_date:
+                  type: string
+                expected_return_date:
+                  type: string
+                vendor:
+                  type: string
+                remarks:
+                  type: string
+            example:
+              maintenance_type: REPAIR
+              reported_date: '2026-05-19'
+              expected_return_date: '2026-05-22'
+              vendor: Máy nhanh
+              remarks: Sửa vết rách
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 2
+  '/rental-incidents/{id}/write-off':
+    post:
+      summary: Write Off Rental Incident Item
+      responses: {}
+      tags:
+        - Rental Incidents
+      description: Ghi giảm vật tư trong kho của một sự cố thuê.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                note:
+                  type: string
+            example:
+              note: Không thể sửa
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 2
+  /maintenance-tickets:
+    get:
+      summary: List Maintenance Tickets
+      responses: {}
+      tags:
+        - Maintenance
+      description: Liệt kê các phiếu bảo trì.
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+          example: OPEN
+        - name: maintenance_type
+          in: query
+          schema:
+            type: string
+          example: REPAIR
+        - name: inventory_item_id
+          in: query
+          schema:
+            type: integer
+          example: 4
+        - name: item_id
+          in: query
+          schema:
+            type: integer
+          example: 15
+    post:
+      summary: Create Maintenance Ticket
+      responses: {}
+      tags:
+        - Maintenance
+      description: Tạo trực tiếp một phiếu bảo trì.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                item_id:
+                  type: integer
+                inventory_item_id:
+                  type: integer
+                maintenance_type:
+                  type: string
+                reported_date:
+                  type: string
+                expected_return_date:
+                  type: string
+                vendor:
+                  type: string
+                remarks:
+                  type: string
+            example:
+              inventory_item_id: 4
+              maintenance_type: REPAIR
+              reported_date: '2026-05-19'
+              expected_return_date: '2026-05-22'
+              vendor: Máy nhanh
+              remarks: Kiểm tra và sửa
+  '/maintenance-tickets/{id}':
+    get:
+      summary: Show Maintenance Ticket
+      responses: {}
+      tags:
+        - Maintenance
+      description: Hiển thị một phiếu bảo trì.
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 2
+  '/maintenance-tickets/{id}/start':
+    post:
+      summary: Start Maintenance
+      responses: {}
+      tags:
+        - Maintenance
+      description: Bắt đầu xử lý một phiếu bảo trì.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                started_date:
+                  type: string
+                vendor:
+                  type: string
+                remarks:
+                  type: string
+            example:
+              started_date: '2026-05-19'
+              vendor: Máy nhanh
+              remarks: Bắt đầu xử lý
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 2
+  '/maintenance-tickets/{id}/complete':
+    post:
+      summary: Complete Maintenance
+      responses: {}
+      tags:
+        - Maintenance
+      description: Đánh dấu một phiếu bảo trì là đã hoàn thành.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                return_date:
+                  type: string
+                cost:
+                  type: number
+                remarks:
+                  type: string
+            example:
+              return_date: '2026-05-21'
+              cost: 80000
+              remarks: Đã sửa xong
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 2
+  '/maintenance-tickets/{id}/cancel':
+    post:
+      summary: Cancel Maintenance Ticket
+      responses: {}
+      tags:
+        - Maintenance
+      description: Hủy phiếu bảo trì đang mở hoặc đang xử lý.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                inventory_condition_id:
+                  type: integer
+                note:
+                  type: string
+            example:
+              inventory_condition_id: 1
+              note: Không cần sửa nữa
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 2
+  '/maintenance-tickets/{id}/return-to-stock':
+    post:
+      summary: Return Maintenance Item To Stock
+      responses: {}
+      tags:
+        - Maintenance
+      description: Nhập lại kho khả dụng một vật tư đã hoàn tất bảo trì.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                inventory_condition_id:
+                  type: integer
+                note:
+                  type: string
+            example:
+              inventory_condition_id: 1
+              note: Nhập lại kho
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: 2
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+security:
+  - BearerAuth: []

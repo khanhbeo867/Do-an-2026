@@ -1,0 +1,45 @@
+$kind: http-request
+description: Bắt đầu xử lý một phiếu bảo trì.
+url: "{{baseUrl}}/maintenance-tickets/:id/start"
+method: POST
+headers:
+  Content-Type: application/json
+pathVariables:
+  - key: id
+    value: "2"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: json
+  content: |-
+    {
+      "started_date": "2026-05-19",
+      "vendor": "Máy nhanh",
+      "remarks": "Bắt đầu xử lý"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "started_date": {
+          "type": "string"
+        },
+        "vendor": {
+          "type": "string"
+        },
+        "remarks": {
+          "type": "string"
+        }
+      }
+    }
+order: 4000

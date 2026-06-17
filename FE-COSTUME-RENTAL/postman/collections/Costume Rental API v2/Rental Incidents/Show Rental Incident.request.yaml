@@ -1,0 +1,23 @@
+$kind: http-request
+description: Hiển thị một sự cố thuê.
+url: "{{baseUrl}}/rental-incidents/:id"
+method: GET
+pathVariables:
+  - key: id
+    value: "2"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: text
+  content: ""
+order: 3000

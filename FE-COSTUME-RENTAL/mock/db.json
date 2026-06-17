@@ -1,0 +1,101 @@
+{
+  "$schema": "db.schema.json",
+  "users": [
+    {
+      "username": "quanghiep031",
+      "password": "$2b$10$K3OV2a6070bTMQngIEewseBH0cbE/uWHqR0fxl5ibvO9WTPM1g1yG",
+      "role": "ADMIN",
+      "employee_id": 1,
+      "is_active": true,
+      "created_at": "2026-04-20T04:35:49.640Z",
+      "updated_at": "2026-04-23T09:19:17.938Z",
+      "id": 1
+    },
+    {
+      "username": "D00004",
+      "password": "$2b$10$fb5Kdj4TDzJde6OCf9LgceP3eKMgTiUt65YyFOBiC5KsgVjJ5ZC4W",
+      "role": "USER",
+      "employee_id": 4,
+      "is_active": true,
+      "created_at": "2026-04-23T14:49:05.966Z",
+      "updated_at": "2026-04-23T17:26:25.087Z",
+      "id": 2
+    },
+    {
+      "username": "D00005",
+      "password": "$2b$10$xi4AvD1cqVzVoBbypscdKeciuND.lYVLEK5b.FCEmK7oXv6vbao6C",
+      "role": "USER",
+      "employee_id": 5,
+      "is_active": true,
+      "created_at": "2026-04-23T15:01:08.330Z",
+      "updated_at": null,
+      "id": 3
+    },
+    {
+      "username": "D00007",
+      "password": "$2b$10$sRgrsryEcNWbVyXnSj4nOeF3R7tfQui9w8LuWOE0Q25rmlvJ2f4xa",
+      "role": "USER",
+      "employee_id": 7,
+      "is_active": true,
+      "created_at": "2026-04-23T15:42:48.663Z",
+      "updated_at": null,
+      "id": 4
+    },
+    {
+      "username": "D00002",
+      "password": "$2b$10$YvPp.Xspj/Bq/7jd1pZ9h.ckqY/WnlOkE7vkm0z/qO2zUfgNrAWqO",
+      "role": "ADMIN",
+      "employee_id": 2,
+      "is_active": tru
+      "size": 1360887,
+      "dest": "/images/1779376419461-ao-dai-truong-lien.jpg",
+      "mime_type": "image/jpeg",
+      "category_id": 9,
+      "created_by": 1,
+      "is_active": true,
+      "created_at": "2026-05-21T15:13:39.462Z",
+      "updated_at": null,
+      "id": 47
+    },
+    {
+      "file_name": "1779376419463-ao-dai-truong-lien-2.jpg",
+      "size": 1404426,
+      "dest": "/images/1779376419463-ao-dai-truong-lien-2.jpg",
+      "mime_type": "image/jpeg",
+      "category_id": 9,
+      "created_by": 1,
+      "is_active": true,
+      "created_at": "2026-05-21T15:13:39.464Z",
+      "updated_at": null,
+      "id": 48
+    },
+    {
+      "file_name": "1779376419472-ao-dai-truong-lien-3.jpg",
+      "size": 1702421,
+      "dest": "/images/1779376419472-ao-dai-truong-lien-3.jpg",
+      "mime_type": "image/jpeg",
+      "category_id": 9,
+      "created_by": 1,
+      "is_active": true,
+      "created_at": "2026-05-21T15:13:39.473Z",
+      "updated_at": null,
+      "id": 49
+    },
+    {
+      "file_name": "1779376419481-ao-dai-truong-lien-4.jpg",
+      "size": 1071190,
+      "dest": "/images/1779376419481-ao-dai-truong-lien-4.jpg",
+      "mime_type": "image/jpeg",
+      "category_id": 9,
+      "created_by": 1,
+      "is_active": true,
+      "created_at": "2026-05-21T15:13:39.481Z",
+      "updated_at": null,
+      "id": 50
+    },
+    {
+      "file_name": "1779376419489-ao-dai-truong-lien-5.jpg",
+      "size": 1143187,
+      "dest": "/images/1779376419489-ao-dai-truong-lien-5.jpg",
+      "mime_type": "image/jpeg",
+      "category_id": 9,

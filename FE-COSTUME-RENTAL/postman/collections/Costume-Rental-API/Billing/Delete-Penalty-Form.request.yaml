@@ -1,0 +1,16 @@
+$kind: http-request
+name: Delete Penalty Form
+description: |-
+  Xóa phiếu phạt theo `id`.
+
+  - `permanantly=false` (mặc định): xóa mềm
+  - `permanantly=true`: xóa cứng.
+method: DELETE
+url: '{{baseUrl}}/penalty-forms/:id'
+order: 2600
+pathVariables:
+  id: '1'
+params:
+  - key: permanantly
+    value: 'false'
+    disabled: true

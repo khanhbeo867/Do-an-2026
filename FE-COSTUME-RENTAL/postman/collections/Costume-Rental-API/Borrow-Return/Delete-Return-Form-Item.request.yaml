@@ -1,0 +1,9 @@
+$kind: http-request
+name: Delete Return Form Item
+description: |-
+  Xóa một dòng SKU khỏi phiếu trả theo `return_form_item.id`.
+method: DELETE
+url: '{{baseUrl}}/return-form-items/:id'
+order: 7200
+pathVariables:
+  id: '1'

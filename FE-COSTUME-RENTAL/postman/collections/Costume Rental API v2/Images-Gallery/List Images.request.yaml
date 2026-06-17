@@ -1,0 +1,16 @@
+$kind: http-request
+description: |-
+  Lấy danh sách tất cả hình ảnh trong thư viện. Hỗ trợ lọc theo category_id và mime_type.
+
+  **Response:**
+
+  - 200 OK: Mảng các đối tượng ImageGallery.
+url: "{{baseUrl}}/images-gallery"
+method: GET
+headers:
+  Accept: application/json
+body:
+  type: text
+  content: ""
+examples: ./.resources/List Images.resources/examples
+order: 1000

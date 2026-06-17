@@ -1,0 +1,27 @@
+$kind: http-request
+description: Liệt kê các vật tư trong kho có sẵn cho luồng phân bổ.
+url: "{{baseUrl}}/inventory/available?warehouse_id=1&item_type=COSTUME&equipment_prop_id=15&size=M&inventory_condition_id=1&keyword=TP"
+method: GET
+queryParams:
+  - key: warehouse_id
+    value: "1"
+    $type: integer
+  - key: item_type
+    value: COSTUME
+    $type: string
+  - key: equipment_prop_id
+    value: "15"
+    $type: integer
+  - key: size
+    value: M
+    $type: string
+  - key: inventory_condition_id
+    value: "1"
+    $type: integer
+  - key: keyword
+    value: TP
+    $type: string
+body:
+  type: text
+  content: ""
+order: 1000

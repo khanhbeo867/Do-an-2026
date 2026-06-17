@@ -1,0 +1,38 @@
+﻿$kind: http-request
+name: Update Image
+description: |-
+  Cập nhật metadata của một hình ảnh theo ID. Có thể thay đổi tên file và danh mục liên kết.
+
+  **Path Variables:**
+
+  | Tham số | Kiểu | Mô tả |
+  |---------|------|-------|
+  | id | integer | ID của hình ảnh cần cập nhật |
+
+  **Body (JSON):**
+
+  | Trường | Kiểu | Mô tả |
+  |--------|------|-------|
+  | file_name | string | Tên file mới |
+  | category_id | integer | ID danh mục liên kết mới |
+
+  **Response:**
+
+  - 200 OK: Đối tượng ImageGallery sau khi cập nhật.
+  - 404 Not Found: Không tìm thấy hình ảnh.
+method: PATCH
+url: '{{baseUrl}}/images-gallery/:id'
+order: 4000
+pathVariables:
+  - key: id
+    value: ''
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "file_name": "",
+      "category_id": ""
+    }

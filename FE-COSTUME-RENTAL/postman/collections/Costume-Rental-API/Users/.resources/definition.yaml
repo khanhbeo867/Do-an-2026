@@ -1,0 +1,41 @@
+﻿$kind: collection
+name: Users
+description: |-
+  ## Quản lý Người dùng
+
+  Nhóm các API quản lý tài khoản người dùng trong hệ thống cho thuê trang phục. Người dùng được phân quyền theo vai trò (ADMIN/USER) và có thể liên kết với hồ sơ nhân viên tương ứng trong hệ thống.
+
+  ### Entity liên quan
+
+  - **User**: Tài khoản người dùng với các trường `id`, `username`, `password`, `employee_id` (liên kết nhân viên), `role` (ADMIN/USER), `is_active`, `created_at`, `updated_at`, `remark`.
+      
+  - **Employee**: Hồ sơ nhân viên liên kết với tài khoản qua `employee_id`.
+      
+
+  ### Endpoints
+
+  - **GET /api/users** – Lấy danh sách tất cả người dùng, hỗ trợ lọc theo `role`, `is_active` và tìm kiếm theo `username`.
+      
+  - **GET /api/users/:id** – Lấy thông tin chi tiết của một người dùng theo `id`, bao gồm thông tin liên kết nhân viên.
+      
+  - **POST /api/users** – Tạo tài khoản người dùng mới với `username`, `password`, `role` và liên kết `employee_id` tùy chọn (yêu cầu quyền ADMIN).
+      
+  - **PUT /api/users/:id** – Cập nhật thông tin người dùng theo `id`, bao gồm vai trò, trạng thái hoạt động và ghi chú (yêu cầu quyền ADMIN).
+      
+  - **DELETE /api/users/:id** – Xóa tài khoản người dùng theo `id` (yêu cầu quyền ADMIN).
+
+  ## Schema: User
+
+  | Trường | Kiểu | Mô tả |
+  |--------|------|-------|
+  | `id` | integer | Khóa chính, định danh duy nhất |
+  | `username` | string | Tên đăng nhập, duy nhất trong hệ thống |
+  | `password` | string | Mật khẩu (đã được hash) |
+  | `employee_id` | integer / null | Liên kết với hồ sơ nhân viên (Employee) |
+  | `role` | enum | Vai trò: `ADMIN` hoặc `USER` |
+  | `is_active` | boolean | Trạng thái kích hoạt tài khoản (mặc định: `true`) |
+  | `created_at` | datetime | Thời điểm tạo tài khoản |
+  | `updated_at` | datetime / null | Thời điểm cập nhật gần nhất |
+  | `created_by` | integer | ID người tạo |
+  | `updated_by` | integer | ID người cập nhật gần nhất |
+  | `remark` | string | Ghi chú thêm |

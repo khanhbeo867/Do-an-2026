@@ -1,0 +1,79 @@
+$kind: http-request
+description: |-
+  Tạo mới một trang phục trong hệ thống. Yêu cầu quyền ADMIN. SKU và slug sẽ được tự động sinh.
+
+  **Body (JSON):**
+
+  | Trường | Kiểu | Mô tả |
+  |--------|------|-------|
+  | name | string | Tên trang phục |
+  | category_id | integer | ID danh mục (ItemCategory, type = COSTUME) |
+  | sizes | array | Các kích cỡ: XS, S, M, L, XL, 2XL, 3XL |
+  | gender | enum | Giới tính: MALE, FEMALE, UNISEX |
+  | images | array | Danh sách ID ảnh (ImageGallery) |
+  | rental_price_per_day | integer | Giá thuê/ngày (tối thiểu 50.000 VND) |
+  | unit | enum | Đơn vị: SET hoặc PIECE |
+  | description | string | Mô tả chi tiết |
+  | hashtags | array | Danh sách hashtag, không trùng lặp |
+  | color | object | Màu sắc: { hex, code, intensity } |
+
+  **Response:**
+
+  - 201 Created: Trang phục mới được tạo thành công.
+  - 400 Bad Request: Dữ liệu không hợp lệ.
+url: "{{baseUrl}}/costumes"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "",
+      "category_id": null,
+      "sizes": [],
+      "gender": "",
+      "images": [],
+      "rental_price_per_day": 50000,
+      "unit": "",
+      "description": null,
+      "hashtags": [],
+      "color": null
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "category_id": {
+          "type": "null"
+        },
+        "sizes": {
+          "type": "array"
+        },
+        "gender": {
+          "type": "string"
+        },
+        "images": {
+          "type": "array"
+        },
+        "rental_price_per_day": {
+          "type": "integer"
+        },
+        "unit": {
+          "type": "string"
+        },
+        "description": {
+          "type": "null"
+        },
+        "hashtags": {
+          "type": "array"
+        },
+        "color": {
+          "type": "null"
+        }
+      }
+    }
+order: 2000

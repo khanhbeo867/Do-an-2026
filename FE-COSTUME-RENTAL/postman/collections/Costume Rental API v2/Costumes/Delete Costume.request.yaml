@@ -1,0 +1,45 @@
+$kind: http-request
+description: |-
+  Xóa một trang phục theo ID. Yêu cầu quyền ADMIN. Hỗ trợ xóa mềm hoặc xóa vĩnh viễn.
+
+  **Path Variables:**
+
+  | Tham số | Kiểu | Mô tả |
+  |---------|------|-------|
+  | id | integer | ID của trang phục cần xóa |
+
+  **Query Params:**
+
+  | Tham số | Kiểu | Mô tả |
+  |---------|------|-------|
+  | permanantly | boolean | true để xóa vĩnh viễn, false để xóa mềm (mặc định: false) |
+
+  **Response:**
+
+  - 200 OK: Xóa thành công.
+  - 404 Not Found: Không tìm thấy trang phục.
+url: "{{baseUrl}}/costumes/:id?permanantly=false"
+method: DELETE
+queryParams:
+  - key: permanantly
+    value: "false"
+    $type: boolean
+pathVariables:
+  - key: id
+    value: ""
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: text
+  content: ""
+order: 5000

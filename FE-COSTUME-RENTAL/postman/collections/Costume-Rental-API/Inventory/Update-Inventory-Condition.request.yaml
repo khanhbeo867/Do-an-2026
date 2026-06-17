@@ -1,0 +1,34 @@
+﻿$kind: http-request
+name: Update Inventory Status
+description: |-
+  Cập nhật trạng thái vận hành của một SKU trong kho.
+
+  **Path Variables:**
+
+  | Tham số | Kiểu | Mô tả |
+  |---------|------|-------|
+  | sku | string | Mã SKU của bản ghi tồn kho cần cập nhật |
+
+  **Body (JSON):**
+
+  | Trường | Kiểu | Mô tả |
+  |--------|------|-------|
+  | status | enum | Trạng thái mới: AVAILABLE, RENTED, MAINTENANCE, DISPOSED |
+
+  **Response:**
+
+  - 200 OK: Bản ghi Inventory sau khi cập nhật tình trạng.
+  - 404 Not Found: Không tìm thấy bản ghi với SKU đã cho.
+method: PATCH
+url: '{{baseUrl}}/inventory/status/:sku'
+pathVariables:
+  sku: TP-ADNH-VOL200-0001
+order: 4000
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "status": "MAINTENANCE"
+    }

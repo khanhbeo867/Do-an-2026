@@ -1,0 +1,50 @@
+$kind: http-request
+description: Tạo phiếu thuê mới.
+url: "{{baseUrl}}/rental-slips"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "customer_id": 1,
+      "warehouse_id": 1,
+      "rental_date": "2026-05-19",
+      "start_date": "2026-05-19",
+      "due_date": "2026-05-21",
+      "deposit_amount": 50000,
+      "terms_and_conditions": "Dieu khoan thue",
+      "remarks": null
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "customer_id": {
+          "type": "integer"
+        },
+        "warehouse_id": {
+          "type": "integer"
+        },
+        "rental_date": {
+          "type": "string"
+        },
+        "start_date": {
+          "type": "string"
+        },
+        "due_date": {
+          "type": "string"
+        },
+        "deposit_amount": {
+          "type": "number"
+        },
+        "terms_and_conditions": {
+          "type": "string"
+        },
+        "remarks": {
+          "type": "string"
+        }
+      }
+    }
+order: 2000

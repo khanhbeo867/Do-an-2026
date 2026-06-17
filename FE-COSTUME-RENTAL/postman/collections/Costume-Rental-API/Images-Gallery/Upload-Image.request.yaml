@@ -1,0 +1,28 @@
+﻿$kind: http-request
+name: Upload Image
+description: |-
+  Upload một hoặc nhiều hình ảnh lên hệ thống sử dụng multipart/form-data. Hỗ trợ các định dạng PNG, JPG, JPEG, WEBP. Trả về thông tin metadata của các ảnh đã upload.
+
+  **Form Data:**
+
+  | Trường | Kiểu | Mô tả |
+  |--------|------|-------|
+  | data | text (JSON) | Metadata kèm theo: { category_id } |
+  | files | file | File ảnh cần upload (PNG/JPG/JPEG/WEBP) |
+
+  **Response:**
+
+  - 201 Created: Danh sách đối tượng ImageGallery của các ảnh đã upload.
+  - 400 Bad Request: Định dạng file không hợp lệ.
+method: POST
+url: '{{baseUrl}}/images-gallery/upload'
+order: 3000
+body:
+  type: formdata
+  content:
+    - key: data
+      type: text
+      value: '{"category_id":""}'
+    - key: files
+      type: file
+      src: ''

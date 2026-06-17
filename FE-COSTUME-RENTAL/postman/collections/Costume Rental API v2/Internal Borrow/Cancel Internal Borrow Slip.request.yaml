@@ -1,0 +1,37 @@
+$kind: http-request
+description: Hủy phiếu mượn nội bộ trước khi xuất kho.
+url: "{{baseUrl}}/internal-borrow-slips/:id/cancel"
+method: POST
+headers:
+  Content-Type: application/json
+pathVariables:
+  - key: id
+    value: "3"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: json
+  content: |-
+    {
+      "reason": "Không còn nhu cầu mượn"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "reason": {
+          "type": "string"
+        }
+      }
+    }
+order: 11000

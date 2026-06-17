@@ -1,0 +1,42 @@
+﻿$kind: http-request
+name: List Costume Inventory
+description: |-
+  Lấy danh sách tồn kho trang phục. Hỗ trợ lọc theo nhiều tiêu chí và mở rộng thông tin tình trạng sản phẩm.
+
+  **Query Params:**
+
+  | Tham số | Kiểu | Mô tả |
+  |---------|------|-------|
+  | _expand | string | Mở rộng dữ liệu liên kết (ví dụ: inventory_condition) |
+  | item_id | integer | Lọc theo ID trang phục |
+  | inventory_condition_id | integer | Lọc theo ID tình trạng sản phẩm |
+  | warehouse_id | integer | Lọc theo ID kho |
+  | status | enum | Lọc theo trạng thái: AVAILABLE, RENTED, MAINTENANCE, DISPOSED |
+  | keyword | string | Tìm kiếm theo từ khóa (tên, SKU) |
+
+  **Response:**
+
+  - 200 OK: Mảng các bản ghi Inventory của trang phục.
+method: GET
+url: '{{baseUrl}}/inventory/costumes'
+queryParams:
+  - key: _expand
+    value: inventory_condition
+    disabled: true
+order: 1000
+params:
+  - key: item_id
+    value: ''
+    disabled: true
+  - key: inventory_condition_id
+    value: ''
+    disabled: true
+  - key: warehouse_id
+    value: ''
+    disabled: true
+  - key: status
+    value: ''
+    disabled: true
+  - key: keyword
+    value: ''
+    disabled: true

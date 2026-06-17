@@ -1,0 +1,11 @@
+$kind: http-request
+name: Complete Return Form
+description: |-
+  **Workflow step 8**: Hoàn tất trả đồ.
+
+  Hệ thống sẽ cập nhật tồn kho theo condition (`GOOD -> AVAILABLE`, còn lại -> `MAINTENANCE`) và đánh dấu `loan_form_items.is_returned=true`.
+
+  Nếu phát sinh hư hỏng/mất, chuyển sang collection `Billing` để tạo phiếu phạt và hóa đơn.
+method: POST
+url: '{{baseUrl}}/return-forms/1/complete'
+order: 8000

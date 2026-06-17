@@ -1,0 +1,41 @@
+$kind: http-request
+description: Xử lý một sự cố thuê.
+url: "{{baseUrl}}/rental-incidents/:id/resolve"
+method: POST
+headers:
+  Content-Type: application/json
+pathVariables:
+  - key: id
+    value: "2"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: json
+  content: |-
+    {
+      "resolution": "Đã xử lý và cập nhật bồi thường",
+      "compensation_amount": 150000
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "resolution": {
+          "type": "string"
+        },
+        "compensation_amount": {
+          "type": "number"
+        }
+      }
+    }
+order: 4000

@@ -1,0 +1,16 @@
+$kind: http-request
+name: Delete Return Form
+description: |-
+  Xóa phiếu trả theo `id`.
+
+  - `permanantly=false` (mặc định): xóa mềm (`is_active=false`)
+  - `permanantly=true`: xóa cứng cả phiếu trả và các return item liên quan.
+method: DELETE
+url: '{{baseUrl}}/return-forms/:id'
+order: 9300
+pathVariables:
+  id: '1'
+params:
+  - key: permanantly
+    value: 'false'
+    disabled: true

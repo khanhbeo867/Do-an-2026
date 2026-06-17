@@ -1,0 +1,24 @@
+$kind: http-request
+name: Get Uploaded File
+description: |-
+  Truy xuất trực tiếp file ảnh đã upload từ server theo tên thư mục và tên file. Endpoint này không yêu cầu xác thực (noauth) và trả về binary stream của file ảnh.
+
+  **Path Variables:**
+
+  | Tham số | Kiểu | Mô tả |
+  |---------|------|-------|
+  | folder | string | Tên thư mục chứa file trên server |
+  | fileName | string | Tên file ảnh cần truy xuất |
+
+  **Response:**
+
+  - 200 OK: Binary stream của file ảnh với Content-Type tương ứng.
+  - 404 Not Found: Không tìm thấy file.
+method: GET
+url: "{{baseImageUrl}}/:folder/:file"
+order: 6000
+auth:
+  type: noauth
+pathVariables:
+  folder: "14"
+  file: 1778513299700-il_794xN.webp

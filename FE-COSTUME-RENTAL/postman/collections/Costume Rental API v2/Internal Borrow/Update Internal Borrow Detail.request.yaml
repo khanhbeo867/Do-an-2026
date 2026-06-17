@@ -1,0 +1,55 @@
+$kind: http-request
+description: Cập nhật số lượng hoặc ghi chú của một dòng chi tiết.
+url: "{{baseUrl}}/internal-borrow-slips/:id/details/:detailId"
+method: PATCH
+headers:
+  Content-Type: application/json
+pathVariables:
+  - key: id
+    value: "3"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+  - key: detailId
+    value: "1"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: json
+  content: |-
+    {
+      "borrowed_quantity": 2,
+      "remarks": "Tăng thêm số lượng"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "borrowed_quantity": {
+          "type": "integer"
+        },
+        "remarks": {
+          "type": "string"
+        }
+      }
+    }
+order: 6000

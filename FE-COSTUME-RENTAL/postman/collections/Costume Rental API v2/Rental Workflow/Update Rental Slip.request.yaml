@@ -1,0 +1,48 @@
+$kind: http-request
+description: Cập nhật các trường có thể chỉnh sửa trên phiếu thuê.
+url: "{{baseUrl}}/rental-slips/:id"
+method: PATCH
+headers:
+  Content-Type: application/json
+pathVariables:
+  - key: id
+    value: "3"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: json
+  content: |-
+    {
+      "due_date": "2026-05-22",
+      "terms_and_conditions": "Dieu khoan moi",
+      "remarks": "Gia hạn"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "start_date": {
+          "type": "string"
+        },
+        "due_date": {
+          "type": "string"
+        },
+        "terms_and_conditions": {
+          "type": "string"
+        },
+        "remarks": {
+          "type": "string"
+        }
+      }
+    }
+order: 4000

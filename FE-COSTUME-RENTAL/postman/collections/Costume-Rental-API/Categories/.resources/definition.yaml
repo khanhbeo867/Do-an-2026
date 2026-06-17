@@ -1,0 +1,39 @@
+$kind: collection
+name: Categories
+description: |-
+  ## Danh mục Sản phẩm
+
+  Nhóm các API quản lý danh mục sản phẩm trong hệ thống cho thuê trang phục. Danh mục được dùng để phân loại cả trang phục lẫn đạo cụ/thiết bị, giúp tổ chức kho hàng và tìm kiếm sản phẩm hiệu quả hơn.
+
+  ### Entity liên quan
+
+  - **ItemCategory**: Danh mục sản phẩm với các trường `id`, `name`, `slug`, `type` (COSTUME/EQUIPMENT_PROPS). Mỗi danh mục thuộc một trong hai loại: trang phục hoặc đạo cụ/thiết bị.
+      
+
+  ### Endpoints
+
+  - **GET /api/categories** – Lấy danh sách tất cả danh mục, hỗ trợ lọc theo `type` (COSTUME hoặc EQUIPMENT_PROPS).
+      
+  - **GET /api/categories/:id** – Lấy thông tin chi tiết của một danh mục theo `id`.
+      
+  - **POST /api/categories** – Tạo danh mục mới với `name`, `slug` và `type`.
+      
+  - **PUT /api/categories/:id** – Cập nhật thông tin danh mục theo `id`.
+      
+  - **DELETE /api/categories/:id** – Xóa danh mục theo `id` (yêu cầu quyền ADMIN).
+      
+
+  ## Schema: ItemCategory
+
+  | Trường | Kiểu | Mô tả |
+  | --- | --- | --- |
+  | `id` | integer | Khóa chính, định danh duy nhất |
+  | `name` | string | Tên danh mục |
+  | `slug` | string | Slug URL thân thiện, tự động sinh từ `name` |
+  | `type` | enum | Loại danh mục: `COSTUME` (trang phục) hoặc `EQUIPMENT_PROPS` (đạo cụ) |
+  | `is_active` | boolean | Trạng thái kích hoạt (mặc định: `true`) |
+  | `created_at` | datetime | Thời điểm tạo |
+  | `updated_at` | datetime / null | Thời điểm cập nhật gần nhất |
+  | `created_by` | integer | ID người tạo |
+  | `updated_by` | integer | ID người cập nhật gần nhất |
+  | `remark` | string | Ghi chú thêm |

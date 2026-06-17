@@ -1,0 +1,38 @@
+$kind: http-request
+name: Create Employee
+description: |-
+  Tạo mới hồ sơ nhân viên trong hệ thống. Yêu cầu quyền ADMIN. Mã nhân viên (employee_code) sẽ được tự động sinh.
+
+  **Body (JSON):**
+
+  | Trường | Kiểu | Mô tả |
+  |--------|------|-------|
+  | full_name | string | Họ và tên đầy đủ của nhân viên |
+  | phone | string | Số điện thoại liên hệ |
+  | email | string | Địa chỉ email liên hệ |
+  | address | string | Địa chỉ thường trú |
+  | citizen_id_number | string | Số căn cước công dân / CMND |
+  | position | enum | Vị trí: MANAGER, WAREHOUSE_MANAGER, ORDER_PROCESSOR, TALENT, TECHNICAL_CREW, WARDROBE |
+  | work_status | enum | Trạng thái: ACTIVE, SUSPENDED, EXITED (mặc định: ACTIVE) |
+
+  **Response:**
+
+  - 201 Created: Hồ sơ nhân viên mới được tạo thành công.
+  - 400 Bad Request: Dữ liệu không hợp lệ.
+method: POST
+url: '{{baseUrl}}/employees'
+order: 3000
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "full_name": "Đào Ngọc Linh",
+      "phone": "0964456768",
+      "email": "ngoclinh224@gmail.com",
+      "address": "Số 8/245 Nguyễn Văn Linh, Lê Chân Hải Phòng",
+      "citizen_id_number": "031446224890",
+      "position": "WAREHOUSE_MANAGER",
+      "work_status": "ACTIVE"
+    }

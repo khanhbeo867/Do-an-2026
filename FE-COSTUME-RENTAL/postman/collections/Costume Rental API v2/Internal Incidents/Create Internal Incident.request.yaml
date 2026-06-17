@@ -1,0 +1,38 @@
+$kind: http-request
+description: Tạo sự cố trực tiếp cho một vật tư thuộc chi tiết mượn nội bộ.
+url: "{{baseUrl}}/internal-incidents"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "internal_borrow_detail_id": 1,
+      "inventory_item_id": 44,
+      "incident_type": "DAMAGED",
+      "incident_description": "Hỏng khi sử dụng",
+      "compensation_amount": 120000
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "internal_borrow_detail_id": {
+          "type": "integer"
+        },
+        "inventory_item_id": {
+          "type": "integer"
+        },
+        "incident_type": {
+          "type": "string"
+        },
+        "incident_description": {
+          "type": "string"
+        },
+        "compensation_amount": {
+          "type": "number"
+        }
+      }
+    }
+order: 2000

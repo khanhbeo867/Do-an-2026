@@ -1,0 +1,20 @@
+$kind: http-request
+name: Add Return Items
+description: |-
+  Bổ sung SKU vào phiếu trả theo `return_form.id`.
+
+  Hữu ích khi tạo phiếu trả trước và bổ sung dần các SKU thực tế nhận lại.
+method: POST
+url: '{{baseUrl}}/return-forms/:id/items'
+order: 6500
+pathVariables:
+  id: '1'
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "skus": ["TP-ADNH-VOL200-0001", "DC-MSKLANRD-0001"]
+    }

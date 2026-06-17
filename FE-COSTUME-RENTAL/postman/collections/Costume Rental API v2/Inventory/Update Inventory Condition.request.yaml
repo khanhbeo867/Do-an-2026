@@ -1,0 +1,55 @@
+$kind: http-request
+description: |-
+  Cập nhật tình trạng chất lượng của một sản phẩm cụ thể trong kho theo SKU. Dùng để ghi nhận tình trạng sản phẩm sau khi kiểm tra hoặc bảo trì.
+
+  **Path Variables:**
+
+  | Tham số | Kiểu | Mô tả |
+  |---------|------|-------|
+  | sku | string | Mã SKU của bản ghi tồn kho cần cập nhật |
+
+  **Body (JSON):**
+
+  | Trường | Kiểu | Mô tả |
+  |--------|------|-------|
+  | inventory_condition_id | integer | ID tình trạng mới (InventoryCondition: A/B/C) |
+
+  **Response:**
+
+  - 200 OK: Bản ghi Inventory sau khi cập nhật tình trạng.
+  - 404 Not Found: Không tìm thấy bản ghi với SKU đã cho.
+url: '{{baseUrl}}/inventory/condition/:sku'
+method: PATCH
+headers:
+  Content-Type: application/json
+pathVariables:
+  - key: sku
+    value: TP-ADNH-VOL200-0001
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: json
+  content: |-
+    {
+      "inventory_condition_id": 1
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "inventory_condition_id": {
+          "type": "integer"
+        }
+      }
+    }
+order: 4000

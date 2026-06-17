@@ -1,0 +1,41 @@
+$kind: http-request
+description: Xuất kho cho phiếu và chuyển các vật tư đã gán ra khỏi kho.
+url: "{{baseUrl}}/internal-borrow-slips/:id/checkout"
+method: POST
+headers:
+  Content-Type: application/json
+pathVariables:
+  - key: id
+    value: "3"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: json
+  content: |-
+    {
+      "checkout_at": "2026-05-19",
+      "note": "Xuất kho"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "checkout_at": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    }
+order: 12000

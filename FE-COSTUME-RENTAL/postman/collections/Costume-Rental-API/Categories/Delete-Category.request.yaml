@@ -1,0 +1,30 @@
+﻿$kind: http-request
+name: Delete Category
+description: |-
+  Xóa một danh mục sản phẩm theo ID. Yêu cầu quyền ADMIN. Hỗ trợ xóa mềm (soft delete) hoặc xóa vĩnh viễn tùy theo tham số permanantly.
+
+  **Path Variables:**
+
+  | Tham số | Kiểu | Mô tả |
+  |---------|------|-------|
+  | id | integer | ID của danh mục cần xóa |
+
+  **Query Params:**
+
+  | Tham số | Kiểu | Mô tả |
+  |---------|------|-------|
+  | permanantly | boolean | true để xóa vĩnh viễn, false để xóa mềm (mặc định: false) |
+
+  **Response:**
+
+  - 200 OK: Xóa thành công.
+  - 404 Not Found: Không tìm thấy danh mục.
+method: DELETE
+url: '{{baseUrl}}/categories/:id'
+order: 5000
+pathVariables:
+  - key: id
+    value: ''
+queryParams:
+  - key: permanantly
+    value: 'false'

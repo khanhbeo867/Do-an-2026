@@ -1,0 +1,45 @@
+$kind: http-request
+description: Tạo trực tiếp một phiếu bảo trì.
+url: "{{baseUrl}}/maintenance-tickets"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "inventory_item_id": 4,
+      "maintenance_type": "REPAIR",
+      "reported_date": "2026-05-19",
+      "expected_return_date": "2026-05-22",
+      "vendor": "Máy nhanh",
+      "remarks": "Kiểm tra và sửa"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "item_id": {
+          "type": "integer"
+        },
+        "inventory_item_id": {
+          "type": "integer"
+        },
+        "maintenance_type": {
+          "type": "string"
+        },
+        "reported_date": {
+          "type": "string"
+        },
+        "expected_return_date": {
+          "type": "string"
+        },
+        "vendor": {
+          "type": "string"
+        },
+        "remarks": {
+          "type": "string"
+        }
+      }
+    }
+order: 2000

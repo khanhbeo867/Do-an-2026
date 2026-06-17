@@ -1,0 +1,21 @@
+﻿$kind: http-request
+name: Get Employee
+description: |-
+  Lấy thông tin chi tiết của một nhân viên theo ID, bao gồm thông tin liên hệ, vị trí công việc và liên kết tài khoản.
+
+  **Path Variables:**
+
+  | Tham số | Kiểu | Mô tả |
+  |---------|------|-------|
+  | id | integer | ID của nhân viên cần lấy |
+
+  **Response:**
+
+  - 200 OK: Đối tượng Employee đầy đủ thông tin.
+  - 404 Not Found: Không tìm thấy nhân viên.
+method: GET
+url: '{{baseUrl}}/employees/:id'
+order: 2000
+pathVariables:
+  - key: id
+    value: ''

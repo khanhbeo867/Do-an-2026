@@ -1,0 +1,11 @@
+$kind: http-request
+name: Cancel Loan Form
+description: |-
+  Hủy phiếu mượn/thuê trong ngày tạo phiếu.
+
+  Khi hủy thành công, hệ thống trả trạng thái các SKU liên quan về `AVAILABLE`.
+method: POST
+url: '{{baseUrl}}/loan-forms/:id/cancel'
+order: 4200
+pathVariables:
+  id: '1'

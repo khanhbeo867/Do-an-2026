@@ -1,0 +1,27 @@
+$kind: http-request
+description: Liệt kê các phiếu mượn nội bộ.
+url: "{{baseUrl}}/internal-borrow-slips?status=BORROWING&employee_id=2&warehouse_id=2&keyword=PMN&from_date=2026-05-19&to_date=2026-05-22"
+method: GET
+queryParams:
+  - key: status
+    value: BORROWING
+    $type: string
+  - key: employee_id
+    value: "2"
+    $type: integer
+  - key: warehouse_id
+    value: "2"
+    $type: integer
+  - key: keyword
+    value: PMN
+    $type: string
+  - key: from_date
+    value: 2026-05-19
+    $type: string
+  - key: to_date
+    value: 2026-05-22
+    $type: string
+body:
+  type: text
+  content: ""
+order: 1000

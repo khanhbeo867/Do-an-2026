@@ -1,0 +1,23 @@
+$kind: http-request
+name: Update Loan Form
+description: |-
+  Cập nhật thông tin phiếu mượn/thuê theo `id`.
+
+  Ví dụ dùng khi cần đổi hạn trả hoặc cập nhật thông tin người mượn trước khi hoàn tất quy trình trả.
+method: PATCH
+url: '{{baseUrl}}/loan-forms/:id'
+order: 3500
+pathVariables:
+  id: '1'
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "borrower_name": "Nguyen Van A",
+      "borrower_phone": "0909123456",
+      "due_date": "2026-05-30",
+      "remark": "Doi lich tra them 1 ngay"
+    }

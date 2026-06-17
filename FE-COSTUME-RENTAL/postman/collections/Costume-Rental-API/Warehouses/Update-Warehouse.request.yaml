@@ -1,0 +1,40 @@
+﻿$kind: http-request
+name: Update Warehouse
+description: |-
+  Cập nhật thông tin của một kho hàng theo ID. Yêu cầu quyền ADMIN.
+
+  **Path Variables:**
+
+  | Tham số | Kiểu | Mô tả |
+  |---------|------|-------|
+  | id | integer | ID của kho cần cập nhật |
+
+  **Body (JSON):**
+
+  | Trường | Kiểu | Mô tả |
+  |--------|------|-------|
+  | name | string | Tên kho mới |
+  | type | enum | Loại kho mới: COSTUME hoặc EQUIPMENT_PROPS |
+  | managed_by | integer | ID nhân viên quản lý mới |
+
+  **Response:**
+
+  - 200 OK: Kho sau khi cập nhật.
+  - 404 Not Found: Không tìm thấy kho.
+method: PATCH
+url: '{{baseUrl}}/warehouses/:id'
+order: 4000
+pathVariables:
+  - key: id
+    value: ''
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "",
+      "type": "",
+      "managed_by": null
+    }

@@ -1,0 +1,36 @@
+﻿$kind: http-request
+name: Import Inventory
+description: |-
+  Nhập kho: thêm một hoặc nhiều sản phẩm vào kho với thông tin đầy đủ. Mỗi bản ghi nhập kho sẽ tạo một SKU tồn kho mới.
+
+  **Body (JSON):**
+
+  | Trường | Kiểu | Mô tả |
+  |--------|------|-------|
+  | item_id | integer | ID sản phẩm (Costume hoặc EquipmentProps) |
+  | item_type | enum | Loại sản phẩm: COSTUME hoặc EQUIPMENT_PROPS |
+  | inventory_condition_id | integer | ID tình trạng sản phẩm (InventoryCondition) |
+  | warehouse_id | integer | ID kho lưu trữ (Warehouse) |
+  | size | enum | Kích cỡ (chỉ áp dụng cho trang phục): XS, S, M, L, XL, 2XL, 3XL |
+  | quantity | integer | Số lượng cần nhập kho |
+
+  **Response:**
+
+  - 201 Created: Danh sách bản ghi Inventory mới được tạo.
+  - 400 Bad Request: Dữ liệu không hợp lệ.
+method: POST
+url: '{{baseUrl}}/inventory/import'
+order: 3000
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "item_id": 5,
+      "item_type": "COSTUME",
+      "inventory_condition_id": 1,
+      "warehouse_id": 1,
+      "size": "2XL",
+      "quantity": 2
+    }

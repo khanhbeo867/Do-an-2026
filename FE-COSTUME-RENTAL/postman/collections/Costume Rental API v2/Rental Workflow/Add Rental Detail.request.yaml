@@ -1,0 +1,57 @@
+$kind: http-request
+description: Thêm một dòng chi tiết thuê.
+url: "{{baseUrl}}/rental-slips/:id/details"
+method: POST
+headers:
+  Content-Type: application/json
+pathVariables:
+  - key: id
+    value: "3"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: json
+  content: |-
+    {
+      "equipment_prop_id": 15,
+      "rented_quantity": 2,
+      "rental_unit_price": 100000,
+      "rental_days": 2,
+      "deposit_amount": 50000,
+      "remarks": null
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "equipment_prop_id": {
+          "type": "integer"
+        },
+        "rented_quantity": {
+          "type": "integer"
+        },
+        "rental_unit_price": {
+          "type": "number"
+        },
+        "rental_days": {
+          "type": "integer"
+        },
+        "deposit_amount": {
+          "type": "number"
+        },
+        "remarks": {
+          "type": "string"
+        }
+      }
+    }
+order: 5000

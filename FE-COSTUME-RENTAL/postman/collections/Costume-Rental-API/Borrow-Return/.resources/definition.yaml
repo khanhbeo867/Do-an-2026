@@ -1,0 +1,51 @@
+$kind: collection
+name: Borrow-Return
+description: |-
+  ## Workflow Mượn/Thuê -> Trả
+
+  Nhóm API phục vụ toàn bộ vòng đời mượn/thuê và trả sản phẩm.
+
+  ### Thứ tự backend nên gọi API (luồng chuẩn)
+
+  1. `POST /api/loan-forms` để tạo phiếu mượn/thuê.
+  2. `POST /api/loan-forms/:id/items` nếu cần bổ sung SKU sau khi tạo phiếu.
+  3. `POST /api/loan-forms/:id/confirm-deposit` (chỉ cho `method=RENT` nếu đang `DEPOSIT_PENDING`).
+  4. `POST /api/loan-forms/:id/checkout` để chuyển phiếu sang `BORROWING` và giữ tồn kho ở `RENTED`.
+  5. `POST /api/return-forms` khi khách trả đồ.
+  6. `POST /api/return-forms/:id/items` nếu cần thêm SKU thực tế trả.
+  7. `POST /api/return-forms/:id/inspect` để ghi nhận chất lượng trả theo từng SKU.
+  8. `POST /api/return-forms/:id/complete` để hoàn tất trả và cập nhật lại tồn kho.
+  9. Nếu có hư hỏng/mất mát: chuyển sang collection `Billing` để tạo phiếu phạt/hóa đơn và thanh toán.
+
+  ### Bảng định nghĩa entity
+
+  | Entity | Trường trọng yếu | Ghi chú |
+  |---|---|---|
+  | `loan_forms` | `code`, `method`, `status`, `due_date`, `deposit_amount`, `borrower_*` | Phiếu mượn/thuê chính |
+  | `loan_form_items` | `loan_form_code`, `sku`, `item_type`, `item_id`, `is_returned` | Snapshot SKU đã xuất theo phiếu |
+  | `return_forms` | `code`, `loan_form_code`, `status`, `returnee_*`, `method` | Phiếu tiếp nhận trả |
+  | `return_form_items` | `return_form_code`, `sku`, `condition_on_return` | Tình trạng trả theo từng SKU |
+  | `inventory` | `sku`, `status`, `inventory_condition_id`, `warehouse_id` | Trạng thái kho biến đổi theo checkout/complete |
+
+  ### Endpoints đầy đủ
+  - GET /api/loan-forms
+  - GET /api/loan-forms/:id
+  - POST /api/loan-forms
+  - PATCH /api/loan-forms/:id
+  - DELETE /api/loan-forms/:id
+  - POST /api/loan-forms/:id/items
+  - POST /api/loan-forms/:id/confirm-deposit
+  - POST /api/loan-forms/:id/checkout
+  - POST /api/loan-forms/:id/cancel
+  - PATCH /api/loan-form-items/:id
+  - DELETE /api/loan-form-items/:id
+  - GET /api/return-forms
+  - GET /api/return-forms/:id
+  - POST /api/return-forms
+  - PATCH /api/return-forms/:id
+  - DELETE /api/return-forms/:id
+  - POST /api/return-forms/:id/items
+  - PATCH /api/return-form-items/:id
+  - DELETE /api/return-form-items/:id
+  - POST /api/return-forms/:id/inspect
+  - POST /api/return-forms/:id/complete

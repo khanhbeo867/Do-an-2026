@@ -1,0 +1,18 @@
+$kind: http-request
+description: Liệt kê khách hàng cho quy trình cho thuê.
+url: "{{baseUrl}}/customers?keyword=khách&type=INDIVIDUAL&include_inactive=false"
+method: GET
+queryParams:
+  - key: keyword
+    value: khách
+    $type: string
+  - key: type
+    value: INDIVIDUAL
+    $type: string
+  - key: include_inactive
+    value: "false"
+    $type: boolean
+body:
+  type: text
+  content: ""
+order: 1000

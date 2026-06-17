@@ -1,0 +1,49 @@
+$kind: http-request
+description: |-
+  Tạo mới tài khoản người dùng trong hệ thống. Yêu cầu quyền ADMIN. Có thể liên kết với hồ sơ nhân viên qua employee_id.
+
+  **Body (JSON):**
+
+  | Trường | Kiểu | Mô tả |
+  |--------|------|-------|
+  | username | string | Tên đăng nhập, phải duy nhất trong hệ thống |
+  | password | string | Mật khẩu (sẽ được hash trước khi lưu) |
+  | employee_id | integer / null | ID nhân viên liên kết (tùy chọn) |
+  | role | enum | Vai trò: ADMIN hoặc USER (mặc định: USER) |
+
+  **Response:**
+
+  - 201 Created: Tài khoản người dùng mới được tạo thành công.
+  - 400 Bad Request: Dữ liệu không hợp lệ hoặc username đã tồn tại.
+url: "{{baseUrl}}/users"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "username": "",
+      "password": "",
+      "employee_id": null,
+      "role": "USER"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "employee_id": {
+          "type": "null"
+        },
+        "role": {
+          "type": "string"
+        }
+      }
+    }
+order: 2000

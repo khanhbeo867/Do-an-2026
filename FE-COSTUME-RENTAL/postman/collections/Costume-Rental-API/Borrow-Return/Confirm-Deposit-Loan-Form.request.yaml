@@ -1,0 +1,11 @@
+$kind: http-request
+name: Confirm Deposit Loan Form
+description: |-
+  Xác nhận đã nhận đủ tiền cọc cho phiếu thuê (`method = RENT`).
+
+  Endpoint này chuyển trạng thái từ `DEPOSIT_PENDING` sang `BORROWING` và cập nhật tồn kho item thành `RENTED`.
+method: POST
+url: '{{baseUrl}}/loan-forms/:id/confirm-deposit'
+order: 4100
+pathVariables:
+  id: '1'

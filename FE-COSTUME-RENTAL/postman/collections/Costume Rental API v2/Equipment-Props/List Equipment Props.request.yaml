@@ -1,0 +1,13 @@
+$kind: http-request
+description: |-
+  Lấy danh sách tất cả đạo cụ và thiết bị trong hệ thống. Hỗ trợ lọc theo danh mục và từ khóa tìm kiếm.
+
+  **Response:**
+
+  - 200 OK: Mảng các đối tượng EquipmentProps.
+url: "{{baseUrl}}/equipment-props"
+method: GET
+body:
+  type: text
+  content: ""
+order: 1000

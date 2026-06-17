@@ -1,0 +1,9 @@
+$kind: http-request
+name: Get Invoice
+description: |-
+  Lấy chi tiết hóa đơn theo `id`, bao gồm dữ liệu join loan/return/penalty.
+method: GET
+url: '{{baseUrl}}/invoices/:id'
+order: 5500
+pathVariables:
+  id: '1'

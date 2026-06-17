@@ -1,0 +1,20 @@
+$kind: http-request
+name: Create Penalty Form
+description: |-
+  **Workflow step 9**: Tạo phiếu phạt khi có hư hỏng/mất mát sau khâu inspect/complete trả đồ.
+method: POST
+url: '{{baseUrl}}/penalty-forms'
+order: 2000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "loan_form_code": "LF00001",
+      "return_form_code": "RF00001",
+      "reason": "SKU TP-ADNH-VOL200-0002 bi rach vai ao",
+      "amount": 300000,
+      "status": "ISSUED"
+    }

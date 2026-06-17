@@ -1,0 +1,16 @@
+$kind: http-request
+name: Add Loan Items
+description: |-
+  Bổ sung SKU vào phiếu mượn/thuê hiện có. Nếu phiếu đã BORROWING thì SKU mới sẽ được đổi trạng thái tồn kho sang RENTED.
+method: POST
+url: '{{baseUrl}}/loan-forms/1/items'
+order: 5000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "skus": ["TP-ADNH-VOL200-0003"]
+    }

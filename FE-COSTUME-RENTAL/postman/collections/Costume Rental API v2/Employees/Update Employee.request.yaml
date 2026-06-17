@@ -1,0 +1,65 @@
+$kind: http-request
+description: |-
+  Cập nhật thông tin của một nhân viên theo ID. Yêu cầu quyền ADMIN.
+
+  **Path Variables:**
+
+  | Tham số | Kiểu | Mô tả |
+  |---------|------|-------|
+  | id | integer | ID của nhân viên cần cập nhật |
+
+  **Body (JSON):**
+
+  | Trường | Kiểu | Mô tả |
+  |--------|------|-------|
+  | full_name | string | Họ và tên mới |
+  | phone | string | Số điện thoại mới |
+  | work_status | enum | Trạng thái làm việc mới: ACTIVE, SUSPENDED, EXITED |
+
+  **Response:**
+
+  - 200 OK: Hồ sơ nhân viên sau khi cập nhật.
+  - 404 Not Found: Không tìm thấy nhân viên.
+url: "{{baseUrl}}/employees/:id"
+method: PATCH
+headers:
+  Content-Type: application/json
+pathVariables:
+  - key: id
+    value: ""
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: json
+  content: |-
+    {
+      "full_name": "",
+      "phone": "",
+      "work_status": "ACTIVE"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "full_name": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "work_status": {
+          "type": "string"
+        }
+      }
+    }
+order: 4000

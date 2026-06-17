@@ -1,0 +1,21 @@
+﻿$kind: http-request
+name: Get Equipment Prop
+description: |-
+  Lấy thông tin chi tiết của một đạo cụ/thiết bị theo ID, bao gồm hình ảnh, mô tả và thông tin danh mục.
+
+  **Path Variables:**
+
+  | Tham số | Kiểu | Mô tả |
+  |---------|------|-------|
+  | id | integer | ID của đạo cụ/thiết bị cần lấy |
+
+  **Response:**
+
+  - 200 OK: Đối tượng EquipmentProps đầy đủ thông tin.
+  - 404 Not Found: Không tìm thấy đạo cụ/thiết bị.
+method: GET
+url: '{{baseUrl}}/equipment-props/:id'
+order: 2000
+pathVariables:
+  - key: id
+    value: ''

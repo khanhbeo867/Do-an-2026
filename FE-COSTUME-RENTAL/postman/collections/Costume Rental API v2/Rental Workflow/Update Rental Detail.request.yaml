@@ -1,0 +1,63 @@
+$kind: http-request
+description: Cập nhật một dòng chi tiết thuê.
+url: "{{baseUrl}}/rental-slips/:id/details/:detailId"
+method: PATCH
+headers:
+  Content-Type: application/json
+pathVariables:
+  - key: id
+    value: "3"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+  - key: detailId
+    value: "1"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: json
+  content: |-
+    {
+      "rental_unit_price": 120000,
+      "rental_days": 3,
+      "deposit_amount": 100000,
+      "remarks": "Điều chỉnh đơn giá"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "rental_unit_price": {
+          "type": "number"
+        },
+        "rental_days": {
+          "type": "integer"
+        },
+        "deposit_amount": {
+          "type": "number"
+        },
+        "remarks": {
+          "type": "string"
+        }
+      }
+    }
+order: 6000

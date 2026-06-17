@@ -1,0 +1,55 @@
+$kind: http-request
+description: |-
+  Đăng ký tài khoản người dùng mới trong hệ thống. Endpoint này tạo một User mới với vai trò mặc định là USER.
+
+  **Body (JSON):**
+
+  | Trường | Kiểu | Mô tả |  
+  |--------|------|-------|  
+  | username | string | Tên đăng nhập, phải duy nhất trong hệ thống |  
+  | email | string | Địa chỉ email của người dùng |  
+  | password | string | Mật khẩu (sẽ được hash trước khi lưu) |  
+  | display_name | string | Tên hiển thị của người dùng |  
+  | role | enum | Vai trò: ADMIN hoặc USER (mặc định: USER) |
+
+  **Response:**
+
+  - 201 Created: Tài khoản được tạo thành công, trả về thông tin user mới.
+      
+  - 400 Bad Request: Dữ liệu không hợp lệ hoặc username đã tồn tại.
+url: "{{baseUrl}}/register"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "username": "",
+      "email": "",
+      "password": "",
+      "display_name": "",
+      "role": "USER"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "display_name": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        }
+      }
+    }
+order: 2000

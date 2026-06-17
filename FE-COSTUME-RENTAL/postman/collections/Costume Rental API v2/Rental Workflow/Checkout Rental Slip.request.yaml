@@ -1,0 +1,41 @@
+$kind: http-request
+description: Xuất kho phiếu thuê và chuyển vật tư sang trạng thái đang được thuê.
+url: "{{baseUrl}}/rental-slips/:id/checkout"
+method: POST
+headers:
+  Content-Type: application/json
+pathVariables:
+  - key: id
+    value: "3"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: json
+  content: |-
+    {
+      "checkout_at": "2026-05-19",
+      "note": "Bàn giao hàng"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "checkout_at": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    }
+order: 12000

@@ -1,0 +1,23 @@
+$kind: http-request
+description: Hiển thị các khoản thanh toán của một phiếu thuê.
+url: "{{baseUrl}}/rental-slips/:id/payments"
+method: GET
+pathVariables:
+  - key: id
+    value: "3"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: text
+  content: ""
+order: 15000

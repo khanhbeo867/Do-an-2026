@@ -1,0 +1,699 @@
+{
+  "type": "object",
+  "required": [
+    "users",
+    "revoke_tokens",
+    "employees",
+    "warehouses",
+    "categories",
+    "costumes",
+    "images",
+    "equipment_props",
+    "inventory",
+    "loan_forms",
+    "loan_form_items",
+    "return_forms",
+    "return_form_items",
+    "penalty_forms",
+    "invoices"
+  ],
+  "definitions": {
+    "BaseEntity": {
+      "type": "object",
+      "additionalProperties": true,
+      "_comment": "BaseEntity định nghĩa các trường chung cho tất cả các thực thể, giúp giảm thiểu sự lặp lại trong schema",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "is_active": {
+          "type": "boolean",
+          "default": true
+        },
+        "created_by": {
+          "type": "integer"
+        },
+        "updated_by": {
+          "type": "integer"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "default": "2026-04-19T00:00:00.000Z"
+        },
+        "updated_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "remark": {
+          "type": ["string", "null"]
+        }
+      },
+      "required": ["id", "is_active", "created_at"]
+    },
+    "ImageMetadata": {
+      "_comment": "ImageMetadata định nghĩa các trường metadata cơ bản cho hình ảnh, giúp chuẩn hóa cách lưu trữ thông tin về hình ảnh trong hệ thống",
+      "type": "object",
+      "properties": {
+        "file_name": { "type": "string" },
+        "size": { "type": "integer" },
+        "dest": { "type": "string", "format": "url" },
+        "mime_type": { "type": "string", "enum": ["image/png", "image/jpg", "image/jpeg", "image/webp"] }
+      },
+      "required": ["file_name", "size", "dest", "mime_type"]
+    },
+    "User": {
+      "_comment": "User định nghĩa các trường thông tin cơ bản cho người dùng, bao gồm thông tin đăng nhập và vai trò, giúp quản lý quyền truy cập trong hệ thống",
+      "allOf": [
+        { "$ref": "#/definitions/BaseEntity" },
+        {
+          "type": "object",
+          "properties": {
+            "username": { "type": "string" },
+            "password": { "type": "string" },
+            "employee_id": { "type": ["integer", "null"] },
+            "role": { "type": "string", "enum": ["ADMIN", "USER"] }
+          },
+          "required": ["username", "password", "role"]
+        }
+      ]
+    },
+    "RevokeToken": {
+      "type": "object",
+      "properties": {
+        "access_token": {
+          "type": "string"
+        }
+      }
+    },
+    "Employee": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseEntity"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "employee_code": {
+              "type": "string"
+            },
+            "user_id": {
+              "type": ["integer", "null"]
+            },
+            "full_name": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string",
+              "format": "email"
+            },
+            "phone": {
+              "type": "string"
+            },
+            "address": {
+              "type": "string"
+            },
+            "citizen_id_number": {
+              "type": "string",
+              "format": "number"
+            },
+            "position": {
+              "type": "string",
+              "enum": ["MANAGER", "WAREHOUSE_MANAGER", "ORDER_PROCESSOR", "TALENT", "TECHNICAL_CREW", "WARDROBE"]
+            },
+            "work_status": {
+              "type": "string",
+              "enum": ["ACTIVE", "SUSPENDED", "EXITED"]
+            }
+          },
+          "required": [
+            "employee_code",
+            "user_id",
+            "full_name",
+            "email",
+            "phone",
+            "address",
+            "citizen_id_number",
+            "position",
+            "work_status"
+          ]
+        }
+      ]
+    },
+    "Warehouse": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseEntity"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string",
+              "enum": ["COSTUME", "EQUIPMENT_PROPS"]
+            },
+            "managed_by": {
+              "type": "number"
+            }
+          }
+        }
+      ]
+    },
+    "ImageGallery": {
+      "allOf": [
+        { "$ref": "#/definitions/BaseEntity" },
+        { "$ref": "#/definitions/ImageMetadata" },
+        {
+          "type": "object",
+          "properties": {
+            "category_id": {
+              "type": "integer"
+            }
+          }
+        }
+      ]
+    },
+    "ItemCategory": {
+      "allOf": [
+        { "$ref": "#/definitions/BaseEntity" },
+        {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" },
+            "slug": { "type": "string" },
+            "type": { "type": "string", "enum": ["COSTUME", "EQUIPMENT_PROPS"] }
+          }
+        }
+      ]
+    },
+    "Costume": {
+      "allOf": [
+        { "$ref": "#/definitions/BaseEntity" },
+        {
+          "type": "object",
+          "properties": {
+            "sku": {
+              "type": "string",
+              "_comment": "Mã định danh duy nhất cho mỗi trang phục, giúp quản lý và tra cứu dễ dàng trong hệ thống"
+            },
+            "slug": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "category_id": {
+              "type": "integer"
+            },
+            "color": {
+              "type": "object",
+              "properties": {
+                "hex": { "type": "string" },
+                "code": { "type": "string" },
+                "intensity": { "type": "integer" }
+              }
+            },
+            "sizes": {
+              "type": "array",
+              "items": { "type": "string", "enum": ["XS", "S", "M", "L", "XL", "2XL", "3XL"] }
+            },
+            "unit": {
+              "type": "string",
+              "enum": ["SET", "PIECE"]
+            },
+            "gender": {
+              "type": "string",
+              "enum": ["MALE", "FEMALE", "UNISEX"]
+            },
+            "images": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "price": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "rental_price_per_day": {
+              "type": "integer",
+              "minimum": 50000
+            },
+            "description": {
+              "type": "string"
+            },
+            "hashtags": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": { "type": "string" }
+            }
+          }
+        },
+        {
+          "required": [
+            "slug",
+            "name",
+            "category_id",
+            "color",
+            "sizes",
+            "unit",
+            "gender",
+            "price",
+            "rental_price_per_day"
+          ]
+        }
+      ]
+    },
+    "EquipmentProps": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseEntity"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" },
+            "slug": { "type": "string" },
+            "category_id": { "type": "integer" },
+            "unit": { "type": "string" },
+            "description": { "type": "string" },
+            "images": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "price": { "type": "integer", "minimum": 0 },
+            "rental_price_per_day": { "type": "integer", "minimum": 50000 },
+            "hashtags": { "type": "array", "uniqueItems": true, "items": { "type": "string" } }
+          }
+        },
+        { "required": ["slug", "name", "category_id", "unit", "price", "rental_price_per_day"] }
+      ]
+    },
+    "Inventory": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseEntity"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "sku": {
+              "type": "string",
+              "_comment": "Mã định danh duy nhất cho mỗi sản phẩm tồn kho, giúp quản lý và tra cứu dễ dàng trong hệ thống"
+            },
+            "item_id": { "type": "integer", "_comment": "Khóa ngoại tham chiếu tới bảng 'warehouses'" },
+            "item_type": { "type": "string", "enum": ["COSTUME", "EQUIPMENT_PROPS"] },
+            "warehouse_id": { "type": "integer", "_comment": "Khóa ngoại tham chiếu tới bảng 'warehouses'" },
+            "status": {
+              "type": "string",
+              "enum": ["AVAILABLE", "RENTED", "MAINTENANCE", "DISPOSED"],
+              "_comment": "Trạng thái của sản phẩm trong kho, giúp quản lý quá trình thuê và bảo trì"
+            },
+            "size": {
+              "type": ["string", "null"],
+              "enum": ["XS", "S", "M", "L", "XL", "2XL", "3XL"],
+              "_comment": "Kích thước của sản phẩm, áp dụng cho trang phục, có thể null đối với đạo cụ"
+            }
+          }
+        }
+      ]
+    },
+    "LoanForm": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseEntity"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string",
+              "_comment": "Mã định danh duy nhất cho mỗi phiếu mượn/thuê, giúp quản lý và tra cứu dễ dàng trong hệ thống"
+            },
+            "borrower_name": {
+              "type": "string",
+              "_comment": "Tên người mượn hoặc thuê trang phục/đạo cụ, giúp nhân viên kho dễ dàng xác định người liên quan đến phiếu mượn"
+            },
+            "borrower_phone": {
+              "type": "string",
+              "_comment": "Số điện thoại của người mượn hoặc thuê, giúp nhân viên kho dễ dàng liên hệ khi cần thiết"
+            },
+            "borrower_citizen_id_number": {
+              "type": "string",
+              "_comment": "Số chứng minh nhân dân hoặc căn cước công dân của người mượn hoặc thuê, giúp xác thực thông tin người liên quan đến phiếu mượn"
+            },
+            "borrower_role": {
+              "type": "string",
+              "enum": ["INTERNAL", "EXTERNAL"],
+              "_comment": "Vai trò của người mượn hoặc thuê, giúp phân biệt giữa nhân viên nội bộ và khách hàng bên ngoài"
+            },
+            "method": {
+              "type": "string",
+              "enum": ["BORROW", "RENT"],
+              "_comment": "Phương thức mượn hoặc thuê, giúp phân biệt giữa việc mượn trang phục/đạo cụ để sử dụng nội bộ và việc thuê trang phục/đạo cụ cho khách hàng"
+            },
+            "due_date": {
+              "type": ["string", "null"],
+              "format": "date-time",
+              "_comment": "Ngày hẹn trả đồ của phiếu mượn/thuê"
+            },
+            "rental_days": {
+              "type": "integer",
+              "_comment": "Tổng số ngày thuê từ ngày tạo phiếu đến ngày hẹn trả"
+            },
+            "total_rental_amount": {
+              "type": "integer",
+              "_comment": "Tổng tiền thuê = tổng rental_price_per_day của các sản phẩm * rental_days"
+            },
+            "total_item_price_amount": {
+              "type": "integer",
+              "_comment": "Tổng giá trị sản phẩm trong phiếu, dùng làm cơ sở tính tiền cọc đề xuất"
+            },
+            "deposit_amount": {
+              "type": "integer",
+              "_comment": "Số tiền đặt cọc, giúp quản lý các khoản đặt cọc liên quan đến việc mượn hoặc thuê trang phục/đạo cụ"
+            },
+            "created_by": {
+              "type": "integer",
+              "_comment": "ID của nhân viên tạo phiếu mượn, giúp theo dõi ai đã tạo phiếu mượn trong hệ thống"
+            },
+            "status": {
+              "type": "string",
+              "enum": ["DEPOSIT_PENDING", "BORROWING", "RETURNED", "CANCELED"],
+              "_comment": "Trạng thái của phiếu mượn, giúp quản lý quá trình mượn và trả hàng"
+            }
+          }
+        }
+      ]
+    },
+    "LoanFormItem": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseEntity"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "loan_form_code": {
+              "type": "string",
+              "_comment": "Mã của phiếu liên quan (có thể là phiếu mượn, phiếu trả hoặc phiếu bảo trì), giúp liên kết giữa các mục hàng hóa và phiếu tương ứng trong hệ thống"
+            },
+            "sku": {
+              "type": "string",
+              "_comment": "Mã định danh duy nhất cho mỗi sản phẩm, giúp quản lý và tra cứu dễ dàng trong hệ thống, đồng thời là mã sản phẩm tại thời điểm mượn, giúp theo dõi lịch sử thay đổi mã sản phẩm nếu có sự thay đổi sau này"
+            },
+            "loan_item_name": {
+              "type": "string",
+              "_comment": "Tên của sản phẩm được mượn hoặc thuê, giúp nhân viên kho dễ dàng xác định sản phẩm liên quan đến mục hàng hóa trong phiếu mượn hoặc thuê, đồng thời là tên sản phẩm tại thời điểm mượn, giúp theo dõi lịch sử thay đổi tên sản phẩm nếu có sự thay đổi sau này"
+            },
+            "rental_price_per_day": {
+              "type": "integer",
+              "_comment": "Giá thuê mỗi ngày của sản phẩm, giúp quản lý chi phí thuê và tính toán tổng chi phí thuê dựa trên số ngày thuê, đồng thời là giá thuê tại thời điểm mượn, giúp theo dõi lịch sử thay đổi giá thuê nếu có sự thay đổi sau này"
+            },
+            "item_price": {
+              "type": "integer",
+              "_comment": "Giá bán/snapshot của sản phẩm tại thời điểm tạo phiếu, dùng để tính tổng tiền cọc đề xuất"
+            }
+          },
+          "_comment": "FormItem định nghĩa các trường thông tin cơ bản cho mục hàng hóa trong các phiếu mượn, trả, bảo trì, giúp quản lý chi tiết các sản phẩm liên quan đến từng phiếu"
+        }
+      ]
+    },
+    "ReturnForm": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseEntity"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "loan_form_code": {
+              "type": "string",
+              "_comment": "Mã của phiếu mượn/thuê liên quan, giúp liên kết giữa phiếu trả và phiếu mượn tương ứng trong hệ thống"
+            },
+            "returnee_name": {
+              "type": "string",
+              "_comment": "Tên người trả hàng, giúp nhân viên kho dễ dàng xác định người liên quan đến phiếu trả"
+            },
+            "returnee_phone": {
+              "type": "string",
+              "_comment": "Số điện thoại của người trả hàng, giúp nhân viên kho dễ dàng liên hệ khi cần thiết"
+            },
+            "returnee_citizen_id_number": {
+              "type": "string",
+              "_comment": "Số chứng minh nhân dân hoặc căn cước công dân của người trả hàng, giúp xác thực thông tin người liên quan đến phiếu trả"
+            },
+            "created_by": {
+              "type": "integer",
+              "_comment": "ID của nhân viên tạo phiếu trả, giúp theo dõi ai đã tạo phiếu trả trong hệ thống"
+            },
+            "status": {
+              "type": "string",
+              "enum": ["RETURNED", "INSPECTED", "CANCELED"],
+              "_comment": "Trạng thái của phiếu trả, giúp quản lý quá trình trả hàng và kiểm tra tình trạng sản phẩm sau khi trả"
+            }
+          }
+        }
+      ]
+    },
+    "ReturnItem": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseEntity"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "return_form_code": {
+              "type": "string",
+              "_comment": "Mã của phiếu trả liên quan, giúp liên kết giữa các mục hàng hóa và phiếu trả tương ứng trong hệ thống"
+            },
+            "sku": {
+              "type": "string",
+              "_comment": "Mã định danh duy nhất cho mỗi sản phẩm, giúp quản lý và tra cứu dễ dàng trong hệ thống, đồng thời là mã sản phẩm tại thời điểm trả, giúp theo dõi lịch sử thay đổi mã sản phẩm nếu có sự thay đổi sau này"
+            },
+            "return_item_name": {
+              "type": "string",
+              "_comment": "Tên của sản phẩm được trả, giúp nhân viên kho dễ dàng xác định sản phẩm liên quan đến mục hàng hóa trong phiếu trả, đồng thời là tên sản phẩm tại thời điểm trả, giúp theo dõi lịch sử thay đổi tên sản phẩm nếu có sự thay đổi sau này"
+            },
+            "rental_price_per_day": {
+              "type": "integer",
+              "_comment": "Giá thuê mỗi ngày của sản phẩm, giúp quản lý chi phí thuê và tính toán tổng chi phí thuê dựa trên số ngày thuê, đồng thời là giá thuê tại thời điểm trả, giúp theo dõi lịch sử thay đổi giá thuê nếu có sự thay đổi sau này"
+            },
+            "condition_on_return": {
+              "type": "string",
+              "_comment": "Tình trạng của sản phẩm khi trả hàng, giúp nhân viên kho đánh giá tình trạng sản phẩm sau khi được trả và có cơ sở để xử lý các tình huống liên quan đến hư hỏng hoặc mất mát"
+            }
+          },
+          "_comment": "ReturnItem định nghĩa các trường thông tin cơ bản cho mục hàng hóa trong phiếu trả, giúp quản lý chi tiết các sản phẩm liên quan đến từng phiếu trả"
+        }
+      ]
+    },
+
+    "PenentyForm": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseEntity"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string",
+              "_comment": "Mã định danh duy nhất cho mỗi phiếu phạt, giúp quản lý và tra cứu dễ dàng trong hệ thống"
+            },
+            "loan_form_code": {
+              "type": "string",
+              "_comment": "Mã của phiếu mượn/thuê liên quan, giúp liên kết giữa phiếu phạt và phiếu mượn tương ứng trong hệ thống"
+            },
+            "return_form_code": {
+              "type": "string",
+              "_comment": "Mã của phiếu trả liên quan, giúp liên kết giữa phiếu phạt và phiếu trả tương ứng trong hệ thống"
+            },
+            "reason": {
+              "type": "string",
+              "_comment": "Lý do phạt, giúp nhân viên kho hiểu rõ nguyên nhân dẫn đến việc phạt và có cơ sở để xử lý tình huống tương tự trong tương lai"
+            },
+            "amount": {
+              "type": "integer",
+              "_comment": "Số tiền phạt, giúp quản lý các khoản phạt một cách chính xác và minh bạch trong hệ thống"
+            },
+            "created_by": {
+              "type": "integer",
+              "_comment": "ID của nhân viên tạo phiếu phạt, giúp theo dõi ai đã tạo phiếu phạt trong hệ thống"
+            },
+            "status": {
+              "type": "string",
+              "enum": ["ISSUED", "PAID", "CANCELED"],
+              "_comment": "Trạng thái của phiếu phạt, giúp quản lý quá trình xử lý phạt và theo dõi tình trạng thanh toán của các khoản phạt"
+            }
+          }
+        }
+      ]
+    },
+    "Invoice": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseEntity"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string",
+              "_comment": "Mã định danh duy nhất cho mỗi hóa đơn, giúp quản lý và tra cứu dễ dàng trong hệ thống"
+            },
+            "loan_form_code": {
+              "type": "string",
+              "_comment": "Mã của phiếu mượn/thuê liên quan, giúp liên kết giữa hóa đơn và phiếu mượn tương ứng trong hệ thống"
+            },
+            "return_form_code": {
+              "type": "string",
+              "_comment": "Mã của phiếu trả liên quan, giúp liên kết giữa hóa đơn và phiếu trả tương ứng trong hệ thống"
+            },
+            "penalty_form_code": {
+              "type": ["string", "null"],
+              "_comment": "Mã của phiếu phạt liên quan, giúp liên kết giữa hóa đơn và phiếu phạt tương ứng trong hệ thống"
+            },
+            "total_amount": {
+              "type": "integer",
+              "_comment": "Tổng số tiền trên hóa đơn, giúp quản lý các khoản thu một cách chính xác và minh bạch trong hệ thống"
+            },
+            "created_by": {
+              "type": "integer",
+              "_comment": "ID của nhân viên tạo hóa đơn, giúp theo dõi ai đã tạo hóa đơn trong hệ thống"
+            },
+            "status": {
+              "type": "string",
+              "enum": ["ISSUED", "PAID", "CANCELED"],
+              "_comment": "Trạng thái của hóa đơn, giúp quản lý quá trình xử lý hóa đơn và theo dõi tình trạng thanh toán của các khoản thu"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "properties": {
+    "users": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/definitions/User"
+      },
+      "description": "Danh sách người dùng"
+    },
+    "employees": {
+      "type": "array",
+      "uniqueItems": true,
+      "description": "Danh sách nhân viên",
+      "items": {
+        "$ref": "#/definitions/Employee"
+      }
+    },
+    "revoke_tokens": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/RevokeToken"
+      }
+    },
+    "warehouses": {
+      "type": "array",
+      "description": "Danh sách kho",
+      "items": {
+        "$ref": "#/definitions/Warehouse"
+      }
+    },
+    "images": {
+      "type": "array",
+      "uniqueItems": true,
+      "description": "Danh sách ảnh gồm thông tin metadata ảnh",
+      "items": {
+        "$ref": "#/definitions/ImageGallery"
+      }
+    },
+    "categories": {
+      "type": "array",
+      "uniqueItems": true,
+      "description": "Danh sách danh mục",
+      "items": {
+        "$ref": "#/definitions/ItemCategory"
+      }
+    },
+    "costumes": {
+      "type": "array",
+      "description": "Danh sách trang phục",
+      "items": {
+        "$ref": "#/definitions/Costume"
+      }
+    },
+    "equipment_props": {
+      "type": "array",
+      "description": "Danh sách các đạo cụ",
+      "items": {
+        "$ref": "#/definitions/EquipmentProps"
+      }
+    },
+    "inventory": {
+      "type": "array",
+      "description": "Danh sách tồn kho, quản lý số lượng và tình trạng của từng sản phẩm trong kho",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/definitions/Inventory"
+      }
+    },
+
+    "loan_forms": {
+      "type": "array",
+      "description": "Danh sách phiếu mượn/thuê, quản lý thông tin về các phiếu mượn và thuê trang phục/đạo cụ",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/definitions/LoanForm"
+      }
+    },
+    "loan_form_items": {
+      "type": "array",
+      "description": "Danh sách mục hàng hóa trong các phiếu mượn/thuê, quản lý chi tiết các sản phẩm liên quan đến từng phiếu mượn/thuê",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/definitions/LoanFormItem"
+      }
+    },
+    "return_forms": {
+      "type": "array",
+      "description": "Danh sách phiếu trả hàng, quản lý thông tin về các phiếu trả hàng sau khi mượn/thuê trang phục/đạo cụ",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/definitions/ReturnForm"
+      }
+    },
+    "return_form_items": {
+      "type": "array",
+      "description": "Danh sách mục hàng hóa trong các phiếu trả hàng, quản lý chi tiết các sản phẩm liên quan đến từng phiếu trả hàng",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/definitions/ReturnItem"
+      }
+    },
+    "penalty_forms": {
+      "type": "array",
+      "description": "Danh sách phiếu phạt, quản lý thông tin về các phiếu phạt liên quan đến việc mượn/thuê và trả hàng",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/definitions/PenentyForm"
+      }
+    },
+    "invoices": {
+      "type": "array",
+      "description": "Danh sách hóa đơn, quản lý thông tin về các hóa đơn liên quan đến việc mượn/thuê, trả hàng và phạt",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/definitions/Invoice"
+      }
+    }
+  }
+}

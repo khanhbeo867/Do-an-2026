@@ -1,0 +1,7 @@
+$kind: http-request
+name: Pay Penalty Form
+description: |-
+  Đánh dấu phiếu phạt đã thanh toán (PAID).
+method: POST
+url: '{{baseUrl}}/penalty-forms/1/pay'
+order: 4000

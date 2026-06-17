@@ -1,0 +1,35 @@
+$kind: http-request
+description: |-
+  Lấy thông tin chi tiết của một trang phục theo ID, bao gồm hình ảnh, các biến thể kích cỡ, màu sắc và giá thuê.
+
+  **Path Variables:**
+
+  | Tham số | Kiểu | Mô tả |
+  |---------|------|-------|
+  | id | integer | ID của trang phục cần lấy |
+
+  **Response:**
+
+  - 200 OK: Đối tượng Costume đầy đủ thông tin.
+  - 404 Not Found: Không tìm thấy trang phục.
+url: "{{baseUrl}}/costumes/:id"
+method: GET
+pathVariables:
+  - key: id
+    value: ""
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: text
+  content: ""
+order: 3000

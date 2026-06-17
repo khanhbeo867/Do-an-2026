@@ -1,0 +1,9 @@
+$kind: http-request
+name: Get Penalty Form
+description: |-
+  Lấy chi tiết một phiếu phạt theo `id`, bao gồm dữ liệu join liên quan loan/return.
+method: GET
+url: '{{baseUrl}}/penalty-forms/:id'
+order: 1500
+pathVariables:
+  id: '1'

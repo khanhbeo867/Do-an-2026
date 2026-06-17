@@ -1,0 +1,13 @@
+$kind: http-request
+description: |-
+  Lấy danh sách tất cả trang phục trong hệ thống. Hỗ trợ lọc theo danh mục, giới tính, kích cỡ và từ khóa tìm kiếm.
+
+  **Response:**
+
+  - 200 OK: Mảng các đối tượng Costume.
+url: "{{baseUrl}}/costumes"
+method: GET
+body:
+  type: text
+  content: ""
+order: 1000

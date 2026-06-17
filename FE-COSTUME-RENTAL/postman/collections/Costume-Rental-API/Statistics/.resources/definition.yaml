@@ -1,0 +1,18 @@
+$kind: collection
+name: Statistics
+description: |-
+  ## Thống kê vận hành
+
+  Nhóm API phục vụ dashboard thống kê theo khoảng thời gian và phương thức mượn/thuê.
+
+  ### Bảng định nghĩa entity liên quan
+
+  | Entity | Trường trọng yếu | Ghi chú |
+  |---|---|---|
+  | `loan_forms` | `code`, `method`, `status`, `due_date`, `created_at` | Nguồn dữ liệu chính để đếm đơn mới, đơn quá hạn, đơn đến hạn hôm nay |
+  | `return_forms` | `code`, `loan_form_code`, `status`, `created_at` | Dùng tính tỷ lệ trả đúng hạn |
+  | `invoices` | `payment_amount`, `paid_at`, `status`, `loan_form_code`, `return_form_code` | Dùng tính doanh thu |
+  | `loan_form_items` | `loan_form_code`, `sku`, `loan_item_name` | Dùng tính top sản phẩm thuê nhiều/ít |
+
+  ### Endpoint
+  - GET /api/statistics

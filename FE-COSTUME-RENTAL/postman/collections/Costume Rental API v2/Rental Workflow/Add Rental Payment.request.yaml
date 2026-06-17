@@ -1,0 +1,57 @@
+$kind: http-request
+description: Thêm một khoản thanh toán vào phiếu thuê.
+url: "{{baseUrl}}/rental-slips/:id/payments"
+method: POST
+headers:
+  Content-Type: application/json
+pathVariables:
+  - key: id
+    value: "3"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: json
+  content: |-
+    {
+      "payment_type": "DEPOSIT",
+      "payment_date": "2026-05-19",
+      "amount": 50000,
+      "payment_method": "CASH",
+      "reference_no": "DEP-001",
+      "note": "Tiền cọc"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "payment_type": {
+          "type": "string"
+        },
+        "payment_date": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "number"
+        },
+        "payment_method": {
+          "type": "string"
+        },
+        "reference_no": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    }
+order: 16000

@@ -1,0 +1,23 @@
+$kind: http-request
+description: Hiển thị một vật tư trong kho.
+url: "{{baseUrl}}/inventory/:id"
+method: GET
+pathVariables:
+  - key: id
+    value: "3"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: text
+  content: ""
+order: 2000

@@ -1,0 +1,23 @@
+$kind: http-request
+description: Duyệt phiếu mượn nội bộ.
+url: "{{baseUrl}}/internal-borrow-slips/:id/approve"
+method: POST
+pathVariables:
+  - key: id
+    value: "3"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: text
+  content: ""
+order: 9000

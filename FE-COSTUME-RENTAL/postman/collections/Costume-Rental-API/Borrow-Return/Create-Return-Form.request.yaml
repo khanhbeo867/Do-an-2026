@@ -1,0 +1,23 @@
+$kind: http-request
+name: Create Return Form
+description: |-
+  **Workflow step 5**: Tạo phiếu trả theo `loan_form_code` đang ở trạng thái `BORROWING`.
+
+  Nếu không truyền `skus`, hệ thống tự lấy toàn bộ SKU từ `loan_form_items`.
+method: POST
+url: '{{baseUrl}}/return-forms'
+order: 6000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "loan_form_code": "LF00001",
+      "returnee_name": "Nguyen Van A",
+      "returnee_phone": "0909123456",
+      "returnee_citizen_id_number": "031123456789",
+      "remark": "Khach tra do vao cuoi buoi",
+      "skus": ["TP-ADNH-VOL200-0001", "TP-ADNH-VOL200-0002"]
+    }

@@ -1,0 +1,34 @@
+﻿$kind: collection
+name: Images-Gallery
+description: |-
+  ## Quản lý Thư viện Hình ảnh
+
+  Nhóm các API quản lý hình ảnh trong hệ thống cho thuê trang phục. Thư viện hình ảnh lưu trữ tất cả ảnh sản phẩm (trang phục, đạo cụ) và hỗ trợ upload, truy xuất cũng như quản lý metadata của từng file ảnh.
+
+  ### Entity liên quan
+  - **ImageGallery**: Hình ảnh với các trường `id`, `file_name`, `size` (kích thước file), `dest` (URL truy cập), `mime_type` (image/png, image/jpg, image/jpeg, image/webp), `category_id` (danh mục liên kết tùy chọn).
+
+  ### Endpoints
+  - **GET /api/images-gallery** – Lấy danh sách tất cả hình ảnh trong thư viện, hỗ trợ lọc theo `category_id` và `mime_type`.
+  - **GET /api/images-gallery/:id** – Lấy thông tin chi tiết (metadata) của một hình ảnh theo `id`.
+  - **GET /api/images-gallery/file/:filename** – Truy xuất trực tiếp file ảnh đã upload theo tên file, trả về binary stream.
+  - **POST /api/images-gallery/upload** – Upload hình ảnh mới lên hệ thống sử dụng `multipart/form-data`. Hỗ trợ các định dạng PNG, JPG, JPEG, WEBP.
+  - **PUT /api/images-gallery/:id** – Cập nhật metadata của hình ảnh theo `id` (tên file, danh mục liên kết).
+  - **DELETE /api/images-gallery/:id** – Xóa hình ảnh khỏi thư viện theo `id` (yêu cầu quyền ADMIN).
+
+  ## Schema: ImageGallery
+
+  | Trường | Kiểu | Mô tả |
+  |--------|------|-------|
+  | `id` | integer | Khóa chính, định danh duy nhất |
+  | `file_name` | string | Tên file ảnh trên server |
+  | `size` | integer | Kích thước file tính bằng byte |
+  | `dest` | string (url) | URL đầy đủ để truy cập file ảnh |
+  | `mime_type` | enum | Định dạng file: `image/png`, `image/jpg`, `image/jpeg`, `image/webp` |
+  | `category_id` | integer | Liên kết với danh mục (tùy chọn) |
+  | `is_active` | boolean | Trạng thái kích hoạt (mặc định: `true`) |
+  | `created_at` | datetime | Thời điểm upload |
+  | `updated_at` | datetime / null | Thời điểm cập nhật gần nhất |
+  | `created_by` | integer | ID người upload |
+  | `updated_by` | integer | ID người cập nhật gần nhất |
+  | `remark` | string | Ghi chú thêm |

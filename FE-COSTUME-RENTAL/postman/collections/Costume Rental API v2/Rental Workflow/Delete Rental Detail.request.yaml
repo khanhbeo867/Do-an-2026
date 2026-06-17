@@ -1,0 +1,37 @@
+$kind: http-request
+description: Xóa một dòng chi tiết thuê.
+url: "{{baseUrl}}/rental-slips/:id/details/:detailId"
+method: DELETE
+pathVariables:
+  - key: id
+    value: "3"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+  - key: detailId
+    value: "1"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: text
+  content: ""
+order: 7000

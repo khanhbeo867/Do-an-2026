@@ -1,0 +1,12 @@
+﻿$kind: http-request
+name: List Images
+description: |-
+  Lấy danh sách tất cả hình ảnh trong thư viện. Hỗ trợ lọc theo category_id và mime_type.
+
+  **Response:**
+
+  - 200 OK: Mảng các đối tượng ImageGallery.
+method: GET
+url: '{{baseUrl}}/images-gallery'
+examples: .resources/List-Images.resources/examples
+order: 1000

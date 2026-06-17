@@ -1,0 +1,11 @@
+$kind: collection
+name: Costume Rental API v2
+variables:
+  baseUrl: "{{baseUrl}}"
+  bearerToken: ""
+auth:
+  - id: c9a70101-7916-4a20-b1d2-2a0b0ffd9e3a
+    type: bearer
+    name: bearer auth
+    credentials:
+      token: "{{token}}"

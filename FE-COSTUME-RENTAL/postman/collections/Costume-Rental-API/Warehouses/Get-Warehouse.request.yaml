@@ -1,0 +1,21 @@
+﻿$kind: http-request
+name: Get Warehouse
+description: |-
+  Lấy thông tin chi tiết của một kho hàng theo ID, bao gồm thông tin người quản lý và thống kê tồn kho.
+
+  **Path Variables:**
+
+  | Tham số | Kiểu | Mô tả |
+  |---------|------|-------|
+  | id | integer | ID của kho cần lấy |
+
+  **Response:**
+
+  - 200 OK: Đối tượng Warehouse đầy đủ thông tin.
+  - 404 Not Found: Không tìm thấy kho.
+method: GET
+url: '{{baseUrl}}/warehouses/:id'
+order: 2000
+pathVariables:
+  - key: id
+    value: ''

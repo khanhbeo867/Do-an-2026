@@ -1,0 +1,25 @@
+$kind: http-request
+name: Inspect Return Form
+description: |-
+  **Workflow step 7**: Cập nhật `condition_on_return` cho từng SKU trả và chuyển phiếu sang `INSPECTED`.
+method: POST
+url: '{{baseUrl}}/return-forms/1/inspect'
+order: 7000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "items": [
+        {
+          "sku": "TP-ADNH-VOL200-0001",
+          "condition_on_return": "GOOD"
+        },
+        {
+          "sku": "TP-ADNH-VOL200-0002",
+          "condition_on_return": "DAMAGED"
+        }
+      ]
+    }

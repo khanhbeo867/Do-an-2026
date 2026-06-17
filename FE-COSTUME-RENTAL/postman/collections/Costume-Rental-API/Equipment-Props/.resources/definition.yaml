@@ -1,0 +1,36 @@
+﻿$kind: collection
+name: Equipment-Props
+description: |-
+  ## Quản lý Đạo cụ & Thiết bị
+
+  Nhóm các API quản lý đạo cụ và thiết bị hỗ trợ trong hệ thống cho thuê. Đây là nhóm sản phẩm bổ sung bên cạnh trang phục, bao gồm các vật dụng, phụ kiện và thiết bị phục vụ cho các buổi biểu diễn, chụp ảnh hoặc sự kiện.
+
+  ### Entity liên quan
+  - **EquipmentProps**: Đạo cụ/thiết bị với các trường `id`, `name`, `slug`, `category_id`, `unit`, `description`, `images[]`, `hashtags[]`. Khác với trang phục, đạo cụ không có trường kích cỡ.
+  - **ItemCategory**: Danh mục đạo cụ liên kết qua `category_id` (type = EQUIPMENT_PROPS).
+
+  ### Endpoints
+  - **GET /api/equipment-props** – Lấy danh sách đạo cụ/thiết bị, hỗ trợ lọc theo danh mục và từ khóa tìm kiếm.
+  - **GET /api/equipment-props/:id** – Lấy thông tin chi tiết của một đạo cụ/thiết bị theo `id`, bao gồm hình ảnh và mô tả.
+  - **POST /api/equipment-props** – Tạo mới đạo cụ/thiết bị với đầy đủ thông tin sản phẩm (yêu cầu quyền ADMIN).
+  - **PUT /api/equipment-props/:id** – Cập nhật thông tin đạo cụ/thiết bị theo `id` (yêu cầu quyền ADMIN).
+  - **DELETE /api/equipment-props/:id** - Xóa đạo cụ/thiết bị theo `id` (yêu cầu quyền ADMIN).
+
+  ## Schema: EquipmentProps
+
+  | Trường | Kiểu | Mô tả |
+  |--------|------|-------|
+  | `id` | integer | Khóa chính, định danh duy nhất |
+  | `name` | string | Tên đạo cụ/thiết bị |
+  | `slug` | string | Slug URL thân thiện, tự động sinh từ `name` |
+  | `category_id` | integer | Liên kết với danh mục (ItemCategory, type = EQUIPMENT_PROPS) |
+  | `unit` | string | Đơn vị tính (ví dụ: cái, bộ, chiếc) |
+  | `description` | string | Mô tả chi tiết đạo cụ/thiết bị |
+  | `images` | array<integer> | Danh sách ID ảnh liên kết (ImageGallery) |
+  | `hashtags` | array<string> | Danh sách hashtag phân loại, không trùng lặp |
+  | `is_active` | boolean | Trạng thái kích hoạt (mặc định: `true`) |
+  | `created_at` | datetime | Thời điểm tạo |
+  | `updated_at` | datetime / null | Thời điểm cập nhật gần nhất |
+  | `created_by` | integer | ID người tạo |
+  | `updated_by` | integer | ID người cập nhật gần nhất |
+  | `remark` | string | Ghi chú thêm |

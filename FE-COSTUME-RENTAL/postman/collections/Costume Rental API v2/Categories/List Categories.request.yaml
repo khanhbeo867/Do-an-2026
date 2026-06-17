@@ -1,0 +1,27 @@
+$kind: http-request
+description: |-
+  Lấy danh sách tất cả danh mục sản phẩm trong hệ thống. Hỗ trợ lọc theo loại danh mục và những sản phẩm liên kết.
+
+  **Query Params:**
+
+  | Tham số | Kiểu | Mô tả |
+  | --- | --- | --- |
+  | _embed | string | Những dữ liệu liên kết (ví dụ: costumes) |
+  | type:eq | enum | Lọc theo loại: COSTUME hoặc EQUIPMENT_PROPS |
+
+  **Response:**
+
+  - 200 OK: Mảng các đối tượng ItemCategory.
+url: "{{baseUrl}}/categories?_embed=costumes&type:eq=EQUIPMENT_PROPS"
+method: GET
+queryParams:
+  - key: _embed
+    value: costumes
+    $type: string
+  - key: type:eq
+    value: EQUIPMENT_PROPS
+    $type: string
+body:
+  type: text
+  content: ""
+order: 1000

@@ -1,0 +1,42 @@
+$kind: http-request
+description: Tạo phiếu mượn nội bộ mới.
+url: "{{baseUrl}}/internal-borrow-slips"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "employee_id": 2,
+      "warehouse_id": 2,
+      "borrow_date": "2026-05-19",
+      "due_date": "2026-05-22",
+      "purpose": "Sử dụng nội bộ",
+      "remarks": null
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "employee_id": {
+          "type": "integer"
+        },
+        "warehouse_id": {
+          "type": "integer"
+        },
+        "borrow_date": {
+          "type": "string"
+        },
+        "due_date": {
+          "type": "string"
+        },
+        "purpose": {
+          "type": "string"
+        },
+        "remarks": {
+          "type": "string"
+        }
+      }
+    }
+order: 2000

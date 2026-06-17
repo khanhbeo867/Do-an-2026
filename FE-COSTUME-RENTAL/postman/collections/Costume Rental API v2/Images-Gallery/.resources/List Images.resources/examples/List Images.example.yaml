@@ -1,0 +1,640 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/images-gallery"
+  method: GET
+  headers:
+    - key: Accept
+      value: application/json
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+  body:
+    type: text
+    content: ""
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: vary
+      value: Origin, Accept-Encoding
+      $type: string
+    - key: access-control-allow-credentials
+      value: "true"
+      $type: boolean
+    - key: cache-control
+      value: no-cache
+      $type: string
+    - key: pragma
+      value: no-cache
+      $type: string
+    - key: expires
+      value: "-1"
+      $type: integer
+    - key: etag
+      value: W/"3848-vv6AKNLAQXc6fgpQJGf8F16CJPY"
+      $type: string
+    - key: content-encoding
+      value: br
+      $type: string
+    - key: x-powered-by
+      value: Express
+      $type: string
+    - key: date
+      value: Thu, 14 May 2026 04:53:58 GMT
+      $type: string
+    - key: transfer-encoding
+      value: chunked
+      $type: string
+  body:
+    type: json
+    content: |-
+      [
+        {
+          "file_name": "1777023502551-ao-dai-gam-bong-nhieu-mau-nu.webp",
+          "size": 36840,
+          "dest": "/images/1777023502551-ao-dai-gam-bong-nhieu-mau-nu.webp",
+          "mime_type": "image/webp",
+          "category_id": 1,
+          "is_active": true,
+          "created_by": {
+            "username": "quanghiep031",
+            "password": "$2b$10$K3OV2a6070bTMQngIEewseBH0cbE/uWHqR0fxl5ibvO9WTPM1g1yG",
+            "role": "ADMIN",
+            "employee_id": 1,
+            "is_active": true,
+            "created_at": "2026-04-20T04:35:49.640Z",
+            "updated_at": "2026-04-23T09:19:17.938Z",
+            "id": 1,
+            "employee": {
+              "id": 1,
+              "user_id": 1,
+              "work_status": "ACTIVE",
+              "employee_code": "D00001",
+              "position": "MANAGER",
+              "hire_date": "2020-01-01",
+              "full_name": "Quang Hiệp",
+              "phone": "0336089988",
+              "email": "quanghiep03198@gmail.com",
+              "address": "Hải Phòng",
+              "citizen_id_number": "031098005468",
+              "is_active": true,
+              "created_at": "2026-04-21T15:43:42.651Z"
+            }
+          },
+          "created_at": "2026-04-24T09:38:22.551Z",
+          "updated_at": "2026-04-24T16:26:33.871Z",
+          "id": 2
+        },
+        {
+          "file_name": "1777023502553-ao-tac-cho-nu-mau-cam.webp",
+          "size": 49296,
+          "dest": "/images/1777023502553-ao-tac-cho-nu-mau-cam.webp",
+          "mime_type": "image/webp",
+          "category_id": 1,
+          "is_active": true,
+          "created_by": {
+            "username": "quanghiep031",
+            "password": "$2b$10$K3OV2a6070bTMQngIEewseBH0cbE/uWHqR0fxl5ibvO9WTPM1g1yG",
+            "role": "ADMIN",
+            "employee_id": 1,
+            "is_active": true,
+            "created_at": "2026-04-20T04:35:49.640Z",
+            "updated_at": "2026-04-23T09:19:17.938Z",
+            "id": 1,
+            "employee": {
+              "id": 1,
+              "user_id": 1,
+              "work_status": "ACTIVE",
+              "employee_code": "D00001",
+              "position": "MANAGER",
+              "hire_date": "2020-01-01",
+              "full_name": "Quang Hiệp",
+              "phone": "0336089988",
+              "email": "quanghiep03198@gmail.com",
+              "address": "Hải Phòng",
+              "citizen_id_number": "031098005468",
+              "is_active": true,
+              "created_at": "2026-04-21T15:43:42.651Z"
+            }
+          },
+          "created_at": "2026-04-24T09:38:22.554Z",
+          "updated_at": null,
+          "id": 4
+        },
+        {
+          "file_name": "AO-TAC-MAU-XANH-MINT-BAC-HA-600x600.webp",
+          "size": 19734,
+          "dest": "/images/AO-TAC-MAU-XANH-MINT-BAC-HA-600x600.webp",
+          "mime_type": "image/webp",
+          "category_id": 1,
+          "is_active": true,
+          "created_by": {
+            "username": "quanghiep031",
+            "password": "$2b$10$K3OV2a6070bTMQngIEewseBH0cbE/uWHqR0fxl5ibvO9WTPM1g1yG",
+            "role": "ADMIN",
+            "employee_id": 1,
+            "is_active": true,
+            "created_at": "2026-04-20T04:35:49.640Z",
+            "updated_at": "2026-04-23T09:19:17.938Z",
+            "id": 1,
+            "employee": {
+              "id": 1,
+              "user_id": 1,
+              "work_status": "ACTIVE",
+              "employee_code": "D00001",
+              "position": "MANAGER",
+              "hire_date": "2020-01-01",
+              "full_name": "Quang Hiệp",
+              "phone": "0336089988",
+              "email": "quanghiep03198@gmail.com",
+              "address": "Hải Phòng",
+              "citizen_id_number": "031098005468",
+              "is_active": true,
+              "created_at": "2026-04-21T15:43:42.651Z"
+            }
+          },
+          "created_at": "2026-04-24T09:38:22.567Z",
+          "updated_at": "2026-05-12T03:21:17.673Z",
+          "id": 5
+        },
+        {
+          "file_name": "AO-TAC-NU-MAU-HONG.webp",
+          "size": 18522,
+          "dest": "/images/AO-TAC-NU-MAU-HONG.webp",
+          "mime_type": "image/webp",
+          "category_id": 1,
+          "is_active": true,
+          "created_by": {
+            "username": "quanghiep031",
+            "password": "$2b$10$K3OV2a6070bTMQngIEewseBH0cbE/uWHqR0fxl5ibvO9WTPM1g1yG",
+            "role": "ADMIN",
+            "employee_id": 1,
+            "is_active": true,
+            "created_at": "2026-04-20T04:35:49.640Z",
+            "updated_at": "2026-04-23T09:19:17.938Z",
+            "id": 1,
+            "employee": {
+              "id": 1,
+              "user_id": 1,
+              "work_status": "ACTIVE",
+              "employee_code": "D00001",
+              "position": "MANAGER",
+              "hire_date": "2020-01-01",
+              "full_name": "Quang Hiệp",
+              "phone": "0336089988",
+              "email": "quanghiep03198@gmail.com",
+              "address": "Hải Phòng",
+              "citizen_id_number": "031098005468",
+              "is_active": true,
+              "created_at": "2026-04-21T15:43:42.651Z"
+            }
+          },
+          "created_at": "2026-04-24T09:38:22.579Z",
+          "updated_at": "2026-05-12T03:21:46.850Z",
+          "id": 6
+        },
+        {
+          "file_name": "1777046950675-vn-11134207-7ras8-m0zo4auo8j6jec-1728118676279.webp",
+          "size": 306928,
+          "dest": "/images/1777046950675-vn-11134207-7ras8-m0zo4auo8j6jec-1728118676279.webp",
+          "mime_type": "image/webp",
+          "item_type": "EQUIPMENT_PROPS",
+          "is_active": true,
+          "created_by": {
+            "username": "quanghiep031",
+            "password": "$2b$10$K3OV2a6070bTMQngIEewseBH0cbE/uWHqR0fxl5ibvO9WTPM1g1yG",
+            "role": "ADMIN",
+            "employee_id": 1,
+            "is_active": true,
+            "created_at": "2026-04-20T04:35:49.640Z",
+            "updated_at": "2026-04-23T09:19:17.938Z",
+            "id": 1,
+            "employee": {
+              "id": 1,
+              "user_id": 1,
+              "work_status": "ACTIVE",
+              "employee_code": "D00001",
+              "position": "MANAGER",
+              "hire_date": "2020-01-01",
+              "full_name": "Quang Hiệp",
+              "phone": "0336089988",
+              "email": "quanghiep03198@gmail.com",
+              "address": "Hải Phòng",
+              "citizen_id_number": "031098005468",
+              "is_active": true,
+              "created_at": "2026-04-21T15:43:42.651Z"
+            }
+          },
+          "created_at": "2026-04-24T16:09:10.676Z",
+          "updated_at": null,
+          "category_id": 5,
+          "id": 7
+        },
+        {
+          "file_name": "ao-dai-cach-tan-tim-1.webp",
+          "size": 65950,
+          "dest": "/images/ao-dai-cach-tan-tim-1.webp",
+          "mime_type": "image/webp",
+          "category_id": 7,
+          "created_by": {
+            "username": "quanghiep031",
+            "password": "$2b$10$K3OV2a6070bTMQngIEewseBH0cbE/uWHqR0fxl5ibvO9WTPM1g1yG",
+            "role": "ADMIN",
+            "employee_id": 1,
+            "is_active": true,
+            "created_at": "2026-04-20T04:35:49.640Z",
+            "updated_at": "2026-04-23T09:19:17.938Z",
+            "id": 1,
+            "employee": {
+              "id": 1,
+              "user_id": 1,
+              "work_status": "ACTIVE",
+              "employee_code": "D00001",
+              "position": "MANAGER",
+              "hire_date": "2020-01-01",
+              "full_name": "Quang Hiệp",
+              "phone": "0336089988",
+              "email": "quanghiep03198@gmail.com",
+              "address": "Hải Phòng",
+              "citizen_id_number": "031098005468",
+              "is_active": true,
+              "created_at": "2026-04-21T15:43:42.651Z"
+            }
+          },
+          "is_active": true,
+          "created_at": "2026-05-11T14:35:40.957Z",
+          "updated_at": "2026-05-12T03:22:32.020Z",
+          "id": 8
+        },
+        {
+          "file_name": "1778510140958-2-8.webp",
+          "size": 77488,
+          "dest": "/images/1778510140958-2-8.webp",
+          "mime_type": "image/webp",
+          "category_id": 7,
+          "created_by": {
+            "username": "quanghiep031",
+            "password": "$2b$10$K3OV2a6070bTMQngIEewseBH0cbE/uWHqR0fxl5ibvO9WTPM1g1yG",
+            "role": "ADMIN",
+            "employee_id": 1,
+            "is_active": true,
+            "created_at": "2026-04-20T04:35:49.640Z",
+            "updated_at": "2026-04-23T09:19:17.938Z",
+            "id": 1,
+            "employee": {
+              "id": 1,
+              "user_id": 1,
+              "work_status": "ACTIVE",
+              "employee_code": "D00001",
+              "position": "MANAGER",
+              "hire_date": "2020-01-01",
+              "full_name": "Quang Hiệp",
+              "phone": "0336089988",
+              "email": "quanghiep03198@gmail.com",
+              "address": "Hải Phòng",
+              "citizen_id_number": "031098005468",
+              "is_active": true,
+              "created_at": "2026-04-21T15:43:42.651Z"
+            }
+          },
+          "is_active": true,
+          "created_at": "2026-05-11T14:35:40.959Z",
+          "updated_at": null,
+          "id": 9
+        },
+        {
+          "file_name": "1778510140971-3-8.webp",
+          "size": 73736,
+          "dest": "/images/1778510140971-3-8.webp",
+          "mime_type": "image/webp",
+          "category_id": 7,
+          "created_by": {
+            "username": "quanghiep031",
+            "password": "$2b$10$K3OV2a6070bTMQngIEewseBH0cbE/uWHqR0fxl5ibvO9WTPM1g1yG",
+            "role": "ADMIN",
+            "employee_id": 1,
+            "is_active": true,
+            "created_at": "2026-04-20T04:35:49.640Z",
+            "updated_at": "2026-04-23T09:19:17.938Z",
+            "id": 1,
+            "employee": {
+              "id": 1,
+              "user_id": 1,
+              "work_status": "ACTIVE",
+              "employee_code": "D00001",
+              "position": "MANAGER",
+              "hire_date": "2020-01-01",
+              "full_name": "Quang Hiệp",
+              "phone": "0336089988",
+              "email": "quanghiep03198@gmail.com",
+              "address": "Hải Phòng",
+              "citizen_id_number": "031098005468",
+              "is_active": true,
+              "created_at": "2026-04-21T15:43:42.651Z"
+            }
+          },
+          "is_active": true,
+          "created_at": "2026-05-11T14:35:40.971Z",
+          "updated_at": null,
+          "id": 10
+        },
+        {
+          "file_name": "1778510140981-5-8-600x901.webp",
+          "size": 52522,
+          "dest": "/images/1778510140981-5-8-600x901.webp",
+          "mime_type": "image/webp",
+          "category_id": 7,
+          "created_by": {
+            "username": "quanghiep031",
+            "password": "$2b$10$K3OV2a6070bTMQngIEewseBH0cbE/uWHqR0fxl5ibvO9WTPM1g1yG",
+            "role": "ADMIN",
+            "employee_id": 1,
+            "is_active": true,
+            "created_at": "2026-04-20T04:35:49.640Z",
+            "updated_at": "2026-04-23T09:19:17.938Z",
+            "id": 1,
+            "employee": {
+              "id": 1,
+              "user_id": 1,
+              "work_status": "ACTIVE",
+              "employee_code": "D00001",
+              "position": "MANAGER",
+              "hire_date": "2020-01-01",
+              "full_name": "Quang Hiệp",
+              "phone": "0336089988",
+              "email": "quanghiep03198@gmail.com",
+              "address": "Hải Phòng",
+              "citizen_id_number": "031098005468",
+              "is_active": true,
+              "created_at": "2026-04-21T15:43:42.651Z"
+            }
+          },
+          "is_active": true,
+          "created_at": "2026-05-11T14:35:40.982Z",
+          "updated_at": null,
+          "id": 11
+        },
+        {
+          "file_name": "1778513299684-il_794xN.webp",
+          "size": 54916,
+          "dest": "/images/1778513299684-il_794xN.webp",
+          "mime_type": "image/webp",
+          "category_id": 7,
+          "created_by": {
+            "username": "quanghiep031",
+            "password": "$2b$10$K3OV2a6070bTMQngIEewseBH0cbE/uWHqR0fxl5ibvO9WTPM1g1yG",
+            "role": "ADMIN",
+            "employee_id": 1,
+            "is_active": true,
+            "created_at": "2026-04-20T04:35:49.640Z",
+            "updated_at": "2026-04-23T09:19:17.938Z",
+            "id": 1,
+            "employee": {
+              "id": 1,
+              "user_id": 1,
+              "work_status": "ACTIVE",
+              "employee_code": "D00001",
+              "position": "MANAGER",
+              "hire_date": "2020-01-01",
+              "full_name": "Quang Hiệp",
+              "phone": "0336089988",
+              "email": "quanghiep03198@gmail.com",
+              "address": "Hải Phòng",
+              "citizen_id_number": "031098005468",
+              "is_active": true,
+              "created_at": "2026-04-21T15:43:42.651Z"
+            }
+          },
+          "is_active": true,
+          "created_at": "2026-05-11T15:28:19.685Z",
+          "updated_at": null,
+          "id": 12
+        },
+        {
+          "file_name": "1778513299686-il_794xN.webp",
+          "size": 53468,
+          "dest": "/images/1778513299686-il_794xN.webp",
+          "mime_type": "image/webp",
+          "category_id": 7,
+          "created_by": {
+            "username": "quanghiep031",
+            "password": "$2b$10$K3OV2a6070bTMQngIEewseBH0cbE/uWHqR0fxl5ibvO9WTPM1g1yG",
+            "role": "ADMIN",
+            "employee_id": 1,
+            "is_active": true,
+            "created_at": "2026-04-20T04:35:49.640Z",
+            "updated_at": "2026-04-23T09:19:17.938Z",
+            "id": 1,
+            "employee": {
+              "id": 1,
+              "user_id": 1,
+              "work_status": "ACTIVE",
+              "employee_code": "D00001",
+              "position": "MANAGER",
+              "hire_date": "2020-01-01",
+              "full_name": "Quang Hiệp",
+              "phone": "0336089988",
+              "email": "quanghiep03198@gmail.com",
+              "address": "Hải Phòng",
+              "citizen_id_number": "031098005468",
+              "is_active": true,
+              "created_at": "2026-04-21T15:43:42.651Z"
+            }
+          },
+          "is_active": true,
+          "created_at": "2026-05-11T15:28:19.687Z",
+          "updated_at": null,
+          "id": 13
+        },
+        {
+          "file_name": "1778513299700-il_794xN.webp",
+          "size": 53056,
+          "dest": "/images/1778513299700-il_794xN.webp",
+          "mime_type": "image/webp",
+          "category_id": 7,
+          "created_by": {
+            "username": "quanghiep031",
+            "password": "$2b$10$K3OV2a6070bTMQngIEewseBH0cbE/uWHqR0fxl5ibvO9WTPM1g1yG",
+            "role": "ADMIN",
+            "employee_id": 1,
+            "is_active": true,
+            "created_at": "2026-04-20T04:35:49.640Z",
+            "updated_at": "2026-04-23T09:19:17.938Z",
+            "id": 1,
+            "employee": {
+              "id": 1,
+              "user_id": 1,
+              "work_status": "ACTIVE",
+              "employee_code": "D00001",
+              "position": "MANAGER",
+              "hire_date": "2020-01-01",
+              "full_name": "Quang Hiệp",
+              "phone": "0336089988",
+              "email": "quanghiep03198@gmail.com",
+              "address": "Hải Phòng",
+              "citizen_id_number": "031098005468",
+              "is_active": true,
+              "created_at": "2026-04-21T15:43:42.651Z"
+            }
+          },
+          "is_active": true,
+          "created_at": "2026-05-11T15:28:19.701Z",
+          "updated_at": null,
+          "id": 14
+        },
+        {
+          "file_name": "1778639230219-672138759_3466822183478641_3521795180160107625_n.jpg",
+          "size": 63664,
+          "dest": "/images/1778639230219-672138759_3466822183478641_3521795180160107625_n.jpg",
+          "mime_type": "image/jpeg",
+          "category_id": 7,
+          "created_by": {
+            "username": "quanghiep031",
+            "password": "$2b$10$K3OV2a6070bTMQngIEewseBH0cbE/uWHqR0fxl5ibvO9WTPM1g1yG",
+            "role": "ADMIN",
+            "employee_id": 1,
+            "is_active": true,
+            "created_at": "2026-04-20T04:35:49.640Z",
+            "updated_at": "2026-04-23T09:19:17.938Z",
+            "id": 1,
+            "employee": {
+              "id": 1,
+              "user_id": 1,
+              "work_status": "ACTIVE",
+              "employee_code": "D00001",
+              "position": "MANAGER",
+              "hire_date": "2020-01-01",
+              "full_name": "Quang Hiệp",
+              "phone": "0336089988",
+              "email": "quanghiep03198@gmail.com",
+              "address": "Hải Phòng",
+              "citizen_id_number": "031098005468",
+              "is_active": true,
+              "created_at": "2026-04-21T15:43:42.651Z"
+            }
+          },
+          "is_active": true,
+          "created_at": "2026-05-13T02:27:10.220Z",
+          "updated_at": null,
+          "id": 15
+        }
+      ]
+    $type: |-
+      {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "file_name": {
+              "type": "string"
+            },
+            "size": {
+              "type": "integer"
+            },
+            "dest": {
+              "type": "string"
+            },
+            "mime_type": {
+              "type": "string"
+            },
+            "category_id": {
+              "type": "integer"
+            },
+            "is_active": {
+              "type": "boolean"
+            },
+            "created_by": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                },
+                "role": {
+                  "type": "string"
+                },
+                "employee_id": {
+                  "type": "integer"
+                },
+                "is_active": {
+                  "type": "boolean"
+                },
+                "created_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "updated_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "employee": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "user_id": {
+                      "type": "integer"
+                    },
+                    "work_status": {
+                      "type": "string"
+                    },
+                    "employee_code": {
+                      "type": "string"
+                    },
+                    "position": {
+                      "type": "string"
+                    },
+                    "hire_date": {
+                      "type": "string",
+                      "format": "date"
+                    },
+                    "full_name": {
+                      "type": "string"
+                    },
+                    "phone": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string",
+                      "format": "email"
+                    },
+                    "address": {
+                      "type": "string"
+                    },
+                    "citizen_id_number": {
+                      "type": "string"
+                    },
+                    "is_active": {
+                      "type": "boolean"
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            },
+            "created_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "updated_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "id": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+order: 1000

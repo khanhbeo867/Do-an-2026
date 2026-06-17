@@ -1,0 +1,23 @@
+$kind: http-request
+description: |-
+  Lấy danh sách tất cả người dùng trong hệ thống. Hỗ trợ mở rộng thông tin nhân viên liên kết.
+
+  **Query Params:**
+
+  | Tham số | Kiểu | Mô tả |
+  |---------|------|-------|
+  | _expand | string | Mở rộng dữ liệu liên kết (ví dụ: employee) |
+
+  **Response:**
+
+  - 200 OK: Mảng các đối tượng User, có thể kèm thông tin Employee.
+url: "{{baseUrl}}/users?_expand=employee"
+method: GET
+queryParams:
+  - key: _expand
+    value: employee
+    $type: string
+body:
+  type: text
+  content: ""
+order: 1000

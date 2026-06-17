@@ -1,0 +1,40 @@
+$kind: collection
+name: Costume Rental API
+description: |-
+  ## Costume Rental API - Mock Coverage
+
+  Collection này bám theo toàn bộ endpoint trong `mock/routes`.
+
+  ### Bảng định nghĩa entity tổng quan (theo `mock/db.schema.json`)
+
+  | Entity | Mục đích |
+  |---|---|
+  | `users` | Tài khoản đăng nhập và phân quyền |
+  | `revoke_tokens` | Token bị thu hồi khi logout |
+  | `employees` | Hồ sơ nhân sự liên kết tài khoản |
+  | `warehouses` | Kho lưu trữ theo loại sản phẩm |
+  | `categories` | Danh mục trang phục/đạo cụ |
+  | `costumes` | Danh mục sản phẩm trang phục |
+  | `images` | Metadata ảnh trong thư viện |
+  | `equipment_props` | Danh mục đạo cụ |
+  | `inventory` | Đơn vị SKU tồn kho thực tế |
+  | `loan_forms` | Phiếu mượn/thuê |
+  | `loan_form_items` | Dòng SKU thuộc phiếu mượn/thuê |
+  | `return_forms` | Phiếu trả |
+  | `return_form_items` | Dòng SKU thuộc phiếu trả |
+  | `penalty_forms` | Phiếu phạt do hư hỏng/mất |
+  | `invoices` | Hóa đơn thanh toán cuối cùng |
+
+  ### Luồng nghiệp vụ chính
+  1. Mượn/thuê: tạo phiếu, thêm item, xác nhận cọc (nếu RENT), checkout.
+  2. Trả: tạo phiếu trả, inspect từng item, complete trả.
+  3. Phạt: tạo/phát hành phiếu phạt nếu có sự cố.
+  4. Thanh toán: tạo/phát hành hóa đơn, xác nhận đã thanh toán.
+auth:
+  type: bearer
+  credentials:
+    token: '{{token}}'
+variables:
+  baseUrlLocal: http://localhost:8000
+  token: ''
+  baseUrl: ''

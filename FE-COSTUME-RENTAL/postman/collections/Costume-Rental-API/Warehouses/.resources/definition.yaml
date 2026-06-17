@@ -1,0 +1,33 @@
+﻿$kind: collection
+name: Warehouses
+description: |-
+  ## Quản lý Kho hàng
+
+  Nhóm các API quản lý kho lưu trữ sản phẩm trong hệ thống cho thuê trang phục. Kho được phân loại theo loại sản phẩm lưu trữ và được giao cho một quản lý kho chịu trách nhiệm vận hành.
+
+  ### Entity liên quan
+  - **Warehouse**: Kho hàng với các trường `id`, `name`, `type` (COSTUME/EQUIPMENT_PROPS), `managed_by` (liên kết với `Employee` có vị trí WAREHOUSE_MANAGER).
+  - **Employee**: Nhân viên quản lý kho liên kết qua `managed_by`.
+  - **Inventory**: Các bản ghi tồn kho thuộc kho này, liên kết qua `warehouse_id`.
+
+  ### Endpoints
+  - **GET /api/warehouses** – Lấy danh sách tất cả kho hàng, hỗ trợ lọc theo `type` (COSTUME hoặc EQUIPMENT_PROPS) và người quản lý.
+  - **GET /api/warehouses/:id** – Lấy thông tin chi tiết của một kho theo `id`, bao gồm thông tin người quản lý và thống kê tồn kho.
+  - **POST /api/warehouses** – Tạo kho mới với `name`, `type` và chỉ định `managed_by` (yêu cầu quyền ADMIN).
+  - **PUT /api/warehouses/:id** – Cập nhật thông tin kho theo `id`, bao gồm tên, loại và người quản lý (yêu cầu quyền ADMIN).
+  - **DELETE /api/warehouses/:id** – Xóa kho theo `id` (yêu cầu quyền ADMIN, kho phải không còn tồn kho).
+
+  ## Schema: Warehouse
+
+  | Trường | Kiểu | Mô tả |
+  |--------|------|-------|
+  | `id` | integer | Khóa chính, định danh duy nhất |
+  | `name` | string | Tên kho |
+  | `type` | enum | Loại kho: `COSTUME` (kho trang phục) hoặc `EQUIPMENT_PROPS` (kho đạo cụ) |
+  | `managed_by` | number | ID của Employee quản lý kho (vị trí WAREHOUSE_MANAGER) |
+  | `is_active` | boolean | Trạng thái kích hoạt (mặc định: `true`) |
+  | `created_at` | datetime | Thời điểm tạo kho |
+  | `updated_at` | datetime / null | Thời điểm cập nhật gần nhất |
+  | `created_by` | integer | ID người tạo |
+  | `updated_by` | integer | ID người cập nhật gần nhất |
+  | `remark` | string | Ghi chú thêm |

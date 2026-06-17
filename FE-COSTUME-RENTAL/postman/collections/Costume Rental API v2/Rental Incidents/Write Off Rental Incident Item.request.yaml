@@ -1,0 +1,37 @@
+$kind: http-request
+description: Ghi giảm vật tư trong kho của một sự cố thuê.
+url: "{{baseUrl}}/rental-incidents/:id/write-off"
+method: POST
+headers:
+  Content-Type: application/json
+pathVariables:
+  - key: id
+    value: "2"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: json
+  content: |-
+    {
+      "note": "Không thể sửa"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "note": {
+          "type": "string"
+        }
+      }
+    }
+order: 7000

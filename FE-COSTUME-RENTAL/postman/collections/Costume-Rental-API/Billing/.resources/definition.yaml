@@ -1,0 +1,40 @@
+$kind: collection
+name: Billing
+description: |-
+  ## Workflow Phạt và Thanh toán
+
+  Nhóm API phục vụ giai đoạn sau trả đồ: lập phiếu phạt (nếu có), lập hóa đơn và xác nhận thanh toán.
+
+  ### Thứ tự backend nên gọi API (sau khi complete return)
+
+  1. `POST /api/penalty-forms` nếu có SKU hư hỏng/mất.
+  2. `POST /api/penalty-forms/:id/issue` để phát hành phiếu phạt.
+  3. `POST /api/invoices` để tạo hóa đơn tổng (tiền thuê + tiền phạt).
+  4. `POST /api/invoices/:id/issue` để phát hành hóa đơn.
+  5. `POST /api/invoices/:id/pay` để xác nhận thanh toán.
+  6. Trường hợp thu phạt riêng: `POST /api/penalty-forms/:id/pay`.
+
+  ### Bảng định nghĩa entity
+
+  | Entity | Trường trọng yếu | Ghi chú |
+  |---|---|---|
+  | `penalty_forms` | `code`, `loan_form_code`, `return_form_code`, `reason`, `amount`, `status` | Phiếu phạt cho hư hỏng/mất |
+  | `invoices` | `code`, `loan_form_code`, `return_form_code`, `penalty_form_code`, `total_amount`, `payment_amount`, `status`, `payment_method` | Hóa đơn thanh toán cuối cùng |
+  | `loan_forms` | `code`, `method`, `status` | Tham chiếu nghiệp vụ gốc |
+  | `return_forms` | `code`, `status` | Tham chiếu phiếu trả |
+
+  ### Endpoints đầy đủ
+  - GET /api/penalty-forms
+  - GET /api/penalty-forms/:id
+  - POST /api/penalty-forms
+  - PATCH /api/penalty-forms/:id
+  - DELETE /api/penalty-forms/:id
+  - POST /api/penalty-forms/:id/issue
+  - POST /api/penalty-forms/:id/pay
+  - GET /api/invoices
+  - GET /api/invoices/:id
+  - POST /api/invoices
+  - PATCH /api/invoices/:id
+  - DELETE /api/invoices/:id
+  - POST /api/invoices/:id/issue
+  - POST /api/invoices/:id/pay

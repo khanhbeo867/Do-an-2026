@@ -1,0 +1,64 @@
+$kind: http-request
+description: |-
+  Tạo mới hồ sơ nhân viên trong hệ thống. Yêu cầu quyền ADMIN. Mã nhân viên (employee_code) sẽ được tự động sinh.
+
+  **Body (JSON):**
+
+  | Trường | Kiểu | Mô tả |
+  |--------|------|-------|
+  | full_name | string | Họ và tên đầy đủ của nhân viên |
+  | phone | string | Số điện thoại liên hệ |
+  | email | string | Địa chỉ email liên hệ |
+  | address | string | Địa chỉ thường trú |
+  | citizen_id_number | string | Số căn cước công dân / CMND |
+  | position | enum | Vị trí: MANAGER, WAREHOUSE_MANAGER, ORDER_PROCESSOR, TALENT, TECHNICAL_CREW, WARDROBE |
+  | work_status | enum | Trạng thái: ACTIVE, SUSPENDED, EXITED (mặc định: ACTIVE) |
+
+  **Response:**
+
+  - 201 Created: Hồ sơ nhân viên mới được tạo thành công.
+  - 400 Bad Request: Dữ liệu không hợp lệ.
+url: '{{baseUrl}}/employees'
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "full_name": "",
+      "phone": "",
+      "email": "",
+      "address": "",
+      "citizen_id_number": "",
+      "position": "",
+      "work_status": "ACTIVE"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "full_name": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "citizen_id_number": {
+          "type": "string"
+        },
+        "position": {
+          "type": "string"
+        },
+        "work_status": {
+          "type": "string"
+        }
+      }
+    }
+order: 2000

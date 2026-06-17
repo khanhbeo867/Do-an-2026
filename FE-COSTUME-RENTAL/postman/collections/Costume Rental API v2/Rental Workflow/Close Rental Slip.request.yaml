@@ -1,0 +1,37 @@
+$kind: http-request
+description: Đóng phiếu thuê đã trả sau khi tất cả sự cố đã được đóng và số dư đã được thanh toán đầy đủ.
+url: "{{baseUrl}}/rental-slips/:id/close"
+method: POST
+headers:
+  Content-Type: application/json
+pathVariables:
+  - key: id
+    value: "3"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: json
+  content: |-
+    {
+      "note": "Đóng phiếu sau khi quyết toán"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "note": {
+          "type": "string"
+        }
+      }
+    }
+order: 14000

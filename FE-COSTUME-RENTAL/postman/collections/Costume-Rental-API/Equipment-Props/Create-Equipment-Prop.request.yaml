@@ -1,0 +1,45 @@
+﻿$kind: http-request
+name: Create Equipment Prop
+description: |-
+  Tạo mới một đạo cụ/thiết bị trong hệ thống. Yêu cầu quyền ADMIN. Slug sẽ được tự động sinh từ trường name.
+
+  **Body (JSON):**
+
+  | Trường | Kiểu | Mô tả |
+  |--------|------|-------|
+  | name | string | Tên đạo cụ/thiết bị |
+  | category_id | integer | ID danh mục (ItemCategory, type = EQUIPMENT_PROPS) |
+  | rental_price_per_day | integer | Giá thuê/ngày (tối thiểu 50.000 VND) |
+  | weight_kg | number | Trọng lượng tính bằng kg |
+  | dimensions | object | Kích thước (dài x rộng x cao) |
+  | is_fragile | boolean | Có dễ vỡ/hư không (mặc định: false) |
+  | description | string | Mô tả chi tiết |
+  | images | array | Danh sách ID ảnh (ImageGallery) |
+  | unit | string | Đơn vị tính (ví dụ: cái, bộ, chiếc) |
+  | hashtags | array | Danh sách hashtag, không trùng lặp |
+
+  **Response:**
+
+  - 201 Created: Đạo cụ/thiết bị mới được tạo thành công.
+  - 400 Bad Request: Dữ liệu không hợp lệ.
+method: POST
+url: '{{baseUrl}}/equipment-props'
+order: 3000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "",
+      "category_id": null,
+      "rental_price_per_day": 50000,
+      "weight_kg": null,
+      "dimensions": null,
+      "is_fragile": false,
+      "description": null,
+      "images": [],
+      "unit": "",
+      "hashtags": []
+    }

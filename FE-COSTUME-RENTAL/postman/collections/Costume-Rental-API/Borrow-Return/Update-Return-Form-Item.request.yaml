@@ -1,0 +1,21 @@
+$kind: http-request
+name: Update Return Form Item
+description: |-
+  Cập nhật condition của một SKU trong phiếu trả.
+
+  Giá trị `condition_on_return` thường là `GOOD`, `DAMAGED`, hoặc `LOST`.
+method: PATCH
+url: '{{baseUrl}}/return-form-items/:id'
+order: 7100
+pathVariables:
+  id: '1'
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "condition_on_return": "DAMAGED",
+      "remark": "Rach vai ao"
+    }

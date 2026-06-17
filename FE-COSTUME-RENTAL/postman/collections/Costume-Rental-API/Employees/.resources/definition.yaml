@@ -1,0 +1,38 @@
+﻿$kind: collection
+name: Employees
+description: |-
+  ## Quản lý Nhân viên
+
+  Nhóm các API quản lý thông tin nhân viên trong hệ thống cho thuê trang phục. Nhân viên được phân chia theo vị trí công việc và trạng thái làm việc, liên kết trực tiếp với tài khoản người dùng trong hệ thống.
+
+  ### Entity liên quan
+  - **Employee**: Nhân viên với các trường `id`, `employee_code`, `user_id`, `full_name`, `email`, `phone`, `address`, `citizen_id_number`, `position` (MANAGER/WAREHOUSE_MANAGER/ORDER_PROCESSOR/TALENT/TECHNICAL_CREW/WARDROBE), `work_status` (ACTIVE/SUSPENDED/EXITED).
+  - **User**: Tài khoản hệ thống liên kết với nhân viên qua `employee_id`.
+
+  ### Endpoints
+  - **GET /api/employees** – Lấy danh sách nhân viên, hỗ trợ lọc theo `position`, `work_status` và tìm kiếm theo tên.
+  - **GET /api/employees/:id** – Lấy thông tin chi tiết của một nhân viên theo `id`, bao gồm thông tin liên hệ và vị trí công việc.
+  - **POST /api/employees** – Tạo hồ sơ nhân viên mới với đầy đủ thông tin cá nhân và vị trí (yêu cầu quyền ADMIN).
+  - **PUT /api/employees/:id** – Cập nhật thông tin nhân viên theo `id`, bao gồm vị trí và trạng thái làm việc (yêu cầu quyền ADMIN).
+  - **DELETE /api/employees/:id** – Xóa hồ sơ nhân viên theo `id` (yêu cầu quyền ADMIN).
+
+  ## Schema: Employee
+
+  | Trường | Kiểu | Mô tả |
+  |--------|------|-------|
+  | `id` | integer | Khóa chính, định danh duy nhất |
+  | `employee_code` | string | Mã nhân viên, duy nhất trong hệ thống |
+  | `user_id` | integer / null | Liên kết với tài khoản User (nếu có) |
+  | `full_name` | string | Họ và tên đầy đủ |
+  | `email` | string (email) | Địa chỉ email liên hệ |
+  | `phone` | string | Số điện thoại liên hệ |
+  | `address` | string | Địa chỉ thường trú |
+  | `citizen_id_number` | string | Số căn cước công dân / CMND |
+  | `position` | enum | Vị trí: `MANAGER`, `WAREHOUSE_MANAGER`, `ORDER_PROCESSOR`, `TALENT`, `TECHNICAL_CREW`, `WARDROBE` |
+  | `work_status` | enum | Trạng thái làm việc: `ACTIVE` (đang làm), `SUSPENDED` (tạm nghỉ), `EXITED` (đã nghỉ) |
+  | `is_active` | boolean | Trạng thái kích hoạt hồ sơ (mặc định: `true`) |
+  | `created_at` | datetime | Thời điểm tạo hồ sơ |
+  | `updated_at` | datetime / null | Thời điểm cập nhật gần nhất |
+  | `created_by` | integer | ID người tạo |
+  | `updated_by` | integer | ID người cập nhật gần nhất |
+  | `remark` | string | Ghi chú thêm |

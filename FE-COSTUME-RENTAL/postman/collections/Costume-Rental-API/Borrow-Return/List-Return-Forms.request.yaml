@@ -1,0 +1,14 @@
+$kind: http-request
+name: List Return Forms
+description: |-
+  Lấy danh sách phiếu trả, đã join loan form, item trả, phiếu phạt và hóa đơn liên quan.
+method: GET
+url: '{{baseUrl}}/return-forms'
+order: 9000
+params:
+  - key: status:eq
+    value: INSPECTED
+    disabled: true
+  - key: loan_form_code:eq
+    value: LF00001
+    disabled: true

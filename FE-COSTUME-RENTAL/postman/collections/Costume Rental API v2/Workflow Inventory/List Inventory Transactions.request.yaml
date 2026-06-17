@@ -1,0 +1,18 @@
+$kind: http-request
+description: Liệt kê các giao dịch kho, có thể lọc theo vật tư trong kho.
+url: "{{baseUrl}}/inventory-transactions?inventory_item_id=3&reference_type=RENTAL_SLIP&reference_id=1"
+method: GET
+queryParams:
+  - key: inventory_item_id
+    value: "3"
+    $type: integer
+  - key: reference_type
+    value: RENTAL_SLIP
+    $type: string
+  - key: reference_id
+    value: "1"
+    $type: integer
+body:
+  type: text
+  content: ""
+order: 4000

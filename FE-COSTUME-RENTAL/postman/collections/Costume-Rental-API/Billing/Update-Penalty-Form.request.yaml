@@ -1,0 +1,20 @@
+$kind: http-request
+name: Update Penalty Form
+description: |-
+  Cập nhật thông tin phiếu phạt theo `id` (lý do, số tiền, ghi chú...).
+method: PATCH
+url: '{{baseUrl}}/penalty-forms/:id'
+order: 2500
+pathVariables:
+  id: '1'
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "reason": "Hu hong vat pham khi tra",
+      "amount": 450000,
+      "remark": "Cap nhat sau khi tham dinh"
+    }

@@ -1,0 +1,49 @@
+﻿$kind: collection
+name: Inventory
+description: |-
+  ## Quản lý Tồn kho
+
+  Nhóm các API quản lý tồn kho sản phẩm trong hệ thống cho thuê trang phục. Tồn kho theo dõi từng đơn vị sản phẩm cụ thể (trang phục hoặc đạo cụ) trong kho, bao gồm trạng thái hiện tại, tình trạng chất lượng và vị trí lưu trữ.
+
+  ### Entity liên quan
+  - **Inventory**: Bản ghi tồn kho với các trường `id`, `sku`, `item_id`, `item_type` (COSTUME/EQUIPMENT_PROPS), `inventory_condition_id`, `warehouse_id`, `status` (AVAILABLE/RENTED/MAINTENANCE/DISPOSED), `size` (XS–3XL, null đối với đạo cụ).
+  - **InventoryCondition**: Tình trạng sản phẩm với `code` (A/B/C), `label`, `discount_rate`, `rentable`, `badge_color`. Xác định mức chiết khấu và khả năng cho thuê.
+  - **Warehouse**: Kho lưu trữ liên kết qua `warehouse_id`.
+
+  ### Endpoints
+  - **GET /api/inventory/costumes** – Lấy danh sách tồn kho trang phục, hỗ trợ lọc theo `warehouse_id`, `status`, `size` và `condition`.
+  - **GET /api/inventory/props** – Lấy danh sách tồn kho đạo cụ/thiết bị, hỗ trợ lọc theo `warehouse_id` và `status`.
+  - **GET /api/inventory/conditions** – Lấy danh sách mã condition (`A`, `B`, `C`) để hiển thị/ánh xạ nghiệp vụ.
+  - **POST /api/inventory/import** – Nhập kho: thêm một hoặc nhiều sản phẩm vào kho với thông tin `item_id`, `item_type`, `warehouse_id`, `condition` và `size` (nếu là trang phục).
+  - **PATCH /api/inventory/status/:sku** – Cập nhật trạng thái tồn kho theo SKU (`AVAILABLE`, `RENTED`, `MAINTENANCE`, `DISPOSED`).
+  - **DELETE /api/inventory/delete/:sku** – Xóa mềm/xóa cứng bản ghi tồn kho theo SKU.
+
+  ## Schema: Inventory
+
+  | Trường | Kiểu | Mô tả |
+  |--------|------|-------|
+  | `id` | integer | Khóa chính, định danh duy nhất |
+  | `sku` | string | Mã SKU duy nhất của bản ghi tồn kho |
+  | `item_id` | integer | ID sản phẩm (Costume hoặc EquipmentProps) |
+  | `item_type` | enum | Loại sản phẩm: `COSTUME` hoặc `EQUIPMENT_PROPS` |
+  | `inventory_condition_id` | integer | Liên kết với bảng InventoryCondition |
+  | `warehouse_id` | integer | Liên kết với kho lưu trữ (Warehouse) |
+  | `status` | enum | Trạng thái: `AVAILABLE` (sẵn sàng), `RENTED` (đang thuê), `MAINTENANCE` (bảo trì), `DISPOSED` (đã thanh lý) |
+  | `size` | enum / null | Kích cỡ: `XS`, `S`, `M`, `L`, `XL`, `2XL`, `3XL` -- null đối với đạo cụ |
+  | `is_active` | boolean | Trạng thái kích hoạt (mặc định: `true`) |
+  | `created_at` | datetime | Thời điểm nhập kho |
+  | `updated_at` | datetime / null | Thời điểm cập nhật gần nhất |
+  | `created_by` | integer | ID người nhập kho |
+  | `updated_by` | integer | ID người cập nhật gần nhất |
+  | `remark` | string | Ghi chú thêm |
+
+  ## Schema: InventoryCondition
+
+  | Trường | Kiểu | Mô tả |
+  |--------|------|-------|
+  | `id` | integer | Khóa chính, định danh duy nhất |
+  | `code` | enum | Mã tình trạng: `A` (mới/tốt), `B` (đã qua sử dụng), `C` (cũ/hỏng) |
+  | `label` | string | Mô tả chi tiết tình trạng sản phẩm |
+  | `discount_rate` | number | Tỷ lệ chiết khấu giá thuê (0 - 0.5) |
+  | `rentable` | boolean | Có thể cho thuê không (`false` khi code = `C`) |
+  | `badge_color` | string | Mã màu hex hiển thị badge tình trạng |

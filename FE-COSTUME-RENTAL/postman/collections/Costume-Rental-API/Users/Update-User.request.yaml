@@ -1,0 +1,40 @@
+﻿$kind: http-request
+name: Update User
+description: |-
+  Cập nhật thông tin của một người dùng theo ID. Yêu cầu quyền ADMIN. Có thể thay đổi tên đăng nhập, vai trò và trạng thái hoạt động.
+
+  **Path Variables:**
+
+  | Tham số | Kiểu | Mô tả |
+  |---------|------|-------|
+  | id | integer | ID của người dùng cần cập nhật |
+
+  **Body (JSON):**
+
+  | Trường | Kiểu | Mô tả |
+  |--------|------|-------|
+  | username | string | Tên đăng nhập mới |
+  | role | enum | Vai trò mới: ADMIN hoặc USER |
+  | is_active | boolean | Trạng thái kích hoạt tài khoản |
+
+  **Response:**
+
+  - 200 OK: Tài khoản người dùng sau khi cập nhật.
+  - 404 Not Found: Không tìm thấy người dùng.
+method: PATCH
+url: '{{baseUrl}}/users/:id'
+order: 4000
+pathVariables:
+  - key: id
+    value: ''
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "username": "",
+      "role": "USER",
+      "is_active": true
+    }

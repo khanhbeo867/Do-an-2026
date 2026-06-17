@@ -1,0 +1,31 @@
+﻿$kind: http-request
+name: Create Warehouse
+description: |-
+  Tạo mới một kho hàng trong hệ thống. Yêu cầu quyền ADMIN. Kho được phân loại theo loại sản phẩm lưu trữ và giao cho một quản lý kho phụ trách.
+
+  **Body (JSON):**
+
+  | Trường | Kiểu | Mô tả |
+  |--------|------|-------|
+  | name | string | Tên kho |
+  | type | enum | Loại kho: COSTUME (kho trang phục) hoặc EQUIPMENT_PROPS (kho đạo cụ) |
+  | managed_by | integer | ID nhân viên quản lý kho (vị trí WAREHOUSE_MANAGER) |
+
+  **Response:**
+
+  - 201 Created: Kho mới được tạo thành công.
+  - 400 Bad Request: Dữ liệu không hợp lệ.
+method: POST
+url: '{{baseUrl}}/warehouses'
+order: 3000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "",
+      "type": "",
+      "managed_by": null
+    }

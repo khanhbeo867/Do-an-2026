@@ -1,0 +1,23 @@
+$kind: http-request
+description: |-
+  Lấy danh sách tồn kho đạo cụ/thiết bị. Hỗ trợ lọc theo nhiều tiêu chí.
+
+  **Query Params:**
+
+  | Tham số | Kiểu | Mô tả |
+  |---------|------|-------|
+  | item_id | integer | Lọc theo ID đạo cụ/thiết bị |
+  | inventory_condition_id | integer | Lọc theo ID tình trạng sản phẩm |
+  | warehouse_id | integer | Lọc theo ID kho |
+  | status | enum | Lọc theo trạng thái: AVAILABLE, RENTED, MAINTENANCE, DISPOSED |
+  | keyword | string | Tìm kiếm theo từ khóa (tên, SKU) |
+
+  **Response:**
+
+  - 200 OK: Mảng các bản ghi Inventory của đạo cụ/thiết bị.
+url: "{{baseUrl}}/inventory/props"
+method: GET
+body:
+  type: text
+  content: ""
+order: 2000

@@ -1,0 +1,20 @@
+$kind: http-request
+name: List Loan Forms
+description: |-
+  Lấy danh sách phiếu mượn/thuê, response đã join item, phiếu trả, phiếu phạt và hóa đơn liên quan.
+method: GET
+url: '{{baseUrl}}/loan-forms'
+order: 1000
+params:
+  - key: status:eq
+    value: BORROWING
+    disabled: true
+  - key: borrower_name:contains
+    value: ''
+    disabled: true
+  - key: _page
+    value: '1'
+    disabled: true
+  - key: _per_page
+    value: '10'
+    disabled: true

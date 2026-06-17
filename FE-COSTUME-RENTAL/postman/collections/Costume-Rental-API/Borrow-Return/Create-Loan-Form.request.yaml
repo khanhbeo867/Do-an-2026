@@ -1,0 +1,39 @@
+$kind: http-request
+name: Create Loan Form
+description: |-
+  **Workflow step 1**: Tạo phiếu mượn/thuê mới.
+
+  Sau bước này backend thường gọi tiếp:
+  - `POST /loan-forms/:id/items` nếu cần thêm SKU
+  - `POST /loan-forms/:id/confirm-deposit` (RENT)
+  - `POST /loan-forms/:id/checkout` để xác nhận xuất kho
+method: POST
+url: '{{baseUrl}}/loan-forms'
+order: 3000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "borrower_name": "Nguyen Van A",
+      "borrower_phone": "0909123456",
+      "borrower_citizen_id_number": "031123456789",
+      "borrower_role": "EXTERNAL",
+      "method": "RENT",
+      "due_date": "2026-05-30",
+      "deposit_amount": 1000000,
+      "loan_items": [
+        {
+          "item_type": "COSTUME",
+          "item_id": 1,
+          "sku": "TP-ADNH-VOL200-0001"
+        },
+        {
+          "item_type": "EQUIPMENT_PROPS",
+          "item_id": 5,
+          "sku": "MSK-LAN-RD-0001"
+        }
+      ]
+    }

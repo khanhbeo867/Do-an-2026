@@ -1,0 +1,26 @@
+$kind: http-request
+name: Delete Employee
+description: |-
+  Xóa hồ sơ nhân viên theo ID. Yêu cầu quyền ADMIN. Hỗ trợ xóa mềm hoặc xóa vĩnh viễn.
+
+  **Path Variables:**
+
+  | Tham số | Kiểu | Mô tả |
+  |---------|------|-------|
+  | id | integer | ID của nhân viên cần xóa |
+
+  **Query Params:**
+
+  | Tham số | Kiểu | Mô tả |
+  |---------|------|-------|
+  | permanantly | boolean | true để xóa vĩnh viễn, false để xóa mềm (mặc định: false) |
+
+  **Response:**
+
+  - 200 OK: Xóa thành công.
+  - 404 Not Found: Không tìm thấy nhân viên.
+method: DELETE
+url: '{{baseUrl}}/employees/:id'
+pathVariables:
+  id: ''
+order: 5000

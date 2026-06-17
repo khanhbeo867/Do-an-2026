@@ -1,0 +1,9 @@
+$kind: http-request
+name: Checkout Loan Form
+description: |-
+  **Workflow step 4**: Chuyển phiếu mượn/thuê sang `BORROWING` và khóa tồn kho item thành `RENTED`.
+
+  Gọi sau khi đã đủ item và đã xác nhận cọc (nếu là luồng thuê).
+method: POST
+url: '{{baseUrl}}/loan-forms/1/checkout'
+order: 4000

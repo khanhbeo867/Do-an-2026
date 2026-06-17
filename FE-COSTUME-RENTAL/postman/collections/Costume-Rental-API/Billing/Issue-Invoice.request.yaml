@@ -1,0 +1,7 @@
+$kind: http-request
+name: Issue Invoice
+description: |-
+  Chuyển trạng thái hóa đơn sang ISSUED.
+method: POST
+url: '{{baseUrl}}/invoices/1/issue'
+order: 7000

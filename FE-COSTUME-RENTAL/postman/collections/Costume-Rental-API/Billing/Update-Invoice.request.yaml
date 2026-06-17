@@ -1,0 +1,21 @@
+$kind: http-request
+name: Update Invoice
+description: |-
+  Cập nhật hóa đơn theo `id` trước khi phát hành hoặc thanh toán.
+method: PATCH
+url: '{{baseUrl}}/invoices/:id'
+order: 6500
+pathVariables:
+  id: '1'
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "payment_method": "BANK_TRANSFER",
+      "payer_name": "Nguyen Van A",
+      "payer_phone": "0909123456",
+      "note": "Khach xin chuyen khoan"
+    }

@@ -1,0 +1,60 @@
+$kind: http-request
+description: |-
+  Cập nhật thông tin của một danh mục sản phẩm theo ID. Yêu cầu quyền ADMIN.
+
+  **Path Variables:**
+
+  | Tham số | Kiểu | Mô tả |
+  |---------|------|-------|
+  | id | integer | ID của danh mục cần cập nhật |
+
+  **Body (JSON):**
+
+  | Trường | Kiểu | Mô tả |
+  |--------|------|-------|
+  | name | string | Tên danh mục mới |
+  | type | enum | Loại danh mục: COSTUME hoặc EQUIPMENT_PROPS |
+
+  **Response:**
+
+  - 200 OK: Danh mục sau khi cập nhật.
+  - 404 Not Found: Không tìm thấy danh mục.
+url: "{{baseUrl}}/categories/:id"
+method: PATCH
+headers:
+  Content-Type: application/json
+pathVariables:
+  - key: id
+    value: ""
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: json
+  content: |-
+    {
+      "name": "",
+      "type": ""
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    }
+order: 4000

@@ -1,0 +1,45 @@
+$kind: http-request
+description: Trả các vật tư mượn nội bộ đã gán với trạng thái bình thường, hư hỏng hoặc thất lạc.
+url: "{{baseUrl}}/internal-borrow-slips/:id/return"
+method: POST
+headers:
+  Content-Type: application/json
+pathVariables:
+  - key: id
+    value: "3"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: json
+  content: |-
+    {
+      "items": [
+        {
+          "inventory_item_id": 44,
+          "return_action": "DAMAGED",
+          "condition_on_return_id": 1,
+          "compensation_amount": 120000,
+          "note": "Hỏng khóa dây"
+        }
+      ]
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array"
+        }
+      }
+    }
+order: 13000

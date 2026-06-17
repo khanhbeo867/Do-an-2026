@@ -1,0 +1,14 @@
+$kind: http-request
+description: |-
+  Lấy thông tin của người dùng đang đăng nhập dựa trên access token hiện tại trong môi trường. Trả về đầy đủ thông tin tài khoản bao gồm username, role, employee_id và trạng thái hoạt động.
+
+  **Response:**
+
+  - 200 OK: Thông tin người dùng hiện tại { id, username, role, employee_id, is_active, ... }.
+  - 401 Unauthorized: Token không hợp lệ hoặc chưa đăng nhập.
+url: "{{baseUrl}}/auth/me"
+method: GET
+body:
+  type: text
+  content: ""
+order: 5000

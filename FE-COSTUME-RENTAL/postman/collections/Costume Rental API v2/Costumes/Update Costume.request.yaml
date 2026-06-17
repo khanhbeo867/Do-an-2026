@@ -1,0 +1,65 @@
+$kind: http-request
+description: |-
+  Cập nhật thông tin của một trang phục theo ID. Yêu cầu quyền ADMIN. Chỉ cần gửi các trường cần thay đổi.
+
+  **Path Variables:**
+
+  | Tham số | Kiểu | Mô tả |
+  |---------|------|-------|
+  | id | integer | ID của trang phục cần cập nhật |
+
+  **Body (JSON):**
+
+  | Trường | Kiểu | Mô tả |
+  |--------|------|-------|
+  | name | string | Tên trang phục mới |
+  | rental_price_per_day | integer | Giá thuê mới (tối thiểu 50.000 VND) |
+  | is_active | boolean | Trạng thái kích hoạt |
+
+  **Response:**
+
+  - 200 OK: Trang phục sau khi cập nhật.
+  - 404 Not Found: Không tìm thấy trang phục.
+url: "{{baseUrl}}/costumes/:id"
+method: PATCH
+headers:
+  Content-Type: application/json
+pathVariables:
+  - key: id
+    value: ""
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: json
+  content: |-
+    {
+      "name": "",
+      "rental_price_per_day": 50000,
+      "is_active": true
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "rental_price_per_day": {
+          "type": "integer"
+        },
+        "is_active": {
+          "type": "boolean"
+        }
+      }
+    }
+order: 4000

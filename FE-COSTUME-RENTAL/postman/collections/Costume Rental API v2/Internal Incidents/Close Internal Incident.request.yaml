@@ -1,0 +1,37 @@
+$kind: http-request
+description: Đóng một sự cố nội bộ đã được xử lý.
+url: "{{baseUrl}}/internal-incidents/:id/close"
+method: POST
+headers:
+  Content-Type: application/json
+pathVariables:
+  - key: id
+    value: "2"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: json
+  content: |-
+    {
+      "note": "Đóng sự cố nội bộ"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "note": {
+          "type": "string"
+        }
+      }
+    }
+order: 5000

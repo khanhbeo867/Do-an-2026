@@ -1,0 +1,14 @@
+$kind: http-request
+name: List Penalty Forms
+description: |-
+  Lấy danh sách phiếu phạt, response đã join loan form, return form, employee tạo và hóa đơn liên quan.
+method: GET
+url: '{{baseUrl}}/penalty-forms'
+order: 1000
+params:
+  - key: status:eq
+    value: ISSUED
+    disabled: true
+  - key: loan_form_code:eq
+    value: LF00001
+    disabled: true

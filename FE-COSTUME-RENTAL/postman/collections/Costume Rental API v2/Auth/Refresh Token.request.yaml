@@ -1,0 +1,21 @@
+$kind: http-request
+description: |-
+  Làm mới access token bằng cách sử dụng refresh token còn hiệu lực. Gửi kèm access token cũ trong header Authorization: Bearer {{token}}. Server sẽ trả về access token mới nếu refresh token hợp lệ.
+
+  **Headers:**
+
+  | Header | Mô tả |  
+  |--------|-------|  
+  | Authorization | Bearer {{token}} - access token hiện tại |
+
+  **Response:**
+
+  - 200 OK: { accessToken } - token mới được cấp.
+      
+  - 401 Unauthorized: Refresh token không hợp lệ hoặc đã hết hạn.
+url: "{{baseUrl}}/auth/refresh"
+method: GET
+body:
+  type: text
+  content: ""
+order: 4000

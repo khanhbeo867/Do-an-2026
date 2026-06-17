@@ -1,0 +1,7 @@
+$kind: http-request
+name: Get Loan Form
+description: |-
+  Lấy chi tiết 1 phiếu mượn/thuê theo id, bao gồm item đã join inventory và item_detail.
+method: GET
+url: '{{baseUrl}}/loan-forms/1'
+order: 2000

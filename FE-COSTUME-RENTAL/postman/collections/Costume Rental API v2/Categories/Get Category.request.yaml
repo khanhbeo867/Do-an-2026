@@ -1,0 +1,36 @@
+$kind: http-request
+description: |-
+  Lấy thông tin chi tiết của một danh mục sản phẩm theo ID.
+
+  **Path Variables:**
+
+  | Tham số | Kiểu | Mô tả |  
+  |---------|------|-------|  
+  | id | integer | ID của danh mục cần lấy |
+
+  **Response:**
+
+  - 200 OK: Đối tượng ItemCategory tương ứng.
+      
+  - 404 Not Found: Không tìm thấy danh mục với ID đã cho.
+url: "{{baseUrl}}/categories/:id"
+method: GET
+pathVariables:
+  - key: id
+    value: ""
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: text
+  content: ""
+order: 3000

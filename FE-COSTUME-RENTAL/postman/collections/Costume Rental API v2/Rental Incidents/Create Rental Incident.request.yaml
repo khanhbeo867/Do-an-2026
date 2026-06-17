@@ -1,0 +1,38 @@
+$kind: http-request
+description: Tạo sự cố trực tiếp cho một vật tư thuộc chi tiết thuê.
+url: "{{baseUrl}}/rental-incidents"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "rental_detail_id": 1,
+      "inventory_item_id": 4,
+      "incident_type": "DAMAGED",
+      "incident_description": "Rách vải khi trả",
+      "compensation_amount": 150000
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "rental_detail_id": {
+          "type": "integer"
+        },
+        "inventory_item_id": {
+          "type": "integer"
+        },
+        "incident_type": {
+          "type": "string"
+        },
+        "incident_description": {
+          "type": "string"
+        },
+        "compensation_amount": {
+          "type": "number"
+        }
+      }
+    }
+order: 2000

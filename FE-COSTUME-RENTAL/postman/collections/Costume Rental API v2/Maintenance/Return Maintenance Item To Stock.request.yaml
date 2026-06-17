@@ -1,0 +1,41 @@
+$kind: http-request
+description: Nhập lại kho khả dụng một vật tư đã hoàn tất bảo trì.
+url: "{{baseUrl}}/maintenance-tickets/:id/return-to-stock"
+method: POST
+headers:
+  Content-Type: application/json
+pathVariables:
+  - key: id
+    value: "2"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: json
+  content: |-
+    {
+      "inventory_condition_id": 1,
+      "note": "Nhập lại kho"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "inventory_condition_id": {
+          "type": "integer"
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    }
+order: 7000

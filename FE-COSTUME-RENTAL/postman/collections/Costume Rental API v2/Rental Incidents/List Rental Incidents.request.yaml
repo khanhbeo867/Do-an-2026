@@ -1,0 +1,18 @@
+$kind: http-request
+description: Liệt kê các sự cố thuê.
+url: "{{baseUrl}}/rental-incidents?status=OPEN&incident_type=DAMAGED&inventory_item_id=4"
+method: GET
+queryParams:
+  - key: status
+    value: OPEN
+    $type: string
+  - key: incident_type
+    value: DAMAGED
+    $type: string
+  - key: inventory_item_id
+    value: "4"
+    $type: integer
+body:
+  type: text
+  content: ""
+order: 1000

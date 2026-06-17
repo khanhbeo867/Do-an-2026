@@ -1,0 +1,18 @@
+$kind: http-request
+name: Get Statistics
+description: |-
+  Lấy dữ liệu thống kê dashboard gồm:
+  - `overviews`: doanh thu, đơn mới, tỷ lệ trả đúng hạn, số đơn quá hạn
+  - `trendings`: xu hướng doanh thu và đơn mới theo ngày
+  - `alerts`: đơn đến hạn hôm nay
+  - `topList`: top 5 thuê nhiều nhất / ít nhất
+
+  Ví dụ dùng cho dashboard sau khi backend đã xử lý các bước nghiệp vụ mượn/thuê -> trả -> phạt -> thanh toán.
+method: GET
+url: '{{baseUrl}}/statistics'
+order: 1000
+params:
+  - key: range
+    value: 7d
+  - key: method
+    value: ALL

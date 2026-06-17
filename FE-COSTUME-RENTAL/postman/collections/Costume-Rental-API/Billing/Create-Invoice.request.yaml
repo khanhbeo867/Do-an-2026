@@ -1,0 +1,26 @@
+$kind: http-request
+name: Create Invoice
+description: |-
+  **Workflow step 10**: Tạo hóa đơn thanh toán sau khi đã có phiếu trả và (nếu có) phiếu phạt.
+
+  Nếu không truyền `total_amount`, hệ thống tự tính từ tiền thuê + tiền phạt + `extra_amount`.
+method: POST
+url: '{{baseUrl}}/invoices'
+order: 6000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "loan_form_code": "LF00001",
+      "return_form_code": "RF00001",
+      "penalty_form_code": "PF00001",
+      "rental_days": 2,
+      "extra_amount": 0,
+      "payment_method": "BANK_TRANSFER",
+      "payer_name": "Nguyen Van A",
+      "payer_phone": "0909123456",
+      "status": "ISSUED"
+    }

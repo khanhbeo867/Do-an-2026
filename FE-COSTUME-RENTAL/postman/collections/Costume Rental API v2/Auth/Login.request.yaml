@@ -1,0 +1,79 @@
+$kind: http-request
+name: Login
+description: |-
+  Đăng nhập vào hệ thống bằng tên đăng nhập và mật khẩu. Khi thành công, server trả về accessToken (JWT) và thông tin người dùng. Access token sẽ được lưu vào biến môi trường token tự động qua script.
+
+  **Body (JSON):**
+
+  | Trường | Kiểu | Mô tả |
+  | --- | --- | --- |
+  | username | string | Tên đăng nhập của tài khoản |
+  | password | string | Mật khẩu của tài khoản |
+
+  **Response:**
+
+  - 200 OK: { accessToken, user } - đăng nhập thành công, token được lưu vào môi trường.
+      
+  - 401 Unauthorized: Sai tên đăng nhập hoặc mật khẩu.
+url: "{{baseUrl}}/auth/login"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "username": "quanghiep031",
+      "password": "123123"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    }
+scripts:
+  - type: afterResponse
+    code: "const jsonData = pm.response.json();\r
+
+      \r
+
+      pm.test('Login status is 200', function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      \    pm.expect(jsonData).to.have.property('access_token');\r
+
+      \    pm.expect(jsonData).to.have.property('user');\r
+
+      });\r
+
+      \r
+
+      if (pm.response.code === 200 && jsonData) {\r
+
+      \    const token = jsonData.access_token;\r
+
+      \    const user = jsonData.user || {};\r
+
+      \r
+
+      \    if (token) pm.environment.set('token', token);\r
+
+      }\r
+
+      \r
+
+      pm.test('Response time is less than 2000ms', function () {\r
+
+      \    pm.expect(pm.response.responseTime).to.be.below(2000);\r
+
+      });"
+    language: text/javascript
+order: 1000

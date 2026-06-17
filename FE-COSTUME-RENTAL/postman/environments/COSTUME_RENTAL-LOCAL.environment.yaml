@@ -1,0 +1,14 @@
+name: 'COSTUME_RENTAL:LOCAL'
+values:
+  - key: token
+    value: ''
+  - key: baseUrl
+    value: ''
+  - key: baseImageUrl
+    value: ''
+  - key: baseUrl
+    value: ''
+    disabled: true
+  - key: baseImageUrl
+    value: ''
+    disabled: true

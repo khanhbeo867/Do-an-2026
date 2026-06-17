@@ -1,0 +1,50 @@
+$kind: collection
+name: Costumes
+description: |-
+  ## Quản lý Trang phục
+
+  Nhóm các API quản lý danh mục trang phục cho thuê trong hệ thống. Trang phục là sản phẩm cốt lõi của hệ thống, bao gồm đầy đủ thông tin về kích cỡ, màu sắc, giá thuê và hình ảnh minh họa.
+
+  ### Entity liên quan
+
+  - **Costume**: Trang phục với các trường `id`, `sku`, `slug`, `name`, `category_id`, `color` (hex/code/intensity), `sizes` (XS/S/M/L/XL/2XL/3XL), `unit` (SET/PIECE), `gender` (MALE/FEMALE/UNISEX), `images[]`, `rental_price_per_day` (tối thiểu 50.000 VNĐ), `description`, `hashtags[]`.
+      
+  - **ItemCategory**: Danh mục trang phục liên kết qua `category_id`.
+      
+
+  ### Endpoints
+
+  - **GET /api/costumes** – Lấy danh sách trang phục, hỗ trợ lọc theo danh mục, giới tính, kích cỡ và từ khóa tìm kiếm.
+      
+  - **GET /api/costumes/:id** – Lấy thông tin chi tiết của một trang phục theo `id`, bao gồm hình ảnh và các biến thể kích cỡ.
+      
+  - **POST /api/costumes** – Tạo mới trang phục với đầy đủ thông tin sản phẩm (yêu cầu quyền ADMIN).
+      
+  - **PUT /api/costumes/:id** – Cập nhật thông tin trang phục theo `id` (yêu cầu quyền ADMIN).
+      
+  - **DELETE /api/costumes/:id** – Xóa trang phục theo `id` (yêu cầu quyền ADMIN).
+      
+
+  ## Schema: Costume
+
+  | Trường | Kiểu | Mô tả |
+  | --- | --- | --- |
+  | `id` | integer | Khóa chính, định danh duy nhất |
+  | `sku` | string | Mã định danh duy nhất của trang phục trong hệ thống |
+  | `slug` | string | Slug URL thân thiện, tự động sinh từ `name` |
+  | `name` | string | Tên trang phục |
+  | `category_id` | integer | Liên kết với danh mục (ItemCategory) |
+  | `color` | object | Màu sắc: `hex` (mã hex), `code` (tên màu), `intensity` (độ đậm nhạt) |
+  | `sizes` | array | Các kích cỡ có sẵn: `XS`, `S`, `M`, `L`, `XL`, `2XL`, `3XL` |
+  | `unit` | enum | Đơn vị tính: `SET` (bộ) hoặc `PIECE` (cái) |
+  | `gender` | enum | Giới tính phù hợp: `MALE`, `FEMALE`, `UNISEX` |
+  | `images` | array | Danh sách ID ảnh liên kết (ImageGallery) |
+  | `rental_price_per_day` | integer | Giá thuê theo ngày (tối thiểu 50.000 VNĐ) |
+  | `description` | string | Mô tả chi tiết trang phục |
+  | `hashtags` | array | Danh sách hashtag phân loại, không trùng lặp |
+  | `is_active` | boolean | Trạng thái kích hoạt (mặc định: `true`) |
+  | `created_at` | datetime | Thời điểm tạo |
+  | `updated_at` | datetime / null | Thời điểm cập nhật gần nhất |
+  | `created_by` | integer | ID người tạo |
+  | `updated_by` | integer | ID người cập nhật gần nhất |
+  | `remark` | string | Ghi chú thêm |

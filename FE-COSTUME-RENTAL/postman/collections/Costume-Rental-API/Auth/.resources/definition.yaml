@@ -1,0 +1,40 @@
+﻿$kind: collection
+name: Auth
+description: |-
+  ## Xác thực & Phân quyền
+
+  Nhóm các API xử lý xác thực và phân quyền người dùng trong hệ thống cho thuê trang phục. Các endpoint này quản lý vòng đời phiên đăng nhập, bao gồm đăng ký tài khoản, đăng nhập, làm mới token và đăng xuất.
+
+  ### Entity liên quan
+
+  - **User**: Tài khoản người dùng với các trường `username`, `password`, `role` (ADMIN/USER), `is_active`, liên kết với `Employee` qua `employee_id`.
+      
+
+  ### Endpoints
+
+  - **GET /api/auth/me** – Lấy thông tin người dùng hiện tại dựa trên access token đang hoạt động.
+      
+  - **POST /api/auth/login** – Đăng nhập bằng `username` và `password`, trả về `accessToken` và thông tin người dùng.
+      
+  - **POST /api/auth/logout** – Đăng xuất, hủy phiên làm việc hiện tại và vô hiệu hóa refresh token.
+      
+  - **GET /api/auth/refresh** – Làm mới access token bằng refresh token còn hiệu lực.
+      
+  - **POST /api/register** – Đăng ký tài khoản mới với thông tin `username`, `password` và các thông tin cơ bản.
+      
+
+  ### Schema: User
+
+  | Trường | Kiểu | Mô tả |
+  | --- | --- | --- |
+  | `id` | integer | Khóa chính, định danh duy nhất |
+  | `username` | string | Tên đăng nhập, duy nhất trong hệ thống |
+  | `password` | string | Mật khẩu (đã được hash) |
+  | `employee_id` | integer / null | Liên kết với hồ sơ nhân viên (Employee) |
+  | `role` | enum | Vai trò: `ADMIN` hoặc `USER` |
+  | `is_active` | boolean | Trạng thái kích hoạt tài khoản (mặc định: `true`) |
+  | `created_at` | datetime | Thời điểm tạo tài khoản |
+  | `updated_at` | datetime / null | Thời điểm cập nhật gần nhất |
+  | `created_by` | integer | ID người tạo |
+  | `updated_by` | integer | ID người cập nhật gần nhất |
+  | `remark` | string | Ghi chú thêm |

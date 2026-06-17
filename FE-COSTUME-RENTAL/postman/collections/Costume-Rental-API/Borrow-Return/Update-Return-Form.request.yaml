@@ -1,0 +1,20 @@
+$kind: http-request
+name: Update Return Form
+description: |-
+  Cập nhật thông tin người trả hoặc ghi chú của phiếu trả theo `id`.
+method: PATCH
+url: '{{baseUrl}}/return-forms/:id'
+order: 6600
+pathVariables:
+  id: '1'
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "returnee_name": "Nguyen Van A",
+      "returnee_phone": "0909123456",
+      "remark": "Tra thieu 1 phu kien, se bo sung sau"
+    }
