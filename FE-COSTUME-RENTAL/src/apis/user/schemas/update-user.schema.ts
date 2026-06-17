@@ -5,6 +5,7 @@ export const updateUserSchema = createUserSchema.partial().extend({
   id: z.number(),
   is_active: z.boolean().optional(),
   phone: z.string().optional(),
+  email: z.string().optional().nullable(),
 })
 
 export type TUpdateUserSchema = typeof updateUserSchema

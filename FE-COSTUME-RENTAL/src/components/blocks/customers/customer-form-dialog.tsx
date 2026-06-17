@@ -48,6 +48,7 @@ const CustomerFormDialog: React.FC = () => {
       password: '',
       is_active: true,
       phone: '',
+      email: '',
     },
     onSubmit: async ({ value }) => {
       if (!value.id || typeof updateMutation?.mutateAsync !== 'function') return
@@ -57,6 +58,7 @@ const CustomerFormDialog: React.FC = () => {
         username: value.username,
         is_active: value.is_active,
         phone: value.phone || null,
+        email: value.email || null,
         role: { label: 'Thành viên', value: UserRole.USER },
         employee_id: null,
       }
@@ -89,6 +91,7 @@ const CustomerFormDialog: React.FC = () => {
           password: '',
           is_active: typeof e.payload.is_active === 'boolean' ? e.payload.is_active : true,
           phone: e.payload.phone || '',
+          email: e.payload.email || '',
         },
         { keepDefaultValues: true },
       )
@@ -184,6 +187,16 @@ const CustomerFormDialog: React.FC = () => {
                           label="Số điện thoại"
                           type="tel"
                           placeholder="Số điện thoại"
+                        />
+                      )}
+                    </UpdateField>
+                    <UpdateField name="email">
+                      {(field) => (
+                        <InputFieldControl
+                          field={field}
+                          label="Email"
+                          type="text"
+                          placeholder="Email"
                         />
                       )}
                     </UpdateField>
