@@ -1,0 +1,23 @@
+# Frontend dependencies & build outputs
+FE-COSTUME-RENTAL/node_modules/
+FE-COSTUME-RENTAL/.output/
+FE-COSTUME-RENTAL/.nitro/
+FE-COSTUME-RENTAL/dist/
+FE-COSTUME-RENTAL/.env
+FE-COSTUME-RENTAL/.env.*
+
+# Backend dependencies & environment files
+diamond-api/vendor/
+diamond-api/.env
+diamond-api/storage/*.key
+diamond-api/bootstrap/cache/*
+diamond-api/storage/logs/*
+diamond-api/storage/framework/views/*
+diamond-api/storage/framework/sessions/*
+diamond-api/storage/framework/cache/*
+
+# Editor/OS files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
