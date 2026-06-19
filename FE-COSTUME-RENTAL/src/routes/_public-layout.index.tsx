@@ -1,3 +1,4 @@
+//trang chủ khách hàng
 import { getCategoriesQueryOptions } from '@/apis/category/hooks/use-category-request'
 import { stats } from '@/assets/data/about-us'
 import { contactInfo } from '@/assets/data/contact-us'

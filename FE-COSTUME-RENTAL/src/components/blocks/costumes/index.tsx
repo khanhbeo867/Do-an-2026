@@ -11,7 +11,7 @@ import CostumeTable from './costumes-table'
 import DeleteAlertDialog from './delete-alert-dialog'
 
 const CostumePage: React.FC = () => {
-  const { title, description } = usePageHelperText('main')
+  const { title } = usePageHelperText('main')
 
   return (
     <PageEventProvider>

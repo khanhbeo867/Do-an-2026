@@ -156,16 +156,19 @@ function RouteComponent() {
 
       const problematicIncidents = value.incidents.filter((incident) => incident.incident_status !== 'NONE')
       const shouldCreatePenalty =
-        selectedLoan?.method === 'RENT' && problematicIncidents.length > 0 && penaltyAmount > 0
+        selectedLoan?.method === 'RENT' && penaltyAmount > 0
 
       let penaltyFormCode: string | null = null
       if (shouldCreatePenalty) {
-        const reason = problematicIncidents
-          .map((incident) => {
-            const statusLabel = incident.incident_status === 'LOST' ? 'Mất' : 'Hỏng'
-            return `${incident.sku} - ${statusLabel}${incident.note ? ` (${incident.note})` : ''}`
-          })
-          .join('; ')
+        let reason = value.penalty_note?.trim()
+        if (!reason) {
+          reason = problematicIncidents
+            .map((incident) => {
+              const statusLabel = incident.incident_status === 'LOST' ? 'Mất' : 'Hỏng'
+              return `${incident.sku} - ${statusLabel}${incident.note ? ` (${incident.note})` : ''}`
+            })
+            .join('; ') || 'Phạt trễ hạn trả đồ'
+        }
 
         const penalty = await createPenaltyAsync({
           loan_form_code: created.loan_form_code,
@@ -261,33 +264,73 @@ function RouteComponent() {
     return incidents.filter((incident) => incident.incident_status !== 'NONE')
   }, [incidents])
 
+  const delayDays = useMemo(() => {
+    if (!selectedLoan?.due_date || selectedLoan?.method !== 'RENT') return 0
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const dueDate = new Date(selectedLoan.due_date)
+    dueDate.setHours(0, 0, 0, 0)
+    
+    const diffTime = today.getTime() - dueDate.getTime()
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+    return diffDays > 0 ? diffDays : 0
+  }, [selectedLoan])
+
+  const delayPenaltyAmount = useMemo(() => {
+    if (delayDays <= 0 || !selectedLoan?.items) return 0
+    const totalRentalPerDay = selectedLoan.items.reduce(
+      (sum, item) => sum + Number(item.rental_price_per_day ?? 0),
+      0
+    )
+    return totalRentalPerDay * delayDays
+  }, [delayDays, selectedLoan])
+
   const minimumPenaltyAmount = useMemo(() => {
     if (selectedLoan?.method !== 'RENT') {
       return 0
     }
 
-    return problematicIncidents.reduce((total, incident) => {
+    const incidentPenalty = problematicIncidents.reduce((total, incident) => {
       if (incident.incident_status === 'LOST') {
         return total + Number(incident.item_price ?? 0)
       }
 
       return total + Number(incident.item_price ?? 0) * 0.1
     }, 0)
-  }, [problematicIncidents, selectedLoan?.method])
+
+    return incidentPenalty + delayPenaltyAmount
+  }, [problematicIncidents, selectedLoan?.method, delayPenaltyAmount])
 
   useEffect(() => {
-    if (!problematicIncidents.length || selectedLoan?.method !== 'RENT') {
+    if (selectedLoan?.method !== 'RENT' || (!problematicIncidents.length && delayDays === 0)) {
       if (penaltyAmount !== 0) {
         form.setFieldValue('penalty_amount', 0)
+        form.setFieldValue('penalty_note', '')
       }
       return
     }
 
     const roundedMinimumPenalty = Math.ceil(minimumPenaltyAmount)
+    
+    const defaultNotes: string[] = []
+    if (delayDays > 0) {
+      defaultNotes.push(`Trễ hạn trả ${delayDays} ngày (${delayPenaltyAmount.toLocaleString('vi-VN')} VND)`)
+    }
+    if (problematicIncidents.length > 0) {
+      const incidentPenaltyTotal = minimumPenaltyAmount - delayPenaltyAmount
+      defaultNotes.push(`Sự cố sản phẩm (${incidentPenaltyTotal.toLocaleString('vi-VN')} VND)`)
+    }
+    const suggestedNote = defaultNotes.join(' | ')
+
     if (penaltyAmount < roundedMinimumPenalty) {
       form.setFieldValue('penalty_amount', roundedMinimumPenalty)
     }
-  }, [form, minimumPenaltyAmount, penaltyAmount, problematicIncidents.length, selectedLoan?.method])
+    
+    const currentNote = form.state.values.penalty_note
+    if (!currentNote || currentNote.trim() === '') {
+      form.setFieldValue('penalty_note', suggestedNote)
+    }
+  }, [form, minimumPenaltyAmount, penaltyAmount, problematicIncidents.length, selectedLoan?.method, delayDays, delayPenaltyAmount])
 
   const rentalAmount = Number(selectedLoan?.total_rental_amount ?? 0)
   const totalAmount = rentalAmount + penaltyAmount
@@ -538,11 +581,18 @@ function RouteComponent() {
                   </form.Field>
                 </FieldSet>
 
-                {selectedLoan?.method === 'RENT' && problematicIncidents.length > 0 ? (
+                {selectedLoan?.method === 'RENT' && (problematicIncidents.length > 0 || delayDays > 0) ? (
                   <div className="space-y-4 rounded-lg border border-amber-300 bg-amber-50/50 p-4">
-                    <div className="text-sm font-medium text-amber-700">
-                      Có {problematicIncidents.length} sản phẩm bị hỏng/mất. Tiền phạt tối thiểu:{' '}
-                      {Math.ceil(minimumPenaltyAmount).toLocaleString('vi-VN')} VND
+                    <div className="text-sm font-medium text-amber-700 space-y-1">
+                      {delayDays > 0 ? (
+                        <div>• Đơn hàng quá hạn {delayDays} ngày. Phí phạt trễ hạn gợi ý: {delayPenaltyAmount.toLocaleString('vi-VN')} VND.</div>
+                      ) : null}
+                      {problematicIncidents.length > 0 ? (
+                        <div>• Có {problematicIncidents.length} sản phẩm gặp sự cố (hỏng/mất). Phí phạt sự cố gợi ý: {(minimumPenaltyAmount - delayPenaltyAmount).toLocaleString('vi-VN')} VND.</div>
+                      ) : null}
+                      <div className="font-bold mt-1 text-amber-800">
+                        Tổng tiền phạt gợi ý tối thiểu: {Math.ceil(minimumPenaltyAmount).toLocaleString('vi-VN')} VND
+                      </div>
                     </div>
                     <form.Field name="penalty_amount">
                       {(field) => (
@@ -560,7 +610,7 @@ function RouteComponent() {
                         <TextareaFieldControl
                           field={field}
                           label="Lý do phạt"
-                          placeholder="Ví dụ: Mất áo khoác SKU CUS-001, hỏng khóa phụ kiện..."
+                          placeholder="Nhập chi tiết lý do phạt..."
                           rows={3}
                         />
                       )}

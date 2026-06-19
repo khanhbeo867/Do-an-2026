@@ -66,6 +66,7 @@ const CostumeTable: React.FC = () => {
         header: 'Giá thuê theo ngày',
         cell: ({ getValue }) => formatCurrency(getValue()),
       }),
+
       columnHelper.accessor('gender', {
         header: 'Giới tính',
         size: 100,
