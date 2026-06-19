@@ -145,7 +145,7 @@ const CostumeFormDialog: React.FC = () => {
             <Card className="col-span-full lg:col-span-2">
               <CardContent>
                 <FieldSet>
-                  <FieldLegend>Thông tin trang phục</FieldLegend>
+                  <FieldLegend>Thông tin đạo cụ</FieldLegend>
                   <FieldGroup>
                     <FormField
                       name="name"
@@ -158,8 +158,8 @@ const CostumeFormDialog: React.FC = () => {
                         return (
                           <InputFieldControl
                             field={field}
-                            label="Tên trang phục"
-                            placeholder='Ví dụ: "Áo dài truyền thống"'
+                            label="Tên đạo cụ"
+                            placeholder='Ví dụ: "Đạo cụ biểu diễn"'
                             classNames={{ field: 'col-span-2' }}
                           />
                         )
@@ -175,7 +175,7 @@ const CostumeFormDialog: React.FC = () => {
                               value={field.state.value}
                               onValueChange={field.handleChange as (updater: Updater<string[]>) => void}
                               onBlur={field.handleBlur}
-                              placeholder="#aoDaiVietNam"
+                              placeholder="#Daocubiedien"
                             />
                             {isInvalid && <FieldError errors={field.state.meta.errors} />}
                           </Field>

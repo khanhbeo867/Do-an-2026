@@ -233,9 +233,10 @@ const Header: React.FC = () => {
 
           <Link
             to="/"
-            className="inline-flex items-center gap-1 px-1 text-lg font-bold font-serif text-primary hover:drop-shadow-[0_0_4px_var(--primary-foreground)] sm:px-2 sm:text-xl"
+            className="inline-flex items-center gap-2 px-1 text-lg font-bold font-serif text-primary hover:drop-shadow-[0_0_4px_var(--primary-foreground)] sm:px-2 sm:text-xl"
           >
-            Diamond Studio
+            <img src="/logo.svg" className="size-6 object-contain" alt="Diamond Studio Logo" />
+            <span>Diamond Studio</span>
           </Link>
           {/* Navigation menu */}
           <NavigationMenu className="hidden lg:block">

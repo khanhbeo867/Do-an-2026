@@ -124,7 +124,7 @@ const RegisterFormContent = ({
       <form className="space-y-4 z-10 bg-card" onSubmit={handleSubmit}>
         <FormField name="email">
           {(field) => (
-            <InputFieldControl field={field} type="email" label="Email" placeholder="example@gmail.com" />
+            <InputFieldControl field={field} type="text" label="Email" placeholder="example@gmail.com" />
           )}
         </FormField>
         <FormField name="phone">

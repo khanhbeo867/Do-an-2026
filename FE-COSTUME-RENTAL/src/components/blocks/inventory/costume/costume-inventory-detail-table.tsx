@@ -16,7 +16,7 @@ const CostumeInventoryDetailTable: React.FC<{
       <Table className="table-auto w-auto">
         <TableHeader className="sticky left-0 top-0 z-20 [&_th]:border-l-0 w-full">
           <TableRow>
-            <TableHead className="w-48">SKU</TableHead>
+            <TableHead className="w-64">SKU</TableHead>
             <TableHead className="w-28">Size</TableHead>
             <TableHead className="w-32">Tình Trạng</TableHead>
             <TableHead className="w-44">Kho</TableHead>
@@ -27,7 +27,7 @@ const CostumeInventoryDetailTable: React.FC<{
           {data.items.map((item) => (
             <TableRow key={item.id}>
               <TableCell align="left">
-                <p className="line-clamp-1">{item.sku}</p>
+                <p className="whitespace-nowrap">{item.sku}</p>
               </TableCell>
               <TableCell align="center">
                 <span className='before:content-["#"] before:mr-0.5 before:text-muted-foreground'>{item.size}</span>

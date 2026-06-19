@@ -14,7 +14,7 @@ const PropsInventoryDetailTable: React.FC<{
       <Table className="table-auto w-auto">
         <TableHeader className="sticky left-0 top-0 z-20 [&_th]:border-l-0 w-full">
           <TableRow>
-            <TableHead className="w-56">SKU</TableHead>
+            <TableHead className="w-64">SKU</TableHead>
             <TableHead className="w-32">Tình Trạng</TableHead>
             <TableHead className="w-44">Kho</TableHead>
             <TableHead className="w-24">Thao Tác</TableHead>
@@ -27,7 +27,7 @@ const PropsInventoryDetailTable: React.FC<{
               className="[&:has(button[data-slot=dropdown-menu-trigger][aria-busy=true])_td]:opacity-50"
             >
               <TableCell align="left">
-                <p className="line-clamp-1">{item.sku}</p>
+                <p className="whitespace-nowrap">{item.sku}</p>
               </TableCell>
               <TableCell align="center">
                 <Badge variant={item.status !== InventoryItemStatus.DISPOSED ? 'outline' : 'destructive'}>

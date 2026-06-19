@@ -36,21 +36,21 @@ const CustomerHistoryDialog: React.FC = () => {
   // Filter forms belonging to selected customer
   const customerOrders = useMemo(() => {
     if (!selectedCustomer || !allLoanForms) return []
-    
+
     const customerPhone = selectedCustomer.employee?.phone
       ? selectedCustomer.employee.phone.replace(/\D/g, '')
       : null
     const customerName = selectedCustomer.employee?.full_name || selectedCustomer.username
     const normalizedCustomerName = customerName ? normalizeString(customerName) : ''
     const normalizedUsername = selectedCustomer.username ? normalizeString(selectedCustomer.username) : ''
-    
+
     return allLoanForms.filter((order: any) => {
       // 1. Match by phone if both have phone numbers
       if (customerPhone && order.borrower_phone) {
         const orderPhone = order.borrower_phone.replace(/\D/g, '')
         if (orderPhone === customerPhone) return true
       }
-      
+
       // 2. Match by normalized name
       if (order.borrower_name) {
         const normalizedOrderName = normalizeString(order.borrower_name)
@@ -61,7 +61,7 @@ const CustomerHistoryDialog: React.FC = () => {
           return true
         }
       }
-      
+
       return false
     })
   }, [allLoanForms, selectedCustomer])
@@ -171,7 +171,7 @@ const CustomerHistoryDialog: React.FC = () => {
             Lịch sử giao dịch
           </DialogTitle>
           <Typography className="text-xs text-muted-foreground pt-1">
-            Khách hàng: <span className="font-semibold text-foreground">{customerName}</span> 
+            Khách hàng: <span className="font-semibold text-foreground">{customerName}</span>
             {(selectedCustomer?.phone || selectedCustomer?.employee?.phone) && ` - SĐT: ${selectedCustomer.phone || selectedCustomer.employee.phone}`}
           </Typography>
         </DialogHeader>
@@ -185,11 +185,11 @@ const CustomerHistoryDialog: React.FC = () => {
               Lịch sử mua ({buyOrders.length})
             </TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="rent" className="pt-3">
             {renderOrderList(rentOrders)}
           </TabsContent>
-          
+
           <TabsContent value="buy" className="pt-3">
             {renderOrderList(buyOrders)}
           </TabsContent>

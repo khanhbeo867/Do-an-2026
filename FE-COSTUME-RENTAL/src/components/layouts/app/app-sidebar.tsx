@@ -23,7 +23,6 @@ import type { TNavigationConfig } from '@/configs/navigation.config'
 import navigationConfig from '@/configs/navigation.config'
 import useMediaQuery from '@/hooks/use-media-query'
 import { Link } from '@tanstack/react-router'
-import { GemIcon } from 'lucide-react'
 import { Fragment, useEffect, useLayoutEffect, useRef } from 'react'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../../ui/collapsible'
 import { Icon } from '../../ui/icon'
@@ -54,7 +53,7 @@ const AppSidebar: React.FC = () => {
       <SidebarHeader>
         <Link to="/" className="hover:opacity-80 transition-opacity block w-full">
           <Item size="xs">
-            <GemIcon size={32} strokeWidth={1} className="self-center fill-primary/10" />
+            <img src="/logo.svg" className="size-8 object-contain self-center" alt="Diamond Studio Logo" />
             <ItemContent>
               <ItemTitle>Diamond Studio</ItemTitle>
               <ItemDescription>Hệ thống quản lý thuê đạo cụ</ItemDescription>

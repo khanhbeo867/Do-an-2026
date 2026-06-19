@@ -1,7 +1,7 @@
 import { buttonVariants } from '@/components/ui/button'
 import { Typography } from '@/components/ui/typography'
 import { Link } from '@tanstack/react-router'
-import { ArrowLeftIcon, GemIcon } from 'lucide-react'
+import { ArrowLeftIcon } from 'lucide-react'
 import LoginForm from './login-form'
 
 const LoginPage: React.FC = () => {
@@ -27,7 +27,7 @@ const LoginPage: React.FC = () => {
           </div>
           <div className="w-full max-w-lg mx-auto px-6 relative h-full flex-1 place-content-center space-y-10">
             <div className="flex justify-center flex-col text-center gap-2">
-              <GemIcon size={48} strokeWidth={1} className="self-center mb-4 fill-primary/10" />
+              <img src="/logo.svg" className="size-12 object-contain self-center mb-4" alt="Diamond Studio Logo" />
               <Typography variant="h1" color="primary" className="font-serif">
                 Diamond Studio
               </Typography>

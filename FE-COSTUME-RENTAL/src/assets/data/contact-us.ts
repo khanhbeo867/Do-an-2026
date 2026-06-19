@@ -30,6 +30,6 @@ export const contactInfo: ContactInfo = [
     slug: 'hotline',
     title: 'Hotline',
     icon: 'Phone',
-    description: '0909 123 456',
+    description: '0829 428 298',
   },
 ]
